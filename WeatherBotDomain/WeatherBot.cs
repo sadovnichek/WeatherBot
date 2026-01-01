@@ -3,11 +3,6 @@ using Telegram.Bot.Types;
 
 namespace WeatherBotDomain
 {
-    public class CustomerUpdate
-    {
-        public Update Update { get; }
-    }
-
     public class WeatherBot
     {
         private TelegramBotClient client;
@@ -17,11 +12,11 @@ namespace WeatherBotDomain
             client = new TelegramBotClient(token);
         }
 
-        public async Task ReceiveAsync(CustomerUpdate update)
+        public async Task ReceiveAsync(Update update)
         {
-            if(update.Update.Message != null)
+            if(update.Message != null)
             {
-                var message = update.Update.Message;
+                var message = update.Message;
                 await client.SendMessage(message.Chat.Id, message.Text);
             }
         }
