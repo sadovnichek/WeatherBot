@@ -5,17 +5,15 @@ namespace WeatherBotDomain
 {
     public class CustomerUpdate
     {
-        public Update Update { get; set; }
+        public Update Update { get; }
     }
 
     public class WeatherBot
     {
-        private string token;
         private TelegramBotClient client;
 
-        public WeatherBot()
+        public WeatherBot(string token)
         {
-            var token = GetToken("../../../token.txt");
             client = new TelegramBotClient(token);
         }
 
@@ -26,14 +24,6 @@ namespace WeatherBotDomain
                 var message = update.Update.Message;
                 await client.SendMessage(message.Chat.Id, message.Text);
             }
-        }
-
-        private static string GetToken(string filepath)
-        {
-            if (!File.Exists(filepath))
-                throw new ArgumentException($"Unable to find the file with token {filepath}");
-            using var reader = new StreamReader(filepath);
-            return reader.ReadLine();
         }
     }
 }
