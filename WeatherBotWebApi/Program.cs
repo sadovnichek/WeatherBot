@@ -6,9 +6,21 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT");
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 var app = builder.Build();
-
 var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
-var bot = new WeatherBot(token);
+
+var handler = new HttpClientHandler()
+{
+    UseProxy = false,
+};
+
+var client = new HttpClient(handler) 
+{ 
+    Timeout = new TimeSpan(0, 0, 5) 
+};
+
+var domain = new WeatherDomain();
+
+var bot = new WeatherBot(client, domain, token);
 
 app.MapPost("/webhook", async (Update u) =>
     {

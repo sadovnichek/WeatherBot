@@ -8,9 +8,9 @@ namespace WeatherBotDomain
 {
     internal class TimeCommand : ICommand
     {
-        public string Execute(string[] args)
+        public async Task<string> Execute(string[] args)
         {
-            return DateTime.Now.ToString();
+            return await Task.Run(() => DateTime.Now.ToString());
         }
     }
 }

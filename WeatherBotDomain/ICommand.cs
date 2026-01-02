@@ -8,6 +8,6 @@ namespace WeatherBotDomain
 {
     internal interface ICommand
     {
-        string Execute(string[] args);
+        Task<string> Execute(string[] args);
     }
 }

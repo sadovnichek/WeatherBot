@@ -5,20 +5,19 @@ namespace WeatherBotDomain
 {
     public class WeatherBot
     {
-        private TelegramBotClient client;
-        private static readonly Dictionary<string, ICommand> commands;
+        private readonly TelegramBotClient bot;
+        private readonly Dictionary<string, ICommand> commands;
 
-        static WeatherBot()
+        public WeatherBot(HttpClient client, 
+            WeatherDomain domain,
+            string token)
         {
+            bot = new TelegramBotClient(token);
             commands = new()
             {
-                {  "/time", new TimeCommand() }
+                {  "/time", new TimeCommand() },
+                {  "/weather", new WeatherCommand(client, domain) }
             };
-        }
-
-        public WeatherBot(string token)
-        {
-            client = new TelegramBotClient(token);
         }
 
         public async Task ReceiveAsync(Update update)
@@ -29,16 +28,16 @@ namespace WeatherBotDomain
 
                 if(commands.ContainsKey(messageText))
                 {
-                    var reply = HandleCommand(messageText, []);
-                    await client.SendMessage(update.Message.Chat.Id, reply);
+                    var reply = await HandleCommand(messageText, []);
+                    await bot.SendMessage(update.Message.Chat.Id, reply);
                 }
             }
         }
 
-        private string HandleCommand(string command, string[] args)
+        private async Task<string> HandleCommand(string command, string[] args)
         {
             var handler = commands[command];
-            return handler.Execute(args);
+            return await handler.Execute(args);
         }
     }
 }
