@@ -6,6 +6,15 @@ namespace WeatherBotDomain
     public class WeatherBot
     {
         private TelegramBotClient client;
+        private static readonly Dictionary<string, ICommand> commands;
+
+        static WeatherBot()
+        {
+            commands = new()
+            {
+                {  "/time", new TimeCommand() }
+            };
+        }
 
         public WeatherBot(string token)
         {
@@ -16,9 +25,20 @@ namespace WeatherBotDomain
         {
             if(update.Message != null)
             {
-                var message = update.Message;
-                await client.SendMessage(message.Chat.Id, message.Text);
+                var messageText = update.Message.Text;
+
+                if(commands.ContainsKey(messageText))
+                {
+                    var reply = HandleCommand(messageText, []);
+                    await client.SendMessage(update.Message.Chat.Id, reply);
+                }
             }
+        }
+
+        private string HandleCommand(string command, string[] args)
+        {
+            var handler = commands[command];
+            return handler.Execute(args);
         }
     }
 }
