@@ -18,9 +18,7 @@ var client = new HttpClient(handler)
     Timeout = new TimeSpan(0, 0, 5) 
 };
 
-var domain = new WeatherDomain();
-
-var bot = new WeatherBot(client, domain, token);
+var bot = new WeatherBot(client, new WeatherCore(), token);
 
 app.MapPost("/webhook", async (Update u) =>
     {

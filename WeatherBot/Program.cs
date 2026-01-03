@@ -7,35 +7,22 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace WeatherBot
 {
-    public enum State
-    {
-        None,
-        Location,
-        Time,
-        Ready
-    }
-
     public class Program
     {
         private static TelegramBotClient bot;
-        private static DataBaseStub database;
         private static Regex extractTimeRegexp;
         private static string help;
         private static Random random;
-        private static State currentState;
 
         static Program()
         {
-            database = new DataBaseStub();
             extractTimeRegexp = new Regex(@"\d{1,2}:\d\d");
             help = "*Weather Bot*\n/time set up time\n/help shows this help";
-            random = new Random();
-            currentState = State.None;
         }
 
         static async Task Main()
         {
-            var token = GetToken("../../../secrets.txt");
+            var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
 
             using var cts = new CancellationTokenSource();
             bot = new TelegramBotClient(token, cancellationToken: cts.Token);
@@ -47,7 +34,6 @@ namespace WeatherBot
             bot.OnUpdate += Bot_OnUpdate;
 
             Console.ReadKey();
-            database.CloseConnection();
             cts.Cancel();
         }
 
@@ -67,19 +53,9 @@ namespace WeatherBot
             {
                 await HandleStartCommand(message);
             }
-            else if (message.Location is not null)
-            {
-                currentState = State.Location;
-                await HandleLocation(message);
-            }
             else if (message.Text == "/time")
             {
-                currentState = State.Time;
                 await Reply(message, "Specify time as hh:mm...");
-            }
-            else if (currentState == State.Time)
-            {
-                await ValidateTime(message);
             }
             else if (message.Text == "/help")
             {
@@ -93,40 +69,9 @@ namespace WeatherBot
 
         private static async Task HandleStartCommand(Message message)
         {
-            database.Update(message.From.Id, new DataBaseRecord { TelegramId = message.From.Id });
-            await bot.SendMessage(message.Chat, "Hi! I'm the Weater Bot!");
+            await bot.SendMessage(message.Chat, "Hi! I'm the Weather Bot!");
             await bot.SendMessage(message.Chat, "First, I need to know your location...",
                 replyMarkup: new KeyboardButton[] { KeyboardButton.WithRequestLocation("Share Location") });
-        }
-
-        private static async Task HandleLocation(Message message)
-        {
-            var record = database.Read(message.From.Id);
-            record.Latitude = message.Location.Latitude;
-            record.Longitude = message.Location.Longitude;
-            database.Update(message.From.Id, record);
-
-            await Reply(message, $"Great! Now I know your location");
-            await Reply(message, "Now set time by command /time...");
-        }
-
-        private static async Task ValidateTime(Message message)
-        {
-            var regexpMatch = extractTimeRegexp.Match(message.Text);
-            if (!regexpMatch.Success)
-                await Reply(message, "Wrong time format. Try type as hh:mm...");
-            else
-            {
-                var time = regexpMatch.Value;
-
-                var record = database.Read(message.From.Id);
-                record.TimeToWakeup = TimeOnly.Parse(time);
-                database.Update(message.From.Id, record);
-
-                await Reply(message, "Time was set succefully!");
-                await Reply(message, $"You will get a message at {time}");
-                currentState = State.Ready;
-            }
         }
 
         private static async Task SendHelp(Message message)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -7,19 +8,29 @@ using System.Threading.Tasks;
 
 namespace WeatherBotDomain
 {
-    public class WeatherDomain
+    public class OpenMeteoResponse
     {
+        [JsonProperty("hourly")]
+        public Data Data { get; set; }
+    }
 
+    public class Data
+    {
+        [JsonProperty("temperature_2m")]
+        public double[] TemperaturePoints { get; set; }
+
+        [JsonProperty("weather_code")]
+        public int[] WeatherCodes { get; set; }
     }
 
     internal class WeatherCommand : ICommand
     {
         private readonly HttpClient httpClient;
-        private readonly WeatherDomain weatherDomain;
+        private readonly WeatherCore weatherDomain;
         private const string uri = "https://api.open-meteo.com/v1/forecast";
 
         public WeatherCommand(HttpClient client, 
-            WeatherDomain domain)
+            WeatherCore domain)
         {
             httpClient = client;
             weatherDomain = domain;
@@ -48,7 +59,33 @@ namespace WeatherBotDomain
         {
             var request = GetValues();
             var response = await httpClient.PostAsync(uri, request);
-            return await response.Content.ReadAsStringAsync();
+            var str = await response.Content.ReadAsStringAsync();
+            return ProcessResponce(str);
+        }
+
+        private string ProcessResponce(string response)
+        {
+            try
+            {
+                var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(response);
+
+                var temperatures = parsedJson.Data.TemperaturePoints;
+                var weatherCodes = parsedJson.Data.WeatherCodes;
+
+                var minTemperature = temperatures.Min();
+                var medianTemperature = temperatures.Median();
+                var maxTemperature = temperatures.Max();
+                var weatherMode = weatherCodes.Mode().Select(x => weatherDomain.GetDescription(x));
+
+                return $"Сегодня будет {string.Join(",", weatherMode)}.\n" +
+                    $"Средняя температура: {medianTemperature}.\n" +
+                    $"Перепады температур: {minTemperature} - {maxTemperature}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "An error occured :(";
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace WeatherBotDomain
         private readonly Dictionary<string, ICommand> commands;
 
         public WeatherBot(HttpClient client, 
-            WeatherDomain domain,
+            WeatherCore domain,
             string token)
         {
             bot = new TelegramBotClient(token);
