@@ -23,11 +23,13 @@ namespace WeatherBotDomain
         public int[] WeatherCodes { get; set; }
     }
 
-    internal class WeatherCommand : ICommand
+    public class WeatherCommand : ICommand
     {
         private readonly HttpClient httpClient;
         private readonly WeatherCore weatherDomain;
         private const string uri = "https://api.open-meteo.com/v1/forecast";
+
+        public string Description => "описание команды weather";
 
         public WeatherCommand(HttpClient client, 
             WeatherCore domain)

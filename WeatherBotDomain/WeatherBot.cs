@@ -6,38 +6,38 @@ namespace WeatherBotDomain
     public class WeatherBot
     {
         private readonly TelegramBotClient bot;
-        private readonly Dictionary<string, ICommand> commands;
+        private readonly CommandHandler commandHandler;
+        private readonly ICommand helpCommand;
 
-        public WeatherBot(HttpClient client, 
-            WeatherCore domain,
+        public WeatherBot(CommandHandler handler,
             string token)
         {
             bot = new TelegramBotClient(token);
-            commands = new()
-            {
-                {  "/time", new TimeCommand() },
-                {  "/weather", new WeatherCommand(client, domain) }
-            };
+            commandHandler = handler;
+            helpCommand = new HelpCommand(commandHandler);
         }
 
         public async Task ReceiveAsync(Update update)
         {
-            if(update.Message != null)
+            if(update.Message != null && update.Message.Text != null)
             {
-                var messageText = update.Message.Text;
+                var messageTextTokens = update.Message?.Text?.Split(" ");
+                var command = messageTextTokens?[0].Trim();
+                var args = messageTextTokens?.Skip(1).ToArray();
 
-                if(commands.ContainsKey(messageText))
+                if(command == "/help")
                 {
-                    var reply = await HandleCommand(messageText, []);
+                    var reply = await helpCommand.Execute([]);
+                    await bot.SendMessage(update.Message.Chat.Id, reply);
+                    return;
+                }
+
+                if(commandHandler.IsCommandExists(command))
+                {
+                    var reply = await commandHandler.HandleCommand(command, args);
                     await bot.SendMessage(update.Message.Chat.Id, reply);
                 }
             }
-        }
-
-        private async Task<string> HandleCommand(string command, string[] args)
-        {
-            var handler = commands[command];
-            return await handler.Execute(args);
         }
     }
 }

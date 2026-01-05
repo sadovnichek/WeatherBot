@@ -13,12 +13,22 @@ var handler = new HttpClientHandler()
     UseProxy = false,
 };
 
-var client = new HttpClient(handler) 
-{ 
-    Timeout = new TimeSpan(0, 0, 5) 
+var client = new HttpClient(handler)
+{
+    Timeout = new TimeSpan(0, 0, 5)
 };
 
-var bot = new WeatherBot(client, new WeatherCore(), token);
+var domain = new WeatherCore();
+
+var commands = new Dictionary<string, ICommand>()
+{
+    {  "/time", new TimeCommand() },
+    {  "/weather", new WeatherCommand(client, domain) }
+};
+
+var commandHandler = new CommandHandler(commands);
+
+var bot = new WeatherBot(commandHandler, token);
 
 app.MapPost("/webhook", async (Update u) =>
     {

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace WeatherBotDomain
 {
-    internal interface ICommand
+    public interface ICommand
     {
+        string Description { get; }
+
         Task<string> Execute(string[] args);
     }
 }

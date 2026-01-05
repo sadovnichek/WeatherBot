@@ -1,4 +1,5 @@
-﻿using WeatherBotDomain;
+﻿using Newtonsoft.Json.Linq;
+using WeatherBotDomain;
 
 namespace WeatherBotDomainTests
 {

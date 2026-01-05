@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -10,13 +9,10 @@ namespace WeatherBot
     public class Program
     {
         private static TelegramBotClient bot;
-        private static Regex extractTimeRegexp;
         private static string help;
-        private static Random random;
 
         static Program()
         {
-            extractTimeRegexp = new Regex(@"\d{1,2}:\d\d");
             help = "*Weather Bot*\n/time set up time\n/help shows this help";
         }
 
@@ -81,22 +77,7 @@ namespace WeatherBot
 
         private static async Task Reply(Message message, string text)
         {
-            var millisecondsDelay = (int)GetNormalDistributionValue(100 * text.Length, 1/12f);
-            await Task.Delay(millisecondsDelay);
             await bot.SendMessage(message.Chat, text);
-        }
-
-        private static double GetNormalDistributionValue(double mean, double std)
-        {
-            return std * Math.Cos(2 * Math.PI * random.NextDouble()) * Math.Sqrt(-2 * Math.Log(random.NextDouble())) + mean;
-        }
-
-        private static string GetToken(string filepath)
-        {
-            if (!File.Exists(filepath))
-                throw new ArgumentException($"Unable to find the file with token {filepath}");
-            using var reader = new StreamReader(filepath);
-            return reader.ReadLine();
         }
     }
 }
