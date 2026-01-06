@@ -8,6 +8,7 @@ namespace WeatherBotDomain
 {
     public class WeatherCore
     {
+        // Could be moved into DB?
         private static readonly Dictionary<int, string> weatherCodes = new()
         {
             {0, "солнечная погода" },
@@ -31,7 +32,7 @@ namespace WeatherBotDomain
         public string GetDescription(int weatherCode)
         {
             if (!weatherCodes.TryGetValue(weatherCode, out var description))
-                return $"Code {weatherCode}";
+                return $"{weatherCode}";
 
             return description;
         }

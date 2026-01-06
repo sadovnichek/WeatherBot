@@ -1,5 +1,6 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
+using WeatherBotDomain.Commands;
 
 namespace WeatherBotDomain
 {
@@ -7,14 +8,12 @@ namespace WeatherBotDomain
     {
         private readonly TelegramBotClient bot;
         private readonly CommandHandler commandHandler;
-        private readonly ICommand helpCommand;
 
         public WeatherBot(CommandHandler handler,
             string token)
         {
             bot = new TelegramBotClient(token);
             commandHandler = handler;
-            helpCommand = new HelpCommand(commandHandler);
         }
 
         public async Task ReceiveAsync(Update update)
@@ -27,7 +26,7 @@ namespace WeatherBotDomain
 
                 if(command == "/help")
                 {
-                    var reply = await helpCommand.Execute([]);
+                    var reply = GetHelp();
                     await bot.SendMessage(update.Message.Chat.Id, reply);
                     return;
                 }
@@ -38,6 +37,11 @@ namespace WeatherBotDomain
                     await bot.SendMessage(update.Message.Chat.Id, reply);
                 }
             }
+        }
+
+        private string GetHelp()
+        {
+            return string.Join("\n", commandHandler.GetCommands().Select(x => $"{x.Key} {x.Value.Description}"));
         }
     }
 }

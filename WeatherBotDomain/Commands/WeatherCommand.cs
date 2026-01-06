@@ -6,10 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherBotDomain
+namespace WeatherBotDomain.Commands
 {
     public class OpenMeteoResponse
     {
+        [JsonProperty("utc_offset_seconds")]
+        public int UtcOffsetSeconds { get; set; }
+
         [JsonProperty("hourly")]
         public Data Data { get; set; }
     }
@@ -27,15 +30,17 @@ namespace WeatherBotDomain
     {
         private readonly HttpClient httpClient;
         private readonly WeatherCore weatherDomain;
-        private const string uri = "https://api.open-meteo.com/v1/forecast";
+        private readonly string uriAddress;
 
         public string Description => "описание команды weather";
 
         public WeatherCommand(HttpClient client, 
-            WeatherCore domain)
+            WeatherCore domain,
+            string uri)
         {
             httpClient = client;
             weatherDomain = domain;
+            uriAddress = uri;
         }
 
         public async Task<string> Execute(string[] args)
@@ -60,7 +65,7 @@ namespace WeatherBotDomain
         private async Task<string> SendRequestAsync()
         {
             var request = GetValues();
-            var response = await httpClient.PostAsync(uri, request);
+            var response = await httpClient.PostAsync(uriAddress, request);
             var str = await response.Content.ReadAsStringAsync();
             return ProcessResponce(str);
         }
@@ -71,6 +76,9 @@ namespace WeatherBotDomain
             {
                 var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(response);
 
+                var utcOffset = parsedJson.UtcOffsetSeconds;
+                var timeNow = DateTime.UtcNow.AddSeconds(utcOffset);
+
                 var temperatures = parsedJson.Data.TemperaturePoints;
                 var weatherCodes = parsedJson.Data.WeatherCodes;
 
@@ -79,7 +87,9 @@ namespace WeatherBotDomain
                 var maxTemperature = Math.Round(temperatures.Max(), 1);
                 var weatherMode = weatherCodes.Mode().Select(x => weatherDomain.GetDescription(x));
 
-                return $"Сегодня ожидается {string.Join(" и ", weatherMode)}.\n" +
+                var greeting = GetGreeting(timeNow);
+
+                return $"{greeting} Сегодня ожидается {string.Join(" и ", weatherMode)}.\n" +
                     $"Средняя температура днем: {medianTemperatureWithinDay}.\n" +
                     $"Перепады температур: с {minTemperature} до {maxTemperature}";
             }
@@ -88,6 +98,18 @@ namespace WeatherBotDomain
                 Console.WriteLine(ex.Message);
                 return "An error occured :(";
             }
+        }
+
+        private string GetGreeting(DateTime time)
+        {
+            if (time.Hour >= 22 && time.Hour < 4)
+                return "Доброй ночи!";
+            if (time.Hour >= 4 && time.Hour < 10)
+                return "Доброе утро!";
+            if (time.Hour >= 10 && time.Hour < 16)
+                return "Добрый день!";
+
+            return "Добрый вечер!";
         }
     }
 }

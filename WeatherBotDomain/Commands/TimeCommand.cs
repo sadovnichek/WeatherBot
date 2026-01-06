@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherBotDomain
+namespace WeatherBotDomain.Commands
 {
     public class TimeCommand : ICommand
     {

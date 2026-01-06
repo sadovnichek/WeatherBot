@@ -1,5 +1,6 @@
 using Telegram.Bot.Types;
 using WeatherBotDomain;
+using WeatherBotDomain.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +21,12 @@ var client = new HttpClient(handler)
 
 var domain = new WeatherCore();
 
+var uri = "https://api.open-meteo.com/v1/forecast";
+
 var commands = new Dictionary<string, ICommand>()
 {
     {  "/time", new TimeCommand() },
-    {  "/weather", new WeatherCommand(client, domain) }
+    {  "/weather", new WeatherCommand(client, domain, uri) }
 };
 
 var commandHandler = new CommandHandler(commands);
