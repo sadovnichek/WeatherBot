@@ -39,4 +39,14 @@ app.MapPost("/webhook", async (Update u) =>
     }
 );
 
+//app.MapPost("/cron/test", async (HttpContext ctx) =>
+//{
+//    if (ctx.Request.Headers["X-Cron-Key"] != Environment.GetEnvironmentVariable("CRON_KEY"))
+//        return Results.Unauthorized();
+
+//    await bot.ReceiveAsync(new Update() { Message = new Message() { Text = "/weather", Chat = new Chat() { Id = 0 } } });
+
+//    return Results.Ok();
+//});
+
 app.Run();

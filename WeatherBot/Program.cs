@@ -20,8 +20,7 @@ namespace WeatherBot
         {
             var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
 
-            using var cts = new CancellationTokenSource();
-            bot = new TelegramBotClient(token, cancellationToken: cts.Token);
+            bot = new TelegramBotClient(token);
             var me = await bot.GetMe();
             Console.WriteLine($"Started {me.FirstName}");
 
@@ -30,7 +29,6 @@ namespace WeatherBot
             bot.OnUpdate += Bot_OnUpdate;
 
             Console.ReadKey();
-            cts.Cancel();
         }
 
         private static async Task Bot_OnUpdate(Update update)

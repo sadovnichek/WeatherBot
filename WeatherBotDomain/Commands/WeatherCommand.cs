@@ -83,7 +83,7 @@ namespace WeatherBotDomain.Commands
                 var weatherCodes = parsedJson.Data.WeatherCodes;
 
                 var minTemperature = Math.Round(temperatures.Min(), 1);
-                var medianTemperatureWithinDay = Math.Round(temperatures.Skip(7).Take(15).Median(), 1);
+                var medianTemperatureWithinDay = Math.Round(temperatures.Skip(7).Take(12).Median(), 1);
                 var maxTemperature = Math.Round(temperatures.Max(), 1);
                 var weatherMode = weatherCodes.Mode().Select(x => weatherDomain.GetDescription(x));
 
@@ -91,7 +91,7 @@ namespace WeatherBotDomain.Commands
 
                 return $"{greeting} Сегодня ожидается {string.Join(" и ", weatherMode)}.\n" +
                     $"Средняя температура днем: {medianTemperatureWithinDay}.\n" +
-                    $"Перепады температур: с {minTemperature} до {maxTemperature}";
+                    $"Перепады температур в течении суток с {minTemperature} до {maxTemperature}";
             }
             catch (Exception ex)
             {

@@ -1,6 +1,5 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
-using WeatherBotDomain.Commands;
 
 namespace WeatherBotDomain
 {
@@ -28,6 +27,7 @@ namespace WeatherBotDomain
                 {
                     var reply = GetHelp();
                     await bot.SendMessage(update.Message.Chat.Id, reply);
+                    Console.WriteLine(update.Message.Chat.Id);
                     return;
                 }
 
