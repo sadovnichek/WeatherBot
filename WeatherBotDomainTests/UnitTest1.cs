@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using WeatherBotDomain;
+﻿using WeatherBotDomain;
 
 namespace WeatherBotDomainTests
 {
     [TestFixture]
-    public class Tests
+    public class Test
     {
         [SetUp]
         public void Setup()

@@ -39,4 +39,22 @@ app.MapPost("/webhook", async (Update u) =>
     }
 );
 
+app.MapPost("/scheduled-work", async (UserRequest r) =>
+    {
+        await bot.ReceiveAsync(new Update()
+        {
+            Message = new Message()
+            {
+                Text = "/weather",
+                Chat = new Chat()
+                {
+                    Id = r.chatId
+                }
+            }
+        });
+    }
+);
+
 app.Run();
+
+public record UserRequest(int chatId);

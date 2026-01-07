@@ -1,10 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WeatherBotDomain.Commands
 {
@@ -72,7 +67,7 @@ namespace WeatherBotDomain.Commands
 
                 var greeting = GetGreeting(timeNow);
 
-                return $"{greeting} Сегодня ожидается {string.Join(" и ", weatherMode)} {emoji}.\n" +
+                return $"{greeting} Сегодня ожидается {string.Join(" и ", weatherMode)} {emoji}\n" +
                     $"Средняя температура днем: {medianTemperatureWithinDay}.\n" +
                     $"Перепады температур в течении суток с {minTemperature} до {maxTemperature}";
             }
