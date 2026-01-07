@@ -9,8 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: send request            
-        run: curl -X POST -H 'Content-Type:application/json' -d '{"chatId":"${{ secrets.SEND_TO }}"}' https://weatherbot-epps.onrender.com/scheduled-workcurl -X POST -H 'Content-Type: application/json' -d '{"chatId": "860170424"}' https://weatherbot-epps.onrender.com/scheduled-work
-        env:                                                  
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}                        curl -X POST -H 'Content-Type: application/json' -d '{"chatId": "860170424"}' https://weatherbot-epps.onrender.com/scheduled-workcurl -X POST -H 'Content-Type: application/json' -d '{"chatId": "860170424"}' https://weatherbot-epps.onrender.com/scheduled-work
-          SEND_TO: curl -X POST -H 'Content-Type: application/json' -d '{"chatId": "860170424"}' https://weatherbot-epps.onrender.com/scheduled-work   
+        run: curl -X POST -H 'Content-Type:application/json' -d '{"chatId":"${{ secrets.SEND_TO }}"}' https://weatherbot-epps.onrender.com/scheduled-work   
     
