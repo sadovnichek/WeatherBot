@@ -57,4 +57,4 @@ app.MapPost("/scheduled-work", async (UserRequest r) =>
 
 app.Run();
 
-public record UserRequest(int chatId);
+public record UserRequest(long chatId);
