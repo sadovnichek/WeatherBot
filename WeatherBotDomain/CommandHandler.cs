@@ -31,12 +31,19 @@ namespace WeatherBotDomain
             throw new ArgumentException($"Unknown command {command}");
         }
 
-        public IEnumerable<KeyValuePair<string, ICommand>> GetCommands()
+        public IEnumerable<string> GetCommands()
         {
-            foreach(var kv in botCommands)
+            return botCommands.Keys;
+        }
+
+        public string GetCommandDescription(string command)
+        {
+            if (botCommands.TryGetValue(command, out var instance))
             {
-                yield return kv;
+                return instance.Description;
             }
+
+            throw new ArgumentException($"Unknown command {command}");
         }
     }
 }

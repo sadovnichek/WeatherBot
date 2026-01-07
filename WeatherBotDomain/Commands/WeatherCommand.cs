@@ -8,24 +8,6 @@ using System.Threading.Tasks;
 
 namespace WeatherBotDomain.Commands
 {
-    public class OpenMeteoResponse
-    {
-        [JsonProperty("utc_offset_seconds")]
-        public int UtcOffsetSeconds { get; set; }
-
-        [JsonProperty("hourly")]
-        public Data Data { get; set; }
-    }
-
-    public class Data
-    {
-        [JsonProperty("temperature_2m")]
-        public double[] TemperaturePoints { get; set; }
-
-        [JsonProperty("weather_code")]
-        public int[] WeatherCodes { get; set; }
-    }
-
     public class WeatherCommand : ICommand
     {
         private readonly HttpClient httpClient;
@@ -86,10 +68,11 @@ namespace WeatherBotDomain.Commands
                 var medianTemperatureWithinDay = Math.Round(temperatures.Skip(7).Take(12).Median(), 1);
                 var maxTemperature = Math.Round(temperatures.Max(), 1);
                 var weatherMode = weatherCodes.Mode().Select(x => weatherDomain.GetDescription(x));
+                var emoji = weatherDomain.GetEmoji(weatherCodes.Mode().First());
 
                 var greeting = GetGreeting(timeNow);
 
-                return $"{greeting} Сегодня ожидается {string.Join(" и ", weatherMode)}.\n" +
+                return $"{greeting} Сегодня ожидается {string.Join(" и ", weatherMode)} {emoji}.\n" +
                     $"Средняя температура днем: {medianTemperatureWithinDay}.\n" +
                     $"Перепады температур в течении суток с {minTemperature} до {maxTemperature}";
             }

@@ -29,9 +29,37 @@ namespace WeatherBotDomain
             {95, "гроза" }
         };
 
+        private static Dictionary<int, string> weatherEmojies = new()
+        {
+            {0, "☀️" },
+            {1, "🌤️" },
+            {2, "⛅" },
+            {3, "☁️" },
+            {45, "🌫️" },
+            {51, "🌧️" },
+            {53, "🌧️" },
+            {55, "🌧️" },
+            {61, "💧" },
+            {71, "🌨️" },
+            {73, "🌨️" },
+            {77, "🌨️" },
+            {80, "☔" },
+            {81, "☔" },
+            {85, "🌨️" },
+            {95, "⛈️" }
+        };
+
         public string GetDescription(int weatherCode)
         {
             if (!weatherCodes.TryGetValue(weatherCode, out var description))
+                return $"{weatherCode}";
+
+            return description;
+        }
+
+        public string GetEmoji(int weatherCode)
+        {
+            if (!weatherEmojies.TryGetValue(weatherCode, out var description))
                 return $"{weatherCode}";
 
             return description;

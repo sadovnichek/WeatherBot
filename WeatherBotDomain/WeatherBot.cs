@@ -28,10 +28,9 @@ namespace WeatherBotDomain
                     var reply = GetHelp();
                     await bot.SendMessage(update.Message.Chat.Id, reply);
                     Console.WriteLine(update.Message.Chat.Id);
-                    return;
                 }
 
-                if(commandHandler.IsCommandExists(command))
+                else if (commandHandler.IsCommandExists(command))
                 {
                     var reply = await commandHandler.HandleCommand(command, args);
                     await bot.SendMessage(update.Message.Chat.Id, reply);
@@ -41,7 +40,10 @@ namespace WeatherBotDomain
 
         private string GetHelp()
         {
-            return string.Join("\n", commandHandler.GetCommands().Select(x => $"{x.Key} {x.Value.Description}"));
+            return string.Join("\n", 
+                commandHandler
+                .GetCommands()
+                .Select(c => $"{c} {commandHandler.GetCommandDescription(c)}"));
         }
     }
 }
