@@ -1,0 +1,16 @@
+name: Send_Message_On_Schedule
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+
+jobs:                          
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: send request            
+        run: curl -H 'Content-Type:application/json' -d '{"chat_id":"${{ secrets.SEND_TO }}"}' -X POST https://weatherbot-epps.onrender.com/scheduled-work
+        env:                                                  
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}                        
+          SEND_TO: ${{ secrets.SEND_TO }}   
+    
