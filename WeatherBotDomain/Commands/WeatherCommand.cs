@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Data;
-
-namespace WeatherBotDomain.Commands
+﻿namespace WeatherBotDomain.Commands
 {
-    public class WeatherCommand : ICommand
+    public abstract class WeatherCommand : ICommand
     {
         private readonly HttpClient httpClient;
         private readonly WeatherCore weatherDomain;
@@ -22,60 +19,33 @@ namespace WeatherBotDomain.Commands
 
         public async Task<string> Execute(string[] args)
         {
-            var response = await SendRequestAsync();
-            return response;
-        }
-
-        private HttpContent GetValues()
-        {
-            var values = new Dictionary<string, string>
-              {
-                  { "latitude", "56.823457" },
-                  { "longitude", "60.551424" },
-                  { "hourly", "temperature_2m,weather_code" },
-                  { "forecast_days", "1" },
-                  { "timezone", "auto" }
-              };
-            return new FormUrlEncodedContent(values);
-        }
-
-        private async Task<string> SendRequestAsync()
-        {
             var request = GetValues();
             var response = await httpClient.PostAsync(uriAddress, request);
             var str = await response.Content.ReadAsStringAsync();
-            return ProcessResponce(str);
+            return ProcessResponse(str);
         }
 
-        private string ProcessResponce(string response)
+        protected abstract string ProcessResponse(string jsonResponse);
+
+        private double GetValueRounded(double[] values, Func<double[], double> func, int digits = 1)
         {
-            try
-            {
-                var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(response);
+            return Math.Round(func(values), digits);
+        }
 
-                var utcOffset = parsedJson.UtcOffsetSeconds;
-                var timeNow = DateTime.UtcNow.AddSeconds(utcOffset);
+        protected string GetMessage(string timePointer, DateTime timeNow, int[] weatherCodes,
+            double[] temperatures)
+        {
+            var greeting = GetGreeting(timeNow);
+            var medianTemperatureWithinDay = GetValueRounded(temperatures, xs => xs.Median());
+            var minTemperature = GetValueRounded(temperatures, xs => xs.Min());
+            var maxTemperature = GetValueRounded(temperatures, xs => xs.Max());
+            var weatherCodesMode = weatherCodes.Mode().First();
+            var weather = weatherDomain.GetDescription(weatherCodesMode);
+            var emoji = weatherDomain.GetEmoji(weatherCodesMode);
 
-                var temperatures = parsedJson.Data.TemperaturePoints;
-                var weatherCodes = parsedJson.Data.WeatherCodes;
-
-                var minTemperature = Math.Round(temperatures.Min(), 1);
-                var medianTemperatureWithinDay = Math.Round(temperatures.Skip(7).Take(12).Median(), 1);
-                var maxTemperature = Math.Round(temperatures.Max(), 1);
-                var weatherMode = weatherCodes.Mode().Select(x => weatherDomain.GetDescription(x));
-                var emoji = weatherDomain.GetEmoji(weatherCodes.Mode().First());
-
-                var greeting = GetGreeting(timeNow);
-
-                return $"{greeting} Сегодня ожидается {string.Join(" и ", weatherMode)} {emoji}\n" +
+            return $"{greeting} {timePointer} ожидается {weather} {emoji}\n" +
                     $"Средняя температура днем: {medianTemperatureWithinDay}.\n" +
                     $"Перепады температур в течении суток с {minTemperature} до {maxTemperature}";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return "An error occured :(";
-            }
         }
 
         private string GetGreeting(DateTime time)
@@ -88,6 +58,19 @@ namespace WeatherBotDomain.Commands
                 return "Добрый день!";
 
             return "Добрый вечер!";
+        }
+
+        private HttpContent GetValues()
+        {
+            var values = new Dictionary<string, string>
+            {
+                  { "latitude", "56.823457" },
+                  { "longitude", "60.551424" },
+                  { "hourly", "temperature_2m,weather_code" },
+                  { "forecast_days", "2" },
+                  { "timezone", "auto" }
+            };
+            return new FormUrlEncodedContent(values);
         }
     }
 }

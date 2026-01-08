@@ -26,7 +26,8 @@ var uri = "https://api.open-meteo.com/v1/forecast";
 var commands = new Dictionary<string, ICommand>()
 {
     {  "/time", new TimeCommand() },
-    {  "/weather", new WeatherCommand(client, domain, uri) }
+    {  "/today", new TodayCommand(client, domain, uri) },
+    {  "/tomorrow", new TomorrowCommand(client, domain, uri) }
 };
 
 var commandHandler = new CommandHandler(commands);
@@ -41,17 +42,7 @@ app.MapPost("/webhook", async (Update u) =>
 
 app.MapPost("/scheduled-work", async (UserRequest r) =>
     {
-        await bot.ReceiveAsync(new Update()
-        {
-            Message = new Message()
-            {
-                Text = "/weather",
-                Chat = new Chat()
-                {
-                    Id = r.chatId
-                }
-            }
-        });
+        await Task.Yield();
     }
 );
 

@@ -4,7 +4,7 @@ using WeatherBotDomain.Commands;
 namespace WeatherBotDomainTests
 {
     [TestFixture]
-    public class WeatherCommand_should
+    public class TodayCommand_should
     {
         private ICommand weatherCommand;
         private HttpClient client;
@@ -14,7 +14,7 @@ namespace WeatherBotDomainTests
         public void Setup()
         {
             client = new HttpClient(new HttpClientHandler() { UseProxy = false });
-            weatherCommand = new WeatherCommand(client, new WeatherCore(), uri);
+            weatherCommand = new TodayCommand(client, new WeatherCore(), uri);
         }
 
         [TearDown]
@@ -27,6 +27,7 @@ namespace WeatherBotDomainTests
         public async Task Test()
         {
             var reply = await weatherCommand.Execute([]);
+            Console.WriteLine(reply);
         }
     }
 }
