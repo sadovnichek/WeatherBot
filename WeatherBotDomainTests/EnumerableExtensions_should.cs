@@ -3,7 +3,7 @@
 namespace WeatherBotDomainTests
 {
     [TestFixture]
-    public class Test
+    public class EnumerableExtensions_should
     {
         [SetUp]
         public void Setup()

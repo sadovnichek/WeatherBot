@@ -3,12 +3,12 @@ using Telegram.Bot.Types;
 
 namespace WeatherBotDomain
 {
-    public class WeatherBot
+    public class Bot
     {
         private readonly TelegramBotClient bot;
         private readonly CommandHandler commandHandler;
 
-        public WeatherBot(CommandHandler handler,
+        public Bot(CommandHandler handler,
             string token)
         {
             bot = new TelegramBotClient(token);

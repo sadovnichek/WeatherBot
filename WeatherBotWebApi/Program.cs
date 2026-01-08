@@ -31,7 +31,7 @@ var commands = new Dictionary<string, ICommand>()
 
 var commandHandler = new CommandHandler(commands);
 
-var bot = new WeatherBot(commandHandler, token);
+var bot = new Bot(commandHandler, token);
 
 app.MapPost("/webhook", async (Update u) =>
     {
