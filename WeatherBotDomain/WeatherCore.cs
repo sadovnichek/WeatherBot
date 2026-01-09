@@ -5,10 +5,10 @@
         // Could be moved into DB?
         private static readonly Dictionary<int, string> weatherCodes = new()
         {
-            {0, "солнечная погода" },
-            {1, "солнечная погода" },
+            {0, "солнечная" },
+            {1, "солнечная" },
             {2, "переменная облачность" },
-            {3, "облачная погода" },
+            {3, "облачная" },
             {45, "туман" },
             {51, "дождь" },
             {53, "дождь" },
@@ -43,6 +43,26 @@
             {95, "⛈️" }
         };
 
+        private static readonly Dictionary<int, bool> isWordingNeeded = new()
+        {
+            {0, true },
+            {1, true },
+            {2, false },
+            {3, true },
+            {45, false },
+            {51, false },
+            {53, false },
+            {55, false },
+            {61, false },
+            {71, false },
+            {73, false },
+            {77, false },
+            {80, false },
+            {81, false },
+            {85, false },
+            {95, false }
+        };
+
         public string GetDescription(int weatherCode)
         {
             if (!weatherCodes.TryGetValue(weatherCode, out var description))
@@ -57,6 +77,14 @@
                 return $"{weatherCode}";
 
             return description;
+        }
+
+        public bool IsWordingNeeded(int weatherCode)
+        {
+            if (!isWordingNeeded.TryGetValue(weatherCode, out var answer))
+                return false;
+
+            return answer;
         }
     }
 }

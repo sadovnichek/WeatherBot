@@ -9,7 +9,7 @@ namespace WeatherBotDomain.Commands
         {
         }
 
-        protected override string ProcessResponse(string jsonResponse)
+        protected override WeatherReply ProcessResponse(string jsonResponse)
         {
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(jsonResponse);
 
