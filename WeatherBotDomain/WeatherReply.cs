@@ -6,9 +6,9 @@
 
         public string Greeting { get; init; }
 
-        public string Weather { get; init; }
+        //public string Weather { get; init; }
 
-        public string Wording { get; init; }
+        //public string Wording { get; init; } = string.Empty;
 
         public string Emoji { get; init; }
 

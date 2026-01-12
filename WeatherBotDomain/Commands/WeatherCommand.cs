@@ -43,9 +43,7 @@
                 var mainWeatherCode = weatherCodesModes.First();
                 var weather = weatherDomain.GetDescription(mainWeatherCode);
                 var emoji = weatherDomain.GetEmoji(mainWeatherCode);
-
-                var wording = weatherDomain.IsWordingNeeded(mainWeatherCode) ? "погода" : string.Empty;
-
+                
                 return new SimpleWeatherReply()
                 {
                     Greeting = greeting,
@@ -55,12 +53,11 @@
                     MinTemperature = minTemperature,
                     MaxTemperature = maxTemperature,
                     Emoji = emoji,
-                    Wording = wording
                 };
             }
 
             var emojies = string.Join("", weatherCodesModes.Select(weatherDomain.GetEmoji).ToHashSet());
-            var withWording = string.Join(" и ", weatherCodesModes.Where(weatherDomain.IsWordingNeeded).Select(weatherDomain.GetDescription).ToHashSet()) + " погода";
+            var withWording = string.Join(" и ", weatherCodesModes.Where(weatherDomain.IsWordingNeeded).Select(weatherDomain.GetDescription).ToHashSet());
             var withoutWording = string.Join(", ", weatherCodesModes.Where(x => !weatherDomain.IsWordingNeeded(x)).Select(weatherDomain.GetDescription));
 
             return new CompoundWeatherReply()
@@ -71,7 +68,8 @@
                 MinTemperature = minTemperature,
                 MaxTemperature = maxTemperature,
                 Emoji = emojies,
-                Weather = $"{withWording}, {withoutWording}"
+                WeathersWithWording = withWording,
+                WeathersWithoutWording = withoutWording
             };
         }
 
