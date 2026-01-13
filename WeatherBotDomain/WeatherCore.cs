@@ -63,6 +63,26 @@
             {95, false }
         };
 
+        private static readonly Dictionary<int, bool> isPrecipitation = new()
+        {
+            {0, false },
+            {1, false },
+            {2, false },
+            {3, false },
+            {45, false },
+            {51, true },
+            {53, true },
+            {55, true },
+            {61, true },
+            {71, true },
+            {73, true },
+            {77, true },
+            {80, true },
+            {81, true },
+            {85, true },
+            {95, true }
+        };
+
         public string GetDescription(int weatherCode)
         {
             if (!weatherCodes.TryGetValue(weatherCode, out var description))
@@ -85,6 +105,37 @@
                 return false;
 
             return answer;
+        }
+
+        public static bool IsPrecipitationExpected(int[] weatherCodes)
+        {
+            return weatherCodes.Any(code => isPrecipitation[code]);
+        }
+
+        /// <exception cref="ArgumentException"></exception>
+        public static Dictionary<int, (int, int)> GetLongestSubsequence(int[] weatherCodes)
+        {
+            if (weatherCodes.Length == 0)
+                throw new ArgumentException("Sequence is empty");
+
+            var dict = new Dictionary<int, (int, int)>();
+            int begin = 0, end = weatherCodes.Length - 1;
+            for(var i = 1; i < weatherCodes.Length + 1; i++)
+            {
+                if (i < weatherCodes.Length && weatherCodes[i] == weatherCodes[i - 1])
+                    continue;
+                end = i - 1;
+                if (dict.ContainsKey(weatherCodes[i - 1]))
+                {
+                    if (end - begin > dict[weatherCodes[i - 1]].Item2 - dict[weatherCodes[i - 1]].Item1)
+                        dict[weatherCodes[i - 1]] = (begin, end);
+                }
+                else
+                    dict.Add(weatherCodes[i - 1], (begin, end));
+                begin = i;
+            }
+
+            return dict;
         }
     }
 }

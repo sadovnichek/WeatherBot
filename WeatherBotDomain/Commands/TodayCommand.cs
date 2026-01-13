@@ -10,6 +10,8 @@ namespace WeatherBotDomain.Commands
 
         }
 
+        public override string Description => "Погода и температура сегодня";
+
         protected override WeatherReply ProcessResponse(string jsonResponse)
         {
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(jsonResponse);

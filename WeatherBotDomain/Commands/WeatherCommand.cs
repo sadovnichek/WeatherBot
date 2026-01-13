@@ -6,7 +6,7 @@
         private readonly WeatherCore weatherDomain;
         private readonly string uriAddress;
 
-        public string Description => "описание команды weather";
+        public abstract string Description { get; }
 
         public WeatherCommand(HttpClient client, 
             WeatherCore domain,
@@ -27,6 +27,7 @@
 
         protected abstract WeatherReply ProcessResponse(string jsonResponse);
 
+        //Too large method
         public WeatherReply GetMessage(string timePointer, 
             DateTime timeNow, 
             int[] weatherCodes,

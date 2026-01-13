@@ -32,7 +32,7 @@ var commands = new Dictionary<string, ICommand>()
 
 var commandHandler = new CommandHandler(commands);
 
-var bot = new Bot(commandHandler, token);
+var bot = new TelegramBot(commandHandler, token);
 
 app.MapPost("/webhook", async (Update u) =>
     {
