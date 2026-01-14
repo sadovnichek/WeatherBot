@@ -7,6 +7,7 @@ namespace WeatherBotDomain.Commands
         public TomorrowCommand(HttpClient client, WeatherCore domain, string uri) 
             : base(client, domain, uri)
         {
+
         }
 
         public override string Description => "Погода и температура завтра";
@@ -21,7 +22,7 @@ namespace WeatherBotDomain.Commands
             var temperatures = parsedJson.Data.TemperaturePoints.Skip(24).ToArray();
             var weatherCodes = parsedJson.Data.WeatherCodes.Skip(24).ToArray();
 
-            return GetMessage("Завтра", timeNow, weatherCodes, temperatures);
+            return weatherDomain.GetReply("Завтра", timeNow, weatherCodes, temperatures);
         }
     }
 }

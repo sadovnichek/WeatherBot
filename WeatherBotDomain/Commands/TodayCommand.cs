@@ -22,7 +22,7 @@ namespace WeatherBotDomain.Commands
             var temperatures = parsedJson.Data.TemperaturePoints.Take(24).ToArray();
             var weatherCodes = parsedJson.Data.WeatherCodes.Take(24).ToArray();
 
-            return GetMessage("Сегодня", timeNow, weatherCodes, temperatures);
+            return weatherDomain.GetReply("Сегодня", timeNow, weatherCodes, temperatures);
         }
     }
 }
