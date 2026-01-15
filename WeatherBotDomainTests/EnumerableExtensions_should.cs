@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using WeatherBotDomain;
 
 namespace WeatherBotDomainTests
 {

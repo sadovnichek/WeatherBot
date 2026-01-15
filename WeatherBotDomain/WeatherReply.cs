@@ -1,4 +1,4 @@
-﻿namespace BotInfrastructure
+﻿namespace WeatherBotDomain
 {
     public abstract class WeatherReply
     {

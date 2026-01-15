@@ -1,4 +1,4 @@
-﻿namespace BotInfrastructure.Commands
+﻿namespace BotInfrastructure
 {
     public interface ICommand
     {

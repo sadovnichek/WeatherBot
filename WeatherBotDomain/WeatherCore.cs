@@ -1,4 +1,6 @@
-﻿namespace BotInfrastructure
+﻿using BotInfrastructure;
+
+namespace WeatherBotDomain
 {
     public class WeatherCore
     {
@@ -158,6 +160,7 @@
                 return new SimpleWeatherReply()
                 {
                     Greeting = greeting,
+                    IsWordingNeeded = IsWordingNeeded(mainWeatherCode),
                     TimePointer = timePointer,
                     Weather = weather,
                     MedianTemperature = medianTemperatureWithinDay,

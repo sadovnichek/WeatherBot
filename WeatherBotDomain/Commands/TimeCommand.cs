@@ -1,4 +1,6 @@
-﻿namespace BotInfrastructure.Commands
+﻿using BotInfrastructure;
+
+namespace WeatherBotDomain.Commands
 {
     public class TimeCommand : ICommand
     {

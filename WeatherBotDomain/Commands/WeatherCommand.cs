@@ -1,9 +1,12 @@
-﻿namespace BotInfrastructure.Commands
+﻿using BotInfrastructure;
+
+namespace WeatherBotDomain.Commands
 {
     public abstract class WeatherCommand : ICommand
     {
         private readonly HttpClient httpClient;
         private readonly string uriAddress;
+        private readonly IMessageBus<Message> bus;
 
         protected readonly WeatherCore weatherDomain;
 
@@ -11,6 +14,7 @@
 
         public WeatherCommand(HttpClient client, 
             WeatherCore domain,
+            IMessageBus<Message> bus,
             string uri)
         {
             httpClient = client;
@@ -23,6 +27,7 @@
             var request = GetValues();
             var response = await httpClient.PostAsync(uriAddress, request);
             var str = await response.Content.ReadAsStringAsync();
+            //await bus.Put(new Message(chatId, ProcessResponse(str).BuildMessage()));
             return ProcessResponse(str).BuildMessage();
         }
 

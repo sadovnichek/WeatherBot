@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using BotInfrastructure;
+using Newtonsoft.Json;
 
-namespace BotInfrastructure.Commands
+namespace WeatherBotDomain.Commands
 {
     public class TomorrowCommand : WeatherCommand
     {
-        public TomorrowCommand(HttpClient client, WeatherCore domain, string uri) 
-            : base(client, domain, uri)
+        public TomorrowCommand(HttpClient client, WeatherCore domain, IMessageBus<Message> bus, string uri)
+            : base(client, domain, bus, uri)
         {
 
         }
