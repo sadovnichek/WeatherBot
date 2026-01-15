@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace WeatherBotDomain.Commands
+namespace BotInfrastructure.Commands
 {
     public class TomorrowCommand : WeatherCommand
     {

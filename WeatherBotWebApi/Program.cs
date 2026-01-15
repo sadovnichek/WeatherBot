@@ -1,6 +1,6 @@
 using Telegram.Bot.Types;
-using WeatherBotDomain;
-using WeatherBotDomain.Commands;
+using BotInfrastructure;
+using BotInfrastructure.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 

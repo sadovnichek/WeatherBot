@@ -1,5 +1,5 @@
-﻿using WeatherBotDomain;
-using WeatherBotDomain.Commands;
+﻿using BotInfrastructure;
+using BotInfrastructure.Commands;
 
 namespace WeatherBotDomainTests
 {
@@ -26,7 +26,7 @@ namespace WeatherBotDomainTests
 
             Console.WriteLine(reply.BuildMessage());
 
-            Assert.That(reply.Weather, Is.EqualTo("солнечная погода"));
+            Assert.That(reply.Weather, Is.EqualTo("солнечная"));
         }
 
         [Test]

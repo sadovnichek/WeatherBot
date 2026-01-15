@@ -7,7 +7,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherBotDomain
+namespace BotInfrastructure
 {
     public static class EnumerableExtensions
     {

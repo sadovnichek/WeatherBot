@@ -1,4 +1,4 @@
-﻿namespace WeatherBotDomain
+﻿namespace BotInfrastructure
 {
     public class CompoundWeatherReply : WeatherReply
     {
