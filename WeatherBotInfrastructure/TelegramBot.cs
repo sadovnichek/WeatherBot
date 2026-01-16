@@ -24,8 +24,11 @@ namespace BotInfrastructure
                 var command = messageTextTokens?[0].Trim();
                 var args = messageTextTokens?.Skip(1).ToArray();
 
-                var reply = await GetReply(command, args);
-                await bot.SendMessage(update.Message.Chat.Id, reply);
+                if(commandHandler.IsCommandExists(command))
+                {
+                    var reply = await GetReply(command, args);
+                    await bot.SendMessage(update.Message.Chat.Id, reply);
+                }
             }
         }
 

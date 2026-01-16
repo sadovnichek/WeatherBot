@@ -26,7 +26,7 @@
 
         public async Task<string> HandleCommand(string command, string[] args)
         {
-            if(botCommands.TryGetValue(command, out var instance))
+            if (botCommands.TryGetValue(command, out var instance))
             {
                 return await instance.Execute(args);
             }
