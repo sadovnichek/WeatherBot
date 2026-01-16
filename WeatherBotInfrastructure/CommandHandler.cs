@@ -4,12 +4,12 @@
     {
         private Dictionary<string, ICommand> botCommands;
 
-        public CommandHandler(IMessageBus<Message> bus)
+        public CommandHandler()
         {
             botCommands = new Dictionary<string, ICommand>();
         }
 
-        public CommandHandler(IMessageBus<Message> bus, Dictionary<string, ICommand> commands)
+        public CommandHandler(Dictionary<string, ICommand> commands)
         {
             botCommands = commands;
         }

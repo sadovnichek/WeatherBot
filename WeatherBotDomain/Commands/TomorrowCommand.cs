@@ -5,7 +5,7 @@ namespace WeatherBotDomain.Commands
 {
     public class TomorrowCommand : WeatherCommand
     {
-        public TomorrowCommand(HttpClient client, WeatherCore domain, IMessageBus<Message> bus, string uri)
+        public TomorrowCommand(HttpClient client, WeatherCore domain, IMessageBus<string> bus, string uri)
             : base(client, domain, bus, uri)
         {
 

@@ -6,7 +6,7 @@ namespace WeatherBotDomain.Commands
     {
         private readonly HttpClient httpClient;
         private readonly string uriAddress;
-        private readonly IMessageBus<string> bus;
+        private readonly IMessageBus<string> messageBus;
 
         protected readonly WeatherCore weatherDomain;
 
@@ -19,6 +19,7 @@ namespace WeatherBotDomain.Commands
         {
             httpClient = client;
             weatherDomain = domain;
+            messageBus = bus;
             uriAddress = uri;
         }
 
@@ -27,8 +28,8 @@ namespace WeatherBotDomain.Commands
             var request = GetValues();
             var response = await httpClient.PostAsync(uriAddress, request);
             var str = await response.Content.ReadAsStringAsync();
-            await bus.Put(ProcessResponse(str).BuildMessage());
-            await bus.Put("Hello!");
+            await messageBus.Put(ProcessResponse(str).BuildMessage());
+            await messageBus.Put("Hello!");
         }
 
         protected abstract WeatherReply ProcessResponse(string jsonResponse);

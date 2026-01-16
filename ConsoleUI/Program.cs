@@ -22,15 +22,17 @@ namespace ConsoleUI
 
             var core = new WeatherCore();
 
-            var bus = new MessageBus<Message>();
+            var bus = new MessageBus<string>();
 
             var command = new TodayCommand(client, core, bus, uri);
 
             await command.Execute([]);
 
-            var reply = await bus.Obtain();
-
-            Console.WriteLine(reply);
+            while(!bus.IsEmpty())
+            {
+                var reply = await bus.Obtain();
+                Console.WriteLine(reply);
+            }
         }
     }
 }
