@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Diagnostics.Metrics;
-using System.Linq;
+﻿using System.Diagnostics.Contracts;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace WeatherBotDomain
+namespace BotInfrastructure
 {
     public static class EnumerableExtensions
     {

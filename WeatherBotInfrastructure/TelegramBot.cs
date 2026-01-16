@@ -1,4 +1,4 @@
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotInfrastructure
@@ -7,12 +7,15 @@ namespace BotInfrastructure
     {
         private readonly TelegramBotClient bot;
         private readonly CommandHandler commandHandler;
+        private readonly IMessageBus<string> messageBus;
 
         public TelegramBot(CommandHandler handler,
+            IMessageBus<string> bus,
             string token)
         {
             bot = new TelegramBotClient(token);
             commandHandler = handler;
+            messageBus = bus;
         }
 
         //Sending several messages?
@@ -26,19 +29,28 @@ namespace BotInfrastructure
 
                 if(commandHandler.IsCommandExists(command))
                 {
-                    var reply = await GetReply(command, args);
-                    await bot.SendMessage(update.Message.Chat.Id, reply);
+                    if(command == "/help")
+                    {
+                        var reply = GetHelp();
+                        await bot.SendMessage(update.Message.Chat.Id, reply);
+                    }
+
+                    while(!messageBus.IsEmpty())
+                    {
+                        var reply = await messageBus.Obtain();
+                        await bot.SendMessage(update.Message.Chat.Id, reply);
+                    }
                 }
             }
         }
 
-        private async Task<string> GetReply(string command, string[] args)
-        {
-            if (command == "/help")
-                return GetHelp();
+        //private async Task<IEnumerable<string>> GetReply(long chatId, string command, string[] args)
+        //{
+        //    if (command == "/help")
+        //        yield return GetHelp();
 
-            return await commandHandler.HandleCommand(command, args);
-        }
+        //    await commandHandler.HandleCommand(chatId, command, args);
+        //}
 
         private string GetHelp()
         {

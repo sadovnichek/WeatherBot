@@ -3,26 +3,37 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using BotInfrastructure;
+using BotInfrastructure.Commands;
 
 namespace WeatherBot
 {
     public class Program
     {
-        private static TelegramBotClient bot;
-        private static string help;
-
-        static Program()
-        {
-            help = "*Weather Bot*\n/time set up time\n/help shows this help";
-        }
+        private static TelegramBot bot;
 
         static async Task Main()
         {
-            var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
+            var token = Environment.GetEnvironmentVariable("TEST_BOT_TOKEN");
 
-            bot = new TelegramBotClient(token);
-            var me = await bot.GetMe();
-            Console.WriteLine($"Started {me.FirstName}");
+            var handler = new HttpClientHandler()
+            {
+                UseProxy = false,
+            };
+
+            var client = new HttpClient(handler)
+            {
+                Timeout = new TimeSpan(0, 0, 5)
+            };
+
+            var core = new WeatherCore();
+
+            var uri = "https://api.open-meteo.com/v1/forecast";
+
+            var commandHandler = new CommandHandler();
+            commandHandler.RegisterCommand("/today", new TodayCommand(client, core, uri));
+
+            bot = new TelegramBot(commandHandler, token);
 
             bot.OnError += Bot_OnError;
             bot.OnMessage += Bot_OnMessage;
@@ -43,39 +54,7 @@ namespace WeatherBot
 
         private static async Task Bot_OnMessage(Message message, UpdateType type)
         {
-            if (message.Text == "/start")
-            {
-                await HandleStartCommand(message);
-            }
-            else if (message.Text == "/time")
-            {
-                await Reply(message, "Specify time as hh:mm...");
-            }
-            else if (message.Text == "/help")
-            {
-                await SendHelp(message);
-            }
-            else
-            {
-                await SendHelp(message);
-            }
-        }
-
-        private static async Task HandleStartCommand(Message message)
-        {
-            await bot.SendMessage(message.Chat, "Hi! I'm the Weather Bot!");
-            await bot.SendMessage(message.Chat, "First, I need to know your location...",
-                replyMarkup: new KeyboardButton[] { KeyboardButton.WithRequestLocation("Share Location") });
-        }
-
-        private static async Task SendHelp(Message message)
-        {
-            await bot.SendMessage(message.Chat, help, ParseMode.Markdown);
-        }
-
-        private static async Task Reply(Message message, string text)
-        {
-            await bot.SendMessage(message.Chat, text);
+            
         }
     }
 }

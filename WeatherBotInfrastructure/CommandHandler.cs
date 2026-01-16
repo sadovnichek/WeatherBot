@@ -1,19 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WeatherBotDomain.Commands;
-
-namespace WeatherBotDomain
+﻿namespace BotInfrastructure
 {
     public class CommandHandler
     {
         private Dictionary<string, ICommand> botCommands;
 
+        public CommandHandler()
+        {
+            botCommands = new Dictionary<string, ICommand>();
+        }
+
         public CommandHandler(Dictionary<string, ICommand> commands)
         {
             botCommands = commands;
+        }
+
+        public bool RegisterCommand(string command, ICommand executor)
+        {
+            return botCommands.TryAdd(command, executor);
         }
 
         public bool IsCommandExists(string command)
@@ -21,11 +24,11 @@ namespace WeatherBotDomain
             return botCommands.ContainsKey(command);
         }
 
-        public async Task<string> HandleCommand(string command, string[] args)
+        public async Task<string> HandleCommand(long chatId, string command, string[] args)
         {
             if (botCommands.TryGetValue(command, out var instance))
             {
-                return await instance.Execute(args);
+                await instance.Execute(args);
             }
 
             throw new ArgumentException($"Unknown command {command}");

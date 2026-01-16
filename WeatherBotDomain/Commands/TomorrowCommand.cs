@@ -1,13 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using BotInfrastructure;
+using Newtonsoft.Json;
 
 namespace WeatherBotDomain.Commands
 {
     public class TomorrowCommand : WeatherCommand
     {
-        public TomorrowCommand(HttpClient client, WeatherCore domain, string uri) 
-            : base(client, domain, uri)
+        public TomorrowCommand(HttpClient client, WeatherCore domain, IMessageBus<string> bus, string uri)
+            : base(client, domain, bus, uri)
         {
+
         }
+
+        public override string Description => "Погода и температура завтра";
 
         protected override WeatherReply ProcessResponse(string jsonResponse)
         {
@@ -19,7 +23,7 @@ namespace WeatherBotDomain.Commands
             var temperatures = parsedJson.Data.TemperaturePoints.Skip(24).ToArray();
             var weatherCodes = parsedJson.Data.WeatherCodes.Skip(24).ToArray();
 
-            return GetMessage("Завтра", timeNow, weatherCodes, temperatures);
+            return weatherDomain.GetReply("Завтра", timeNow, weatherCodes, temperatures);
         }
     }
 }
