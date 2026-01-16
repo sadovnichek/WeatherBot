@@ -1,20 +1,21 @@
-﻿using Telegram.Bot;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace WeatherBotDomain
+namespace BotInfrastructure
 {
-    public class Bot
+    public class TelegramBot
     {
         private readonly TelegramBotClient bot;
         private readonly CommandHandler commandHandler;
 
-        public Bot(CommandHandler handler,
+        public TelegramBot(CommandHandler handler,
             string token)
         {
             bot = new TelegramBotClient(token);
             commandHandler = handler;
         }
 
+        //Sending several messages?
         public async Task ReceiveAsync(Update update)
         {
             if(update.Message != null && update.Message.Text != null)
@@ -23,19 +24,20 @@ namespace WeatherBotDomain
                 var command = messageTextTokens?[0].Trim();
                 var args = messageTextTokens?.Skip(1).ToArray();
 
-                if(command == "/help")
+                if(commandHandler.IsCommandExists(command))
                 {
-                    var reply = GetHelp();
-                    await bot.SendMessage(update.Message.Chat.Id, reply);
-                    Console.WriteLine(update.Message.Chat.Id);
-                }
-
-                else if (commandHandler.IsCommandExists(command))
-                {
-                    var reply = await commandHandler.HandleCommand(command, args);
+                    var reply = await GetReply(command, args);
                     await bot.SendMessage(update.Message.Chat.Id, reply);
                 }
             }
+        }
+
+        private async Task<string> GetReply(string command, string[] args)
+        {
+            if (command == "/help")
+                return GetHelp();
+
+            return await commandHandler.HandleCommand(command, args);
         }
 
         private string GetHelp()
