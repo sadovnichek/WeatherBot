@@ -1,9 +1,8 @@
-﻿using System.Threading.Channels;
+﻿using System.ComponentModel;
+using System.Threading.Channels;
 
 namespace BotInfrastructure
 {
-    public record Message(long ChatId, string Text);
-
     public interface IMessageBus<T>
     {
         Task Put(T item);
@@ -11,6 +10,8 @@ namespace BotInfrastructure
         Task<T> Obtain();
 
         void Complete();
+
+        bool IsEmpty();
     }
 
     public class MessageBus<T> : IMessageBus<T>
@@ -29,6 +30,11 @@ namespace BotInfrastructure
         public async Task<T> Obtain()
         {
             return await reader.ReadAsync();
+        }
+
+        public bool IsEmpty()
+        {
+            return reader.Count == 0;
         }
 
         public async Task Put(T item)

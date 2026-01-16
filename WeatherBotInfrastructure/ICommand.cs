@@ -4,6 +4,6 @@
     {
         string Description { get; }
 
-        Task<string> Execute(string[] args);
+        Task Execute(string[] args);
     }
 }

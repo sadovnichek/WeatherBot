@@ -4,12 +4,12 @@
     {
         private Dictionary<string, ICommand> botCommands;
 
-        public CommandHandler()
+        public CommandHandler(IMessageBus<Message> bus)
         {
             botCommands = new Dictionary<string, ICommand>();
         }
 
-        public CommandHandler(Dictionary<string, ICommand> commands)
+        public CommandHandler(IMessageBus<Message> bus, Dictionary<string, ICommand> commands)
         {
             botCommands = commands;
         }
@@ -24,11 +24,11 @@
             return botCommands.ContainsKey(command);
         }
 
-        public async Task<string> HandleCommand(string command, string[] args)
+        public async Task<string> HandleCommand(long chatId, string command, string[] args)
         {
             if (botCommands.TryGetValue(command, out var instance))
             {
-                return await instance.Execute(args);
+                await instance.Execute(args);
             }
 
             throw new ArgumentException($"Unknown command {command}");
