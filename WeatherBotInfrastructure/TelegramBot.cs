@@ -35,6 +35,8 @@ namespace BotInfrastructure
                         await bot.SendMessage(update.Message.Chat.Id, reply);
                     }
 
+                    await commandHandler.HandleCommand(command, args);
+
                     while(!messageBus.IsEmpty())
                     {
                         var reply = await messageBus.Obtain();

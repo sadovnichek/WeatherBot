@@ -24,11 +24,12 @@
             return botCommands.ContainsKey(command);
         }
 
-        public async Task<string> HandleCommand(long chatId, string command, string[] args)
+        public async Task HandleCommand(string command, string[] args)
         {
             if (botCommands.TryGetValue(command, out var instance))
             {
                 await instance.Execute(args);
+                return;
             }
 
             throw new ArgumentException($"Unknown command {command}");

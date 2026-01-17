@@ -24,11 +24,18 @@ namespace ConsoleUI
 
             var bus = new MessageBus<string>();
 
-            var command = new TodayCommand(client, core, bus, uri);
+            var commands = new Dictionary<string, ICommand>()
+            {
+                {  "/time", new TimeCommand() },
+                {  "/today", new TodayCommand(client, core, bus, uri) },
+                {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) }
+            };
 
-            await command.Execute([]);
+            var commandHandler = new CommandHandler(commands);
 
-            while(!bus.IsEmpty())
+            await commandHandler.HandleCommand("/today", []);
+
+            while (!bus.IsEmpty())
             {
                 var reply = await bus.Obtain();
                 Console.WriteLine(reply);
