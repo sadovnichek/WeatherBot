@@ -4,90 +4,95 @@ namespace WeatherBotDomain
 {
     public class WeatherCore
     {
+        private enum Weather
+        {
+            Sunny,
+            PartlyCloudy,
+            Cloudy,
+            Rainy,
+            Fog,
+            SlightlyRainy,
+            Snowy,
+            Shower,
+            Thunderstorm
+        }
+
+        private static readonly Dictionary<int, Weather> weatherGrouping = new()
+        {
+            {0, Weather.Sunny },
+            {1, Weather.Sunny },
+            {2, Weather.PartlyCloudy },
+            {3, Weather.Cloudy },
+            {45, Weather.Fog },
+            {51, Weather.Rainy },
+            {53, Weather.Rainy },
+            {55, Weather.Rainy },
+            {61, Weather.SlightlyRainy },
+            {71, Weather.Snowy },
+            {73, Weather.Snowy },
+            {77, Weather.Snowy },
+            {80, Weather.Shower },
+            {81, Weather.Shower },
+            {85, Weather.Snowy },
+            {95, Weather.Thunderstorm }
+        };
+
         // Could be moved into DB?
-        private static readonly Dictionary<int, string> weatherCodes = new()
+        private static readonly Dictionary<Weather, string> weatherDescription = new()
         {
-            {0, "солнечная" },
-            {1, "солнечная" },
-            {2, "переменная облачность" },
-            {3, "облачная" },
-            {45, "туман" },
-            {51, "дождь" },
-            {53, "дождь" },
-            {55, "дождь" },
-            {61, "небольшой дождь" },
-            {71, "снегопад" },
-            {73, "снегопад" },
-            {77, "снегопад" },
-            {80, "ливень" },
-            {81, "ливень" },
-            {85, "снегопад" },
-            {95, "гроза" }
+            { Weather.Sunny, "солнечная" },
+            { Weather.PartlyCloudy, "переменная облачность" },
+            { Weather.Cloudy, "облачная" },
+            { Weather.Fog, "туман" },
+            { Weather.Rainy, "дождь" },
+            { Weather.SlightlyRainy, "небольшой дождь" },
+            { Weather.Snowy, "снегопад" },
+            { Weather.Shower, "ливень" },
+            { Weather.Thunderstorm, "гроза" }
         };
 
-        private static Dictionary<int, string> weatherEmojies = new()
+        private static Dictionary<Weather, string> weatherEmojies = new()
         {
-            {0, "☀️" },
-            {1, "🌤️" },
-            {2, "⛅" },
-            {3, "☁️" },
-            {45, "🌫️" },
-            {51, "🌧️" },
-            {53, "🌧️" },
-            {55, "🌧️" },
-            {61, "💧" },
-            {71, "🌨️" },
-            {73, "🌨️" },
-            {77, "🌨️" },
-            {80, "☔" },
-            {81, "☔" },
-            {85, "🌨️" },
-            {95, "⛈️" }
+            { Weather.Sunny, "☀️" },
+            { Weather.PartlyCloudy, "⛅" },
+            { Weather.Cloudy, "☁️" },
+            { Weather.Fog, "🌫️" },
+            { Weather.Rainy, "🌧️" },
+            { Weather.SlightlyRainy, "💧" },
+            { Weather.Snowy, "🌨️" },
+            { Weather.Shower, "☔" },
+            { Weather.Thunderstorm, "⛈️" }
         };
 
-        private static readonly Dictionary<int, bool> isWordingNeeded = new()
+        private static readonly Dictionary<Weather, bool> isWordingNeeded = new()
         {
-            {0, true },
-            {1, true },
-            {2, false },
-            {3, true },
-            {45, false },
-            {51, false },
-            {53, false },
-            {55, false },
-            {61, false },
-            {71, false },
-            {73, false },
-            {77, false },
-            {80, false },
-            {81, false },
-            {85, false },
-            {95, false }
+            { Weather.Sunny, true },
+            { Weather.PartlyCloudy, false },
+            { Weather.Cloudy, true },
+            { Weather.Fog, false },
+            { Weather.Rainy, false },
+            { Weather.SlightlyRainy, false },
+            { Weather.Snowy, false },
+            { Weather.Shower, false },
+            { Weather.Thunderstorm, false }
         };
 
-        private static readonly Dictionary<int, bool> isPrecipitation = new()
+        private static readonly Dictionary<Weather, bool> isPrecipitation = new()
         {
-            {0, false },
-            {1, false },
-            {2, false },
-            {3, false },
-            {45, false },
-            {51, true },
-            {53, true },
-            {55, true },
-            {61, true },
-            {71, true },
-            {73, true },
-            {77, true },
-            {80, true },
-            {81, true },
-            {85, true },
-            {95, true }
+            { Weather.Sunny, false },
+            { Weather.PartlyCloudy, false },
+            { Weather.Cloudy, false },
+            { Weather.Fog, false },
+            { Weather.Rainy, true },
+            { Weather.SlightlyRainy, true },
+            { Weather.Snowy, true },
+            { Weather.Shower, true },
+            { Weather.Thunderstorm, true }
         };
 
         public string GetDescription(int weatherCode)
         {
-            if (!weatherCodes.TryGetValue(weatherCode, out var description))
+            if (!weatherDescription.TryGetValue(weatherGrouping[weatherCode], out var description))
                 return $"{weatherCode}";
 
             return description;
@@ -95,7 +100,7 @@ namespace WeatherBotDomain
 
         public string GetEmoji(int weatherCode)
         {
-            if (!weatherEmojies.TryGetValue(weatherCode, out var description))
+            if (!weatherEmojies.TryGetValue(weatherGrouping[weatherCode], out var description))
                 return $"{weatherCode}";
 
             return description;
@@ -103,7 +108,7 @@ namespace WeatherBotDomain
 
         public bool IsWordingNeeded(int weatherCode)
         {
-            if (!isWordingNeeded.TryGetValue(weatherCode, out var answer))
+            if (!isWordingNeeded.TryGetValue(weatherGrouping[weatherCode], out var answer))
                 return false;
 
             return answer;
@@ -111,7 +116,7 @@ namespace WeatherBotDomain
 
         public static bool IsPrecipitationExpected(int[] weatherCodes)
         {
-            return weatherCodes.Any(code => isPrecipitation[code]);
+            return weatherCodes.Any(code => isPrecipitation[weatherGrouping[code]]);
         }
 
         /// <exception cref="ArgumentException"></exception>
