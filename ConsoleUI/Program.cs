@@ -37,7 +37,7 @@ namespace ConsoleUI
 
             while (!bus.IsEmpty())
             {
-                var reply = await bus.Obtain();
+                var reply = await bus.Get();
                 Console.WriteLine(reply);
             }
         }

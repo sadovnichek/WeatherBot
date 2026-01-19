@@ -33,7 +33,7 @@ namespace BotInfrastructure
 
                     while (!messageBus.IsEmpty())
                     {
-                        var reply = await messageBus.Obtain();
+                        var reply = await messageBus.Get();
                         await bot.SendMessage(update.Message.Chat.Id, reply);
                     }
                 }

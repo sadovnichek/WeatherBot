@@ -6,7 +6,7 @@ namespace BotInfrastructure
     {
         Task Put(T item);
 
-        Task<T> Obtain();
+        Task<T> Get();
 
         void Complete();
 
@@ -26,7 +26,7 @@ namespace BotInfrastructure
             writer = channel.Writer;
         }
 
-        public async Task<T> Obtain()
+        public async Task<T> Get()
         {
             return await reader.ReadAsync();
         }
