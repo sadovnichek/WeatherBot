@@ -33,7 +33,7 @@ var commands = new Dictionary<string, ICommand>()
     {  "/tomorrow", new TomorrowCommand(client, domain, bus, uri) }
 };
 
-var commandHandler = new CommandHandler(commands);
+var commandHandler = new CommandHandler(commands, bus);
 
 var bot = new TelegramBot(commandHandler, bus, token);
 

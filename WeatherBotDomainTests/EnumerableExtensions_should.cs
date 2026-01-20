@@ -30,14 +30,17 @@ namespace WeatherBotDomainTests
         [Test]
         [TestCase(new int[] { 1, 1, 2, 3 }, 0, 1)]
         [TestCase(new int[] { 1, 1, 2, 3, 1 }, 0, 1)]
-        [TestCase(new int[] { 1, 1, 2, 3, 1, 1, 1 }, 4, 6)]
+        [TestCase(new int[] { 1, 1, 1, 1, 1, 1, 1 }, 0, 6)]
         [TestCase(new int[] { 1 }, 0, 0)]
         public void Test1(int[] sequence, int start, int end)
         {
-            var map = WeatherCore.GetLongestSubsequence(sequence);
+            var map = WeatherCore.ClassifyItemsByIndex(sequence);
 
-            Assert.That(map[1].Item1, Is.EqualTo(start));
-            Assert.That(map[1].Item2, Is.EqualTo(end));
+            Assert.Multiple(() =>
+            {
+                Assert.That(map[0].Key, Is.EqualTo(1));
+                Assert.That(map[0].Value, Is.EqualTo((start, end)));
+            });
         }
     }
 }

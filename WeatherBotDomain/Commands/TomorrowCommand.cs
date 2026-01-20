@@ -1,5 +1,4 @@
 ﻿using BotInfrastructure;
-using Newtonsoft.Json;
 
 namespace WeatherBotDomain.Commands
 {
@@ -11,17 +10,21 @@ namespace WeatherBotDomain.Commands
 
         }
 
-        public override string Description => "Погода и температура завтра";
+        public override string Description => "Погода, температура и осадки на завтра";
 
-        protected override WeatherReply ProcessResponse(string jsonResponse)
+        protected override string GetPrecipitationForecast(OpenMeteoResponse response)
         {
-            var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(jsonResponse);
+            var weatherCodes = response.Data.WeatherCodes.Skip(24).Take(24).ToArray();
+            return weatherDomain.GetPrecipitationForecast(weatherCodes);
+        }
 
-            var utcOffset = parsedJson.UtcOffsetSeconds;
+        protected override WeatherReply ProcessResponse(OpenMeteoResponse response)
+        {
+            var utcOffset = response.UtcOffsetSeconds;
             var timeNow = DateTime.UtcNow.AddSeconds(utcOffset);
 
-            var temperatures = parsedJson.Data.TemperaturePoints.Skip(24).ToArray();
-            var weatherCodes = parsedJson.Data.WeatherCodes.Skip(24).ToArray();
+            var temperatures = response.Data.TemperaturePoints.Skip(24).ToArray();
+            var weatherCodes = response.Data.WeatherCodes.Skip(24).ToArray();
 
             return weatherDomain.GetReply("Завтра", timeNow, weatherCodes, temperatures);
         }

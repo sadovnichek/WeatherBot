@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using Newtonsoft.Json;
 
 namespace WeatherBotDomain.Commands
 {
@@ -28,11 +29,14 @@ namespace WeatherBotDomain.Commands
             var request = GetValues();
             var response = await httpClient.PostAsync(uriAddress, request);
             var str = await response.Content.ReadAsStringAsync();
-            await messageBus.Put(ProcessResponse(str).BuildMessage());
-            await messageBus.Put("Hello!");
+            var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(str);
+            await messageBus.Put(ProcessResponse(parsedJson).BuildMessage());
+            await messageBus.Put(GetPrecipitationForecast(parsedJson));
         }
 
-        protected abstract WeatherReply ProcessResponse(string jsonResponse);
+        protected abstract WeatherReply ProcessResponse(OpenMeteoResponse response);
+
+        protected abstract string GetPrecipitationForecast(OpenMeteoResponse response);
 
         private HttpContent GetValues()
         {

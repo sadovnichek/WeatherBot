@@ -1,10 +1,11 @@
 ﻿using BotInfrastructure;
+using System.Text;
 
 namespace WeatherBotDomain
 {
     public class WeatherCore
     {
-        private enum Weather
+        public enum Weather
         {
             Sunny,
             PartlyCloudy,
@@ -114,35 +115,40 @@ namespace WeatherBotDomain
             return answer;
         }
 
-        public static bool IsPrecipitationExpected(int[] weatherCodes)
+        public bool IsPrecipitationExpected(int[] weatherCodes)
         {
             return weatherCodes.Any(code => isPrecipitation[weatherGrouping[code]]);
         }
 
-        /// <exception cref="ArgumentException"></exception>
-        public static Dictionary<int, (int, int)> GetLongestSubsequence(int[] weatherCodes)
+        public bool IsPrecipitation(int weatherCode)
         {
-            if (weatherCodes.Length == 0)
+            return isPrecipitation[weatherGrouping[weatherCode]];
+        }
+
+        public Weather GetWeather(int weatherCode)
+        {
+            return weatherGrouping[weatherCode];
+        }
+
+        /// <exception cref="ArgumentException"></exception>
+        public static List<KeyValuePair<T, (int, int)>> ClassifyItemsByIndex<T>(T[] items)
+            where T : notnull
+        {
+            if (items.Length == 0)
                 throw new ArgumentException("Sequence is empty");
 
-            var dict = new Dictionary<int, (int, int)>();
-            int begin = 0, end = weatherCodes.Length - 1;
-            for(var i = 1; i < weatherCodes.Length + 1; i++)
+            var result = new List<KeyValuePair<T, (int, int)>>();
+            int begin = 0, end = items.Length - 1;
+            for(var i = 1; i < items.Length + 1; i++)
             {
-                if (i < weatherCodes.Length && weatherCodes[i] == weatherCodes[i - 1])
+                if (i < items.Length && items[i].Equals(items[i - 1]))
                     continue;
                 end = i - 1;
-                if (dict.ContainsKey(weatherCodes[i - 1]))
-                {
-                    if (end - begin > dict[weatherCodes[i - 1]].Item2 - dict[weatherCodes[i - 1]].Item1)
-                        dict[weatherCodes[i - 1]] = (begin, end);
-                }
-                else
-                    dict.Add(weatherCodes[i - 1], (begin, end));
+                result.Add(new (items[i - 1], (begin, end)));
                 begin = i;
             }
 
-            return dict;
+            return result;
         }
 
         public WeatherReply GetReply(string timePointer,
@@ -207,6 +213,28 @@ namespace WeatherBotDomain
                 return "Добрый день!";
 
             return "Добрый вечер!";
+        }
+
+        public string GetPrecipitationForecast(int[] weatherCodes)
+        {
+            var sb = new StringBuilder();
+            if (IsPrecipitationExpected(weatherCodes))
+            {
+                var forecast = ClassifyItemsByIndex(weatherCodes);
+                sb.Append("Ожидаются осадки:\n");
+                foreach (var kv in forecast)
+                {
+                    if (IsPrecipitation(kv.Key))
+                    {
+                        var start = kv.Value.Item1.ToString().PadLeft(2, '0');
+                        var end = kv.Value.Item2.ToString().PadLeft(2, '0');
+                        sb.Append(GetDescription(kv.Key));
+                        sb.Append($" {start}:00 - {end}:00\n");
+                    }
+                }
+                return sb.ToString();
+            }
+            return "Осадки не ожидаются";
         }
     }
 }

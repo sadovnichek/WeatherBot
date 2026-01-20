@@ -31,7 +31,7 @@ namespace ConsoleUI
                 {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) }
             };
 
-            var commandHandler = new CommandHandler(commands);
+            var commandHandler = new CommandHandler(commands, bus);
 
             await commandHandler.HandleCommand("/today", []);
 
