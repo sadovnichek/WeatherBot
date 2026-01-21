@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace WeatherBotDomain
@@ -93,41 +94,51 @@ namespace WeatherBotDomain
 
         public string GetDescription(int weatherCode)
         {
-            if (!weatherDescription.TryGetValue(weatherGrouping[weatherCode], out var description))
-                return $"{weatherCode}";
+            return weatherDescription[GetWeather(weatherCode)];
+        }
 
-            return description;
+        public string GetDescription(Weather weather)
+        {
+            return weatherDescription[weather];
         }
 
         public string GetEmoji(int weatherCode)
         {
-            if (!weatherEmojies.TryGetValue(weatherGrouping[weatherCode], out var description))
-                return $"{weatherCode}";
+            return weatherEmojies[GetWeather(weatherCode)];
+        }
 
-            return description;
+        public string GetEmoji(Weather weather)
+        {
+            return weatherEmojies[weather];
         }
 
         public bool IsWordingNeeded(int weatherCode)
         {
-            if (!isWordingNeeded.TryGetValue(weatherGrouping[weatherCode], out var answer))
-                return false;
-
-            return answer;
+            return isWordingNeeded[GetWeather(weatherCode)];
         }
 
         public bool IsPrecipitationExpected(int[] weatherCodes)
         {
-            return weatherCodes.Any(code => isPrecipitation[weatherGrouping[code]]);
+            return weatherCodes.Any(code => isPrecipitation[GetWeather(code)]);
         }
 
         public bool IsPrecipitation(int weatherCode)
         {
-            return isPrecipitation[weatherGrouping[weatherCode]];
+            return isPrecipitation[GetWeather(weatherCode)];
         }
 
+        public bool IsPrecipitation(Weather weather)
+        {
+            return isPrecipitation[weather];
+        }
+
+        /// <exception cref="ArgumentException"></exception>
         public Weather GetWeather(int weatherCode)
         {
-            return weatherGrouping[weatherCode];
+            if (weatherGrouping.TryGetValue(weatherCode, out var weather))
+                return weather;
+
+            throw new ArgumentException($"Unknown weather code: {weatherCode}");
         }
 
         /// <exception cref="ArgumentException"></exception>
@@ -220,16 +231,23 @@ namespace WeatherBotDomain
             var sb = new StringBuilder();
             if (IsPrecipitationExpected(weatherCodes))
             {
-                var forecast = ClassifyItemsByIndex(weatherCodes);
+                var groups = ClassifyItemsByIndex(weatherCodes.Select(GetWeather).ToArray())
+                    .GroupBy(kv => kv.Key);
                 sb.Append("Ожидаются осадки:\n");
-                foreach (var kv in forecast)
+                foreach (var group in groups)
                 {
-                    if (IsPrecipitation(kv.Key))
+                    if (IsPrecipitation(group.Key))
                     {
-                        var start = kv.Value.Item1.ToString().PadLeft(2, '0');
-                        var end = kv.Value.Item2.ToString().PadLeft(2, '0');
-                        sb.Append(GetDescription(kv.Key));
-                        sb.Append($" {start}:00 - {end}:00\n");
+                        sb.Append(GetDescription(group.Key));
+                        sb.Append($" {GetEmoji(group.Key)} ");
+                        var hours = string.Join(", ", group.Select(item =>
+                        {
+                            var startHour = item.Value.Item1.ToString().PadLeft(2, '0');
+                            var endHour = item.Value.Item2.ToString().PadLeft(2, '0');
+                            return $"{startHour}:00 - {endHour}:00";
+                        }));
+                        sb.Append(hours);
+                        sb.Append('\n');
                     }
                 }
                 return sb.ToString();
