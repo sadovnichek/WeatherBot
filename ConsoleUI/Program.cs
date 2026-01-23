@@ -28,12 +28,13 @@ namespace ConsoleUI
             {
                 {  "/time", new TimeCommand() },
                 {  "/today", new TodayCommand(client, core, bus, uri) },
-                {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) }
+                {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) },
+                {  "/hourly", new HourlyCommand(client, uri, bus, core) }
             };
 
             var commandHandler = new CommandHandler(commands, bus);
 
-            await commandHandler.HandleCommand("/today", []);
+            await commandHandler.HandleCommand("/hourly", []);
 
             while (!bus.IsEmpty())
             {

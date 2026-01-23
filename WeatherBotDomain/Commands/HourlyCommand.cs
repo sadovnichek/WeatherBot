@@ -1,27 +1,27 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace WeatherBotDomain.Commands
 {
-    public abstract class WeatherCommand : ICommand
+    public class HourlyCommand : ICommand
     {
         private readonly HttpClient httpClient;
         private readonly string uriAddress;
         private readonly IMessageBus<string> messageBus;
+        private readonly WeatherCore weatherDomain;
 
-        protected readonly WeatherCore weatherDomain;
+        public string Description => "Погода и температура на каждый час сегодня";
 
-        public abstract string Description { get; }
-
-        public WeatherCommand(HttpClient client, 
-            WeatherCore domain,
+        public HourlyCommand(HttpClient client, 
+            string uri, 
             IMessageBus<string> bus,
-            string uri)
+            WeatherCore domain)
         {
             httpClient = client;
-            weatherDomain = domain;
-            messageBus = bus;
             uriAddress = uri;
+            messageBus = bus;
+            weatherDomain = domain;
         }
 
         public async Task Execute(string[] args)
@@ -30,15 +30,25 @@ namespace WeatherBotDomain.Commands
             var response = await httpClient.PostAsync(uriAddress, request);
             var content = await response.Content.ReadAsStringAsync();
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
-            await messageBus.Put(ProcessResponse(parsedJson).BuildMessage());
-            await messageBus.Put(GetPrecipitationForecast(parsedJson));
+            await messageBus.Put(GetHourlyForecast(parsedJson));
         }
 
-        protected abstract WeatherReply ProcessResponse(OpenMeteoResponse response);
+        private string GetHourlyForecast(OpenMeteoResponse response)
+        {
+            var sb = new StringBuilder();
 
-        protected abstract string GetPrecipitationForecast(OpenMeteoResponse response);
+            for(var i = 0; i < 24; i++)
+            {
+                sb.Append($"{i.ToString().PadLeft(2, '0')}:00 ");
+                sb.Append(weatherDomain.GetEmoji(response.Data.WeatherCodes[i]));
+                sb.Append(' ');
+                sb.Append($"{response.Data.TemperaturePoints[i]}°C\n");
+            }
 
-        //Dublicate
+            return sb.ToString();
+        }
+
+        //Dublicate?
         private HttpContent GetValues()
         {
             var values = new Dictionary<string, string>
@@ -46,7 +56,7 @@ namespace WeatherBotDomain.Commands
                   { "latitude", "56.823457" },
                   { "longitude", "60.551424" },
                   { "hourly", "temperature_2m,weather_code" },
-                  { "forecast_days", "2" },
+                  { "forecast_days", "1" },
                   { "timezone", "auto" }
             };
             return new FormUrlEncodedContent(values);
