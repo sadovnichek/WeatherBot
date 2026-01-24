@@ -1,5 +1,4 @@
 ﻿using BotInfrastructure;
-using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace WeatherBotDomain

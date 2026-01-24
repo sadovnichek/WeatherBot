@@ -29,9 +29,10 @@ namespace WeatherBotDomain.Commands
         {
             if (!AreArgumentsValid(args))
             {
-                await messageBus.Put("Неверные аргументы\n. Нужно указать два числа - начало и конец временного промежутка от 0 до 23 часов");
+                await messageBus.Put("Неверные аргументы.\nНужно указать два числа - начало и конец временного промежутка от 0 до 23 часов");
                 return;
-            }    
+            }
+            
             var request = GetValues();
             var response = await httpClient.PostAsync(uriAddress, request);
             var content = await response.Content.ReadAsStringAsync();
@@ -46,8 +47,8 @@ namespace WeatherBotDomain.Commands
 
             if (args.Length == 2)
             {
-                return Regex.IsMatch(args[0], @"\s*[0-23]\s*")
-                    && Regex.IsMatch(args[1], @"\s*[0-23]\s*");
+                return Regex.IsMatch(args[0], @"\b([0-9]|1[0-9]|2[0-3])\b")
+                    && Regex.IsMatch(args[1], @"\b([0-9]|1[0-9]|2[0-3])\b");
             }
 
             return false;
