@@ -30,7 +30,8 @@ var commands = new Dictionary<string, ICommand>()
 {
     {  "/time", new TimeCommand() },
     {  "/today", new TodayCommand(client, domain, bus, uri) },
-    {  "/tomorrow", new TomorrowCommand(client, domain, bus, uri) }
+    {  "/tomorrow", new TomorrowCommand(client, domain, bus, uri) },
+    {  "/hourly", new HourlyCommand(client, uri, bus, domain) }
 };
 
 var commandHandler = new CommandHandler(commands, bus);
