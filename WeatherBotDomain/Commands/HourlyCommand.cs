@@ -1,6 +1,7 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WeatherBotDomain.Commands
 {
@@ -26,18 +27,44 @@ namespace WeatherBotDomain.Commands
 
         public async Task Execute(string[] args)
         {
+            if (!AreArgumentsValid(args))
+            {
+                await messageBus.Put("Неверные аргументы\n. Нужно указать два числа - начало и конец временного промежутка от 0 до 23 часов");
+                return;
+            }    
             var request = GetValues();
             var response = await httpClient.PostAsync(uriAddress, request);
             var content = await response.Content.ReadAsStringAsync();
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
-            await messageBus.Put(GetHourlyForecast(parsedJson));
+            await messageBus.Put(GetHourlyForecast(parsedJson, args));
         }
 
-        private string GetHourlyForecast(OpenMeteoResponse response)
+        private bool AreArgumentsValid(string[] args)
+        {
+            if (args.Length == 0)
+                return true;
+
+            if (args.Length == 2)
+            {
+                return Regex.IsMatch(args[0], @"\s*[0-23]\s*")
+                    && Regex.IsMatch(args[1], @"\s*[0-23]\s*");
+            }
+
+            return false;
+        }
+
+        private string GetHourlyForecast(OpenMeteoResponse response, string[] args)
         {
             var sb = new StringBuilder();
 
-            for(var i = 0; i < 24; i++)
+            var start = args.Length == 0
+                ? 0
+                : int.Parse(args[0]);
+            var end = args.Length == 0
+                ? 24
+                : int.Parse(args[1]) + 1;
+
+            for(var i = start; i < end; i++)
             {
                 sb.Append($"{i.ToString().PadLeft(2, '0')}:00 ");
                 sb.Append(weatherDomain.GetEmoji(response.Data.WeatherCodes[i]));

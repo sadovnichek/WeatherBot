@@ -34,7 +34,7 @@ namespace ConsoleUI
 
             var commandHandler = new CommandHandler(commands, bus);
 
-            await commandHandler.HandleCommand("/hourly", []);
+            await commandHandler.HandleCommand("/hourly", ["10", "12"]);
 
             while (!bus.IsEmpty())
             {
