@@ -1,11 +1,12 @@
 ﻿using BotInfrastructure;
 using System.Text;
+using System.Threading.Channels;
 
 namespace WeatherBotDomain.Commands
 {
     public class TodayCommand : WeatherCommand
     {
-        public TodayCommand(HttpClient client, WeatherCore domain, IMessageBus<string> bus, string uri) 
+        public TodayCommand(HttpClient client, WeatherCore domain, ChannelWriter<string> bus, string uri) 
             : base(client, domain, bus, uri)
         {
 

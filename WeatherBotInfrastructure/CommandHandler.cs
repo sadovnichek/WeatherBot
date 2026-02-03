@@ -1,18 +1,20 @@
-﻿namespace BotInfrastructure
+﻿using System.Threading.Channels;
+
+namespace BotInfrastructure
 {
     public class CommandHandler
     {
         private Dictionary<string, ICommand> botCommands;
-        private IMessageBus<string> messageBus;
+        private ChannelWriter<string> messageBus;
 
-        public CommandHandler(IMessageBus<string> bus)
+        public CommandHandler(ChannelWriter<string> bus)
         {
             botCommands = new Dictionary<string, ICommand>();
             messageBus = bus;
         }
 
         public CommandHandler(Dictionary<string, ICommand> commands, 
-            IMessageBus<string> bus)
+            ChannelWriter<string> bus)
         {
             botCommands = commands;
             messageBus = bus;
@@ -35,7 +37,7 @@
         {
             if (command == "/help")
             {
-                await messageBus.Put(GetHelp());
+                await messageBus.WriteAsync(GetHelp());
                 return;
             }
 

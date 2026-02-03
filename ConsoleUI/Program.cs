@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using System.Threading.Channels;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
 
@@ -22,7 +23,7 @@ namespace ConsoleUI
 
             var core = new WeatherCore();
 
-            var bus = new MessageBus<string>();
+            var bus = Channel.CreateUnbounded<string>();
 
             var commands = new Dictionary<string, ICommand>()
             {
@@ -36,9 +37,9 @@ namespace ConsoleUI
 
             await commandHandler.HandleCommand("/today", []);
 
-            while (!bus.IsEmpty())
+            while (bus.Reader.Count > 0)
             {
-                var reply = await bus.Get();
+                var reply = await bus.Reader.ReadAsync();
                 Console.WriteLine(reply);
             }
         }

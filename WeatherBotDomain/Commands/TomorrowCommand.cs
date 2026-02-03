@@ -1,17 +1,17 @@
-﻿using BotInfrastructure;
+﻿using System.Threading.Channels;
 
 namespace WeatherBotDomain.Commands
 {
     public class TomorrowCommand : WeatherCommand
     {
-        public TomorrowCommand(HttpClient client, WeatherCore domain, IMessageBus<string> bus, string uri)
+        public TomorrowCommand(HttpClient client, WeatherCore domain, ChannelWriter<string> bus, string uri)
             : base(client, domain, bus, uri)
         {
 
         }
 
         public override string Description => "Погода, температура и осадки на завтра";
-
+        
         protected override IReply GetPrecipitationForecast(OpenMeteoResponse response)
         {
             var weatherCodes = response.Data.WeatherCodes.Skip(24).Take(24).ToArray();

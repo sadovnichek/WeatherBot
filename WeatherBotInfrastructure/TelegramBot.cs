@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using System.Threading.Channels;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotInfrastructure
@@ -7,10 +8,10 @@ namespace BotInfrastructure
     {
         private readonly TelegramBotClient bot;
         private readonly CommandHandler commandHandler;
-        private readonly IMessageBus<string> messageBus;
+        private readonly ChannelReader<string> messageBus;
 
         public TelegramBot(CommandHandler handler,
-            IMessageBus<string> bus,
+            ChannelReader<string> bus,
             string token)
         {
             bot = new TelegramBotClient(token);
@@ -31,9 +32,9 @@ namespace BotInfrastructure
                 {
                     await commandHandler.HandleCommand(command, args);
 
-                    while (!messageBus.IsEmpty())
+                    while (messageBus.Count > 0)
                     {
-                        var reply = await messageBus.Get();
+                        var reply = await messageBus.ReadAsync();
                         await bot.SendMessage(update.Message.Chat.Id, reply);
                     }
                 }

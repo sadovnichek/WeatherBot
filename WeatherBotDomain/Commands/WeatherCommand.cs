@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
+using System.Threading.Channels;
 
 namespace WeatherBotDomain.Commands
 {
@@ -7,7 +8,7 @@ namespace WeatherBotDomain.Commands
     {
         private readonly HttpClient httpClient;
         private readonly string uriAddress;
-        private readonly IMessageBus<string> messageBus;
+        private readonly ChannelWriter<string> messageBus;
 
         protected readonly WeatherCore weatherDomain;
 
@@ -15,7 +16,7 @@ namespace WeatherBotDomain.Commands
 
         public WeatherCommand(HttpClient client, 
             WeatherCore domain,
-            IMessageBus<string> bus,
+            ChannelWriter<string> bus,
             string uri)
         {
             httpClient = client;
@@ -30,8 +31,9 @@ namespace WeatherBotDomain.Commands
             var response = await httpClient.PostAsync(uriAddress, request);
             var content = await response.Content.ReadAsStringAsync();
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
-            await messageBus.Put(ProcessResponse(parsedJson).BuildMessage());
-            await messageBus.Put(GetPrecipitationForecast(parsedJson).BuildMessage());
+
+            await messageBus.WriteAsync(ProcessResponse(parsedJson).BuildMessage());
+            await messageBus.WriteAsync(GetPrecipitationForecast(parsedJson).BuildMessage());
         }
 
         protected abstract IReply ProcessResponse(OpenMeteoResponse response);
