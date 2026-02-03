@@ -31,12 +31,12 @@ namespace WeatherBotDomain.Commands
             var content = await response.Content.ReadAsStringAsync();
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
             await messageBus.Put(ProcessResponse(parsedJson).BuildMessage());
-            await messageBus.Put(GetPrecipitationForecast(parsedJson));
+            await messageBus.Put(GetPrecipitationForecast(parsedJson).BuildMessage());
         }
 
-        protected abstract WeatherReply ProcessResponse(OpenMeteoResponse response);
+        protected abstract IReply ProcessResponse(OpenMeteoResponse response);
 
-        protected abstract string GetPrecipitationForecast(OpenMeteoResponse response);
+        protected abstract IReply GetPrecipitationForecast(OpenMeteoResponse response);
 
         //Dublicate
         private HttpContent GetValues()

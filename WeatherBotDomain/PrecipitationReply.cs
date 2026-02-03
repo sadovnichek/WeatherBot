@@ -2,11 +2,6 @@
 
 namespace WeatherBotDomain
 {
-    public interface IReply
-    {
-        string BuildMessage();
-    }
-
     public record TimeSegment(TimeOnly Start, TimeOnly End)
     {
         public string GetStringRepresentation()

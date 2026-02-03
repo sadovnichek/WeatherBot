@@ -13,13 +13,13 @@ namespace WeatherBotDomain.Commands
 
         public override string Description => "Погода, температура и осадки сегодня";
 
-        protected override string GetPrecipitationForecast(OpenMeteoResponse response)
+        protected override IReply GetPrecipitationForecast(OpenMeteoResponse response)
         {
             var weatherCodes = response.Data.WeatherCodes.Take(24).ToArray();
-            return weatherDomain.GetPrecipitationForecast(weatherCodes).BuildMessage();
+            return weatherDomain.GetPrecipitationForecast(weatherCodes);
         }
 
-        protected override WeatherReply ProcessResponse(OpenMeteoResponse response)
+        protected override IReply ProcessResponse(OpenMeteoResponse response)
         {
             var utcOffset = response.UtcOffsetSeconds;
             var timeNow = DateTime.UtcNow.AddSeconds(utcOffset);
