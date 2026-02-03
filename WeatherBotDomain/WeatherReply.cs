@@ -1,6 +1,6 @@
 ﻿namespace WeatherBotDomain
 {
-    public abstract class WeatherReply
+    public abstract class WeatherReply : IReply
     {
         public string TimePointer { get; init; }
 

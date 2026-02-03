@@ -225,33 +225,25 @@ namespace WeatherBotDomain
             return "Добрый вечер!";
         }
 
-        public string GetPrecipitationForecast(int[] weatherCodes)
+        public IReply GetPrecipitationForecast(int[] weatherCodes)
         {
-            var sb = new StringBuilder();
-            if (IsPrecipitationExpected(weatherCodes))
-            {
-                var groups = ClassifyItemsByIndex(weatherCodes.Select(GetWeather).ToArray())
-                    .GroupBy(kv => kv.Key);
-                sb.Append("Ожидаются осадки:\n");
-                foreach (var group in groups)
-                {
-                    if (IsPrecipitation(group.Key))
-                    {
-                        sb.Append(GetDescription(group.Key));
-                        sb.Append($" {GetEmoji(group.Key)} ");
-                        var hours = string.Join(", ", group.Select(item =>
+            var weatherSegments = ClassifyItemsByIndex(weatherCodes.Select(GetWeather).ToArray())
+                    .Where(kv => IsPrecipitation(kv.Key))
+                    .GroupBy(kv => kv.Key)
+                    .Select(group => new WeatherSegment(
+                        GetDescription(group.Key),
+                        GetEmoji(group.Key),
+                        group.Select(p =>
                         {
-                            var startHour = item.Value.Item1.ToString().PadLeft(2, '0');
-                            var endHour = item.Value.Item2.ToString().PadLeft(2, '0');
-                            return $"{startHour}:00 - {endHour}:00";
-                        }));
-                        sb.Append(hours);
-                        sb.Append('\n');
-                    }
-                }
-                return sb.ToString();
-            }
-            return "Осадки не ожидаются";
+                            var start = new TimeOnly(p.Value.Item1, 0);
+                            var end = new TimeOnly(p.Value.Item2, 0).AddHours(1);
+                            return new TimeSegment(start, end);
+                        }).ToArray()
+                        ));
+
+            var reply = new PrecipitationReply(weatherSegments);
+
+            return reply;
         }
     }
 }

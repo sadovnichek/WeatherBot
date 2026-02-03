@@ -16,7 +16,7 @@ namespace WeatherBotDomain.Commands
         protected override string GetPrecipitationForecast(OpenMeteoResponse response)
         {
             var weatherCodes = response.Data.WeatherCodes.Take(24).ToArray();
-            return weatherDomain.GetPrecipitationForecast(weatherCodes);
+            return weatherDomain.GetPrecipitationForecast(weatherCodes).BuildMessage();
         }
 
         protected override WeatherReply ProcessResponse(OpenMeteoResponse response)

@@ -42,5 +42,36 @@ namespace WeatherBotDomainTests
                 Assert.That(map[0].Value, Is.EqualTo((start, end)));
             });
         }
+
+        [Test]
+        [TestCase(new int[] {71, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 71})]
+        public void Test2(int[] sequence)
+        {
+            var weatherCore = new WeatherCore();
+            var reply = (PrecipitationReply)weatherCore.GetPrecipitationForecast(sequence);
+
+            var result = reply.WeatherSegments.ToList();
+            var timeSegments = result[0].TimeSegments;
+            var description = result[0].Description;
+
+            Assert.That(timeSegments, Has.Length.EqualTo(2));
+
+            Assert.That(timeSegments[0].Start, Is.EqualTo(new TimeOnly(0, 0)));
+            Assert.That(timeSegments[0].End, Is.EqualTo(new TimeOnly(1, 0)));
+
+            Assert.That(timeSegments[1].Start, Is.EqualTo(new TimeOnly(23, 0)));
+            Assert.That(timeSegments[1].End, Is.EqualTo(new TimeOnly(0, 0)));
+
+            Assert.That(description, Is.EqualTo(weatherCore.GetDescription(71)));
+        }
+
+        [Test]
+        public void Test3()
+        {
+            var timeSegment = new TimeSegment(new TimeOnly(10, 24), new TimeOnly(15, 43));
+            var strRepresenation = timeSegment.GetStringRepresentation();
+
+            Assert.That(strRepresenation, Is.EqualTo("10:24 - 15:43"));
+        }
     }
 }
