@@ -2,16 +2,6 @@
 
 namespace WeatherBotDomain
 {
-    public record TimeSegment(TimeOnly Start, TimeOnly End)
-    {
-        public string GetStringRepresentation()
-        {
-            return $"{Start} - {End}";
-        }
-    }
-
-    public record WeatherSegment(string Description, string Emoji, TimeSegment[] TimeSegments);
-
     public record PrecipitationReply(IEnumerable<WeatherSegment> WeatherSegments) : IReply
     {
         public string BuildMessage()
@@ -24,12 +14,13 @@ namespace WeatherBotDomain
 
             foreach (var item in WeatherSegments)
             {
-                builder.Append(item.Description);
-                builder.Append(' ');
-                builder.Append(item.Emoji);
-                builder.Append(' ');
-                builder.Append(string.Join(", ", item.TimeSegments.Select(segment => segment.GetStringRepresentation())));
-                builder.Append('\n');
+                var readableTimeSegments = item.TimeSegments.Select(segment => segment.GetStringRepresentation());
+                builder.Append(item.Description)
+                    .Append(' ')
+                    .Append(item.Emoji)
+                    .Append(' ')
+                    .Append(string.Join(", ", readableTimeSegments))
+                    .Append('\n');
             }
 
             return builder.ToString();
