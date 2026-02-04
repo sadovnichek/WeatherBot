@@ -1,4 +1,4 @@
-﻿namespace WeatherBotDomain
+﻿namespace WeatherBotDomain.Reply
 {
     public abstract class WeatherReply : IReply
     {

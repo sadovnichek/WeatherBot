@@ -1,6 +1,7 @@
 ﻿using BotInfrastructure;
 using System.Text;
 using System.Threading.Channels;
+using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain.Commands
 {

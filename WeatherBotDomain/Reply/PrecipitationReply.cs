@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace WeatherBotDomain
+namespace WeatherBotDomain.Reply
 {
     public record PrecipitationReply(IEnumerable<WeatherSegment> WeatherSegments) : IReply
     {

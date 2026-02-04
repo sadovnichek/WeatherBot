@@ -1,4 +1,5 @@
 ﻿using WeatherBotDomain;
+using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomainTests
 {
