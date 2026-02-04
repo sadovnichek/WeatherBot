@@ -1,4 +1,5 @@
 using BotInfrastructure;
+using System.Threading.Channels;
 using Telegram.Bot.Types;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
@@ -24,7 +25,7 @@ var domain = new WeatherCore();
 
 var uri = "https://api.open-meteo.com/v1/forecast";
 
-var bus = new MessageBus<string>();
+var bus = Channel.CreateUnbounded<string>();
 
 var commands = new Dictionary<string, ICommand>()
 {
