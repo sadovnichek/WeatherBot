@@ -19,7 +19,6 @@ namespace BotInfrastructure
             messageBus = bus;
         }
 
-        //Sending several messages?
         public async Task ReceiveAsync(Update update)
         {
             if (update.Message != null && update.Message.Text != null)

@@ -1,4 +1,5 @@
 using BotInfrastructure;
+using System.Collections.Frozen;
 using System.Threading.Channels;
 using Telegram.Bot.Types;
 using WeatherBotDomain;
@@ -29,13 +30,15 @@ var bus = Channel.CreateUnbounded<string>();
 
 var commands = new Dictionary<string, ICommand>()
 {
-    {  "/time", new TimeCommand() },
     {  "/today", new TodayCommand(client, domain, bus, uri) },
     {  "/tomorrow", new TomorrowCommand(client, domain, bus, uri) },
-    {  "/hourly", new HourlyCommand(client, uri, bus, domain) }
-};
+    {  "/hourly", new HourlyCommand(client, uri, bus, domain) },
+    {  "/start", new StartCommand(bus) }
+}.ToFrozenDictionary();
 
-var commandHandler = new CommandHandler(commands, bus);
+var help = new HelpCommand(commands, bus);
+
+var commandHandler = new CommandHandler(commands, help);
 
 var bot = new TelegramBot(commandHandler, bus, token);
 
@@ -45,12 +48,4 @@ app.MapPost("/webhook", async (Update u) =>
     }
 );
 
-app.MapPost("/scheduled-work", async (UserRequest r) =>
-    {
-        await Task.Yield();
-    }
-);
-
 app.Run();
-
-public record UserRequest(long chatId);

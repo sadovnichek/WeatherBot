@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using System.Collections.Frozen;
 using System.Threading.Channels;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
@@ -30,12 +31,15 @@ namespace ConsoleUI
                 {  "/time", new TimeCommand() },
                 {  "/today", new TodayCommand(client, core, bus, uri) },
                 {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) },
-                {  "/hourly", new HourlyCommand(client, uri, bus, core) }
-            };
+                {  "/hourly", new HourlyCommand(client, uri, bus, core) },
+                {  "/start", new StartCommand(bus) }
+            }.ToFrozenDictionary();
 
-            var commandHandler = new CommandHandler(commands, bus);
+            var help = new HelpCommand(commands, bus);
 
-            await commandHandler.HandleCommand("/today", []);
+            var commandHandler = new CommandHandler(commands, help);
+
+            await commandHandler.HandleCommand("/start", []);
 
             while (bus.Reader.Count > 0)
             {

@@ -1,46 +1,26 @@
-﻿using System.Threading.Channels;
+﻿using System.Collections.Frozen;
 
 namespace BotInfrastructure
 {
     public class CommandHandler
     {
         private Dictionary<string, ICommand> botCommands;
-        private ChannelWriter<string> messageBus;
 
-        public CommandHandler(ChannelWriter<string> bus)
+        public CommandHandler(FrozenDictionary<string, ICommand> commands,
+            HelpCommand help)
         {
-            botCommands = new Dictionary<string, ICommand>();
-            messageBus = bus;
-        }
-
-        public CommandHandler(Dictionary<string, ICommand> commands, 
-            ChannelWriter<string> bus)
-        {
-            botCommands = commands;
-            messageBus = bus;
-        }
-
-        public bool RegisterCommand(string command, ICommand executor)
-        {
-            return botCommands.TryAdd(command, executor);
+            botCommands = commands.ToDictionary(kv => kv.Key, kv => kv.Value);
+            botCommands.Add("/help", help);
         }
 
         public bool IsCommandExists(string command)
         {
-            if (command == "/help")
-                return true;
-
             return botCommands.ContainsKey(command);
         }
 
+        /// <exception cref="ArgumentException"></exception>
         public async Task HandleCommand(string command, string[] args)
         {
-            if (command == "/help")
-            {
-                await messageBus.WriteAsync(GetHelp());
-                return;
-            }
-
             if (botCommands.TryGetValue(command, out var instance))
             {
                 await instance.Execute(args);
@@ -53,22 +33,6 @@ namespace BotInfrastructure
         public IEnumerable<string> GetCommands()
         {
             return botCommands.Keys;
-        }
-
-        public string GetCommandDescription(string command)
-        {
-            if (botCommands.TryGetValue(command, out var instance))
-            {
-                return instance.Description;
-            }
-
-            throw new ArgumentException($"Unknown command {command}");
-        }
-
-        public string GetHelp()
-        {
-            return string.Join("\n",
-                GetCommands().Select(c => $"{c} {GetCommandDescription(c)}"));
         }
     }
 }
