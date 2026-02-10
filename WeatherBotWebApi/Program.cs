@@ -33,7 +33,8 @@ var commands = new Dictionary<string, ICommand>()
     {  "/today", new TodayCommand(client, domain, bus, uri) },
     {  "/tomorrow", new TomorrowCommand(client, domain, bus, uri) },
     {  "/hourly", new HourlyCommand(client, uri, bus, domain) },
-    {  "/start", new StartCommand(bus) }
+    {  "/start", new StartCommand(bus) },
+    {  "/daytime", new DaytimeCommand(client, uri, bus) }
 }.ToFrozenDictionary();
 
 var help = new HelpCommand(commands, bus);
