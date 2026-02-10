@@ -69,9 +69,9 @@ namespace WeatherBotDomain.Commands
             for(var i = start; i < end; i++)
             {
                 sb.Append($"{i.ToString().PadLeft(2, '0')}:00 ");
-                sb.Append(weatherDomain.GetEmoji(response.Data.WeatherCodes[i]));
+                sb.Append(weatherDomain.GetEmoji(response.WeatherData.WeatherCodes[i]));
                 sb.Append(' ');
-                sb.Append($"{response.Data.TemperaturePoints[i]}°C\n");
+                sb.Append($"{response.WeatherData.TemperaturePoints[i]}°C\n");
             }
 
             return sb.ToString();

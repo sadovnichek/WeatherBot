@@ -1,0 +1,63 @@
+﻿using BotInfrastructure;
+using Newtonsoft.Json;
+using System.Threading.Channels;
+using WeatherBotDomain.Reply;
+
+namespace WeatherBotDomain.Commands
+{
+    public class DaytimeCommand : ICommand
+    {
+        private readonly HttpClient httpClient;
+        private readonly string uriAddress;
+        private readonly ChannelWriter<string> messageBus;
+
+        public string Description => "Время заката и рассвета сегодня";
+
+        public DaytimeCommand(HttpClient client, 
+            string uri, 
+            ChannelWriter<string> bus)
+        {
+            httpClient = client;
+            uriAddress = uri;
+            messageBus = bus;
+        }
+
+        public async Task Execute(string[] args)
+        {
+            var request = GetValues();
+            var response = await httpClient.PostAsync(uriAddress, request);
+            var content = await response.Content.ReadAsStringAsync();
+            var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
+            var sunrise = parsedJson.DailyData.Sunrise[0];
+            var sunset = parsedJson.DailyData.Sunset[0];
+            
+            await messageBus.WriteAsync(GetReply(sunrise, sunset).BuildMessage());
+        }
+
+        public static IReply GetReply(string sunriseTime, string sunsetTime)
+        {
+            var timeSegment = GetDayTime(sunriseTime, sunsetTime);
+            return new DaytimeReply(timeSegment);
+        }
+
+        public static TimeSegment GetDayTime(string sunriseTime, string sunsetTime)
+        {
+            var start = TimeOnly.Parse(sunriseTime);
+            var end = TimeOnly.Parse(sunsetTime);
+            return new TimeSegment(start, end);
+        }
+
+        private HttpContent GetValues()
+        {
+            var values = new Dictionary<string, string>
+            {
+                  { "latitude", "56.823457" },
+                  { "longitude", "60.551424" },
+                  { "daily", "sunrise,sunset" },
+                  { "timezone", "auto" },
+                  { "forecast_days", "1" }
+            };
+            return new FormUrlEncodedContent(values);
+        }
+    }
+}

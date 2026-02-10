@@ -17,7 +17,7 @@ namespace WeatherBotDomain.Commands
 
         protected override IReply GetPrecipitationForecast(OpenMeteoResponse response)
         {
-            var weatherCodes = response.Data.WeatherCodes.Take(24).ToArray();
+            var weatherCodes = response.WeatherData.WeatherCodes.Take(24).ToArray();
             return weatherDomain.GetPrecipitationForecast(weatherCodes);
         }
 
@@ -26,8 +26,8 @@ namespace WeatherBotDomain.Commands
             var utcOffset = response.UtcOffsetSeconds;
             var timeNow = DateTime.UtcNow.AddSeconds(utcOffset);
 
-            var temperatures = response.Data.TemperaturePoints.Take(24).ToArray();
-            var weatherCodes = response.Data.WeatherCodes.Take(24).ToArray();
+            var temperatures = response.WeatherData.TemperaturePoints.Take(24).ToArray();
+            var weatherCodes = response.WeatherData.WeatherCodes.Take(24).ToArray();
 
             return weatherDomain.GetReply("Сегодня", timeNow, weatherCodes, temperatures);
         }

@@ -32,14 +32,15 @@ namespace ConsoleUI
                 {  "/today", new TodayCommand(client, core, bus, uri) },
                 {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) },
                 {  "/hourly", new HourlyCommand(client, uri, bus, core) },
-                {  "/start", new StartCommand(bus) }
+                {  "/start", new StartCommand(bus) },
+                {  "/daytime", new DaytimeCommand(client, uri, bus) }
             }.ToFrozenDictionary();
 
             var help = new HelpCommand(commands, bus);
 
             var commandHandler = new CommandHandler(commands, help);
 
-            await commandHandler.HandleCommand("/start", []);
+            await commandHandler.HandleCommand("/daytime", []);
 
             while (bus.Reader.Count > 0)
             {
