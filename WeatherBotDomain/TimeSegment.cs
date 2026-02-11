@@ -6,5 +6,10 @@
         {
             return $"{Start} - {End}";
         }
+
+        public bool IsTimeInSegment(TimeOnly time)
+        {
+            return time >= Start && time <= End;
+        }
     }
 }

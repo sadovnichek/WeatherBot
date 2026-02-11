@@ -1,6 +1,5 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
 using WeatherBotDomain.Reply;
@@ -40,7 +39,21 @@ namespace WeatherBotDomain.Commands
             var content = await response.Content.ReadAsStringAsync();
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
 
-            var reply = new HourlyForecastReply(args, weatherDomain, parsedJson);
+            var startIndex = args.Length > 0 ? int.Parse(args[0]) : 0;
+            var endIndex = args.Length > 0 ? int.Parse(args[1]) : 24;
+
+            var reply = new HourlyForecastReply();
+            var daytime = new TimeSegment(TimeOnly.Parse(parsedJson.DailyData.Sunrise[0]),
+                TimeOnly.Parse(parsedJson.DailyData.Sunset[0]));
+            for(var i = startIndex; i < endIndex; i++)
+            {
+                var time = new TimeOnly(i, 0);
+                var isDay = daytime.IsTimeInSegment(time);
+                var emoji = weatherDomain.GetEmoji(parsedJson.WeatherData.WeatherCodes[i], !isDay);
+                var temperature = parsedJson.WeatherData.TemperaturePoints[i];
+                var data = new HourlyForecastData(time, emoji, temperature);
+                reply.AppendData(data);
+            }
 
             await messageBus.WriteAsync(reply.BuildMessage());
         }

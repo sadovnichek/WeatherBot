@@ -1,4 +1,5 @@
 ﻿using WeatherBotDomain.Commands;
+using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomainTests
 {
@@ -14,6 +15,17 @@ namespace WeatherBotDomainTests
 
             Assert.That(timeSegment.Start, Is.EqualTo(new TimeOnly(8, 36)));
             Assert.That(timeSegment.End, Is.EqualTo(new TimeOnly(18, 46)));
+        }
+
+        [Test]
+        public void Test2()
+        {
+            var reply = new HourlyForecastReply();
+            reply.AppendData(new HourlyForecastData(new TimeOnly(10, 0), "", 10));
+            reply.AppendData(new HourlyForecastData(new TimeOnly(11, 0), "", 8));
+            reply.AppendData(new HourlyForecastData(new TimeOnly(12, 0), "", 7));
+
+            Console.WriteLine(reply.BuildMessage());
         }
     }
 }

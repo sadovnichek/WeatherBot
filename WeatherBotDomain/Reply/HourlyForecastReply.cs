@@ -2,37 +2,38 @@
 
 namespace WeatherBotDomain.Reply
 {
+    public record HourlyForecastData(TimeOnly Time, string Emoji, double Temperature);
+
     public class HourlyForecastReply : IReply
     {
-        private readonly string[] _args;
-        private readonly WeatherCore _weatherDomain;
-        private readonly OpenMeteoResponse _response;
+        private List<HourlyForecastData> _data;
 
-        public HourlyForecastReply(string[] args,
-            WeatherCore weatherDomain, OpenMeteoResponse response)
+        public HourlyForecastReply()
         {
-            _args = args;
-            _weatherDomain = weatherDomain;
-            _response = response;
+            _data = new List<HourlyForecastData>();
+        }
+
+        public HourlyForecastReply(List<HourlyForecastData> data)
+        {
+            _data = data;
+        }
+
+        public void AppendData(HourlyForecastData data)
+        {
+            _data.Add(data);
         }
 
         public string BuildMessage()
         {
             var sb = new StringBuilder();
 
-            var start = _args.Length == 0
-                ? 0
-                : int.Parse(_args[0]);
-            var end = _args.Length == 0
-                ? 24
-                : int.Parse(_args[1]) + 1;
-
-            for (var i = start; i < end; i++)
+            foreach(var item in _data)
             {
-                sb.Append($"{i.ToString().PadLeft(2, '0')}:00 ");
-                sb.Append(_weatherDomain.GetEmoji(_response.WeatherData.WeatherCodes[i]));
-                sb.Append(' ');
-                sb.Append($"{_response.WeatherData.TemperaturePoints[i]}°C\n");
+                sb.Append(item.Time.ToShortTimeString())
+                  .Append(' ')
+                  .Append(item.Emoji)
+                  .Append(' ')
+                  .Append($"{item.Temperature}°C\n");
             }
 
             return sb.ToString();

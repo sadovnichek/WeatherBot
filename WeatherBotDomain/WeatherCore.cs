@@ -3,20 +3,59 @@ using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain
 {
+    public enum Weather
+    {
+        Sunny,
+        PartlyCloudy,
+        Cloudy,
+        Rainy,
+        Fog,
+        SlightlyRainy,
+        Snowy,
+        Shower,
+        Thunderstorm
+    }
+
+    public class WeatherDescriptor
+    {
+        public string Description { get; init; }
+
+        public string DayEmoji { get; init; }
+
+        public string NightEmoji { get; init; }
+
+        public bool IsWordingNeeded { get; init; }
+
+        public bool IsPrecipitation { get; init; }
+
+        public WeatherDescriptor(string description, 
+            string dayEmoji, 
+            string nightEmoji, 
+            bool isWordingNeeded, 
+            bool isPrecipitation) 
+        {
+            Description = description;
+            DayEmoji = dayEmoji;
+            NightEmoji = nightEmoji;
+            IsWordingNeeded = isWordingNeeded;
+            IsPrecipitation = isPrecipitation;
+        }
+    }
+
     public class WeatherCore
     {
-        public enum Weather
+        private static readonly Dictionary<Weather, WeatherDescriptor> weatherData = new()
         {
-            Sunny,
-            PartlyCloudy,
-            Cloudy,
-            Rainy,
-            Fog,
-            SlightlyRainy,
-            Snowy,
-            Shower,
-            Thunderstorm
-        }
+            { Weather.Sunny, new WeatherDescriptor("солнечная", "☀️", "🌙", true, false) },
+            { Weather.PartlyCloudy, new WeatherDescriptor("переменная облачность", "⛅", "🌙", false, false) },
+            { Weather.Cloudy, new WeatherDescriptor("облачная", "☁️", "🌙", true, false) },
+            { Weather.Fog, new WeatherDescriptor("туман", "🌫️", "🌫️", false, false) },
+            { Weather.Rainy, new WeatherDescriptor("дождь", "🌧️", "🌧️", false, true) },
+            { Weather.SlightlyRainy, new WeatherDescriptor("небольшой дождь", "💧", "💧", false, true) },
+            { Weather.Snowy, new WeatherDescriptor("снег", "🌨️", "🌨️", false, true) },
+            { Weather.Shower, new WeatherDescriptor("ливень", "☔", "☔", false, true) },
+            { Weather.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "⛈", false, true) }
+        };
 
         private static readonly Dictionary<int, Weather> weatherGrouping = new()
         {
@@ -38,97 +77,46 @@ namespace WeatherBotDomain
             {95, Weather.Thunderstorm }
         };
 
-        // Could be moved into DB?
-        private static readonly Dictionary<Weather, string> weatherDescription = new()
-        {
-            { Weather.Sunny, "солнечная" },
-            { Weather.PartlyCloudy, "переменная облачность" },
-            { Weather.Cloudy, "облачная" },
-            { Weather.Fog, "туман" },
-            { Weather.Rainy, "дождь" },
-            { Weather.SlightlyRainy, "небольшой дождь" },
-            { Weather.Snowy, "снегопад" },
-            { Weather.Shower, "ливень" },
-            { Weather.Thunderstorm, "гроза" }
-        };
-
-        private static Dictionary<Weather, string> weatherEmojies = new()
-        {
-            { Weather.Sunny, "☀️" },
-            { Weather.PartlyCloudy, "⛅" },
-            { Weather.Cloudy, "☁️" },
-            { Weather.Fog, "🌫️" },
-            { Weather.Rainy, "🌧️" },
-            { Weather.SlightlyRainy, "💧" },
-            { Weather.Snowy, "🌨️" },
-            { Weather.Shower, "☔" },
-            { Weather.Thunderstorm, "⛈️" }
-        };
-
-        private static readonly Dictionary<Weather, bool> isWordingNeeded = new()
-        {
-            { Weather.Sunny, true },
-            { Weather.PartlyCloudy, false },
-            { Weather.Cloudy, true },
-            { Weather.Fog, false },
-            { Weather.Rainy, false },
-            { Weather.SlightlyRainy, false },
-            { Weather.Snowy, false },
-            { Weather.Shower, false },
-            { Weather.Thunderstorm, false }
-        };
-
-        private static readonly Dictionary<Weather, bool> isPrecipitation = new()
-        {
-            { Weather.Sunny, false },
-            { Weather.PartlyCloudy, false },
-            { Weather.Cloudy, false },
-            { Weather.Fog, false },
-            { Weather.Rainy, true },
-            { Weather.SlightlyRainy, true },
-            { Weather.Snowy, true },
-            { Weather.Shower, true },
-            { Weather.Thunderstorm, true }
-        };
-
         public string GetDescription(int weatherCode)
         {
-            return weatherDescription[GetWeather(weatherCode)];
+            return GetDescription(GetWeather(weatherCode));
         }
 
         public string GetDescription(Weather weather)
         {
-            return weatherDescription[weather];
+            return weatherData[weather].Description;
         }
 
-        public string GetEmoji(int weatherCode)
+        public string GetEmoji(int weatherCode, bool isNight = false)
         {
-            return weatherEmojies[GetWeather(weatherCode)];
+            return GetEmoji(GetWeather(weatherCode), isNight);
         }
 
-        public string GetEmoji(Weather weather)
+        public string GetEmoji(Weather weather, bool isNight = false)
         {
-            return weatherEmojies[weather];
+            return isNight
+                ? weatherData[weather].NightEmoji
+                : weatherData[weather].DayEmoji;
         }
 
         public bool IsWordingNeeded(int weatherCode)
         {
-            return isWordingNeeded[GetWeather(weatherCode)];
+            return weatherData[GetWeather(weatherCode)].IsWordingNeeded;
         }
 
         public bool IsPrecipitationExpected(int[] weatherCodes)
         {
-            return weatherCodes.Any(code => isPrecipitation[GetWeather(code)]);
+            return weatherCodes.Any(IsPrecipitation);
         }
 
         public bool IsPrecipitation(int weatherCode)
         {
-            return isPrecipitation[GetWeather(weatherCode)];
+            return IsPrecipitation(GetWeather(weatherCode));
         }
 
         public bool IsPrecipitation(Weather weather)
         {
-            return isPrecipitation[weather];
+            return weatherData[weather].IsPrecipitation;
         }
 
         /// <exception cref="ArgumentException"></exception>
@@ -191,7 +179,7 @@ namespace WeatherBotDomain
                 };
             }
 
-            var emojies = string.Join("", weatherCodesModes.Select(GetEmoji).ToHashSet());
+            var emojies = string.Join("", weatherCodesModes.Select(x => GetEmoji(x)).Distinct());
             var withWording = string.Join(" и ", weatherCodesModes.Where(IsWordingNeeded).Select(GetDescription).ToHashSet());
             var withoutWording = string.Join(", ", weatherCodesModes.Where(x => !IsWordingNeeded(x)).Select(GetDescription));
 
