@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
+using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain.Commands
 {
@@ -38,7 +39,10 @@ namespace WeatherBotDomain.Commands
             var response = await httpClient.PostAsync(uriAddress, request);
             var content = await response.Content.ReadAsStringAsync();
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
-            await messageBus.WriteAsync(GetHourlyForecast(parsedJson, args));
+
+            var reply = new HourlyForecastReply(args, weatherDomain, parsedJson);
+
+            await messageBus.WriteAsync(reply.BuildMessage());
         }
 
         private bool AreArgumentsValid(string[] args)
@@ -55,28 +59,6 @@ namespace WeatherBotDomain.Commands
             return false;
         }
 
-        private string GetHourlyForecast(OpenMeteoResponse response, string[] args)
-        {
-            var sb = new StringBuilder();
-
-            var start = args.Length == 0
-                ? 0
-                : int.Parse(args[0]);
-            var end = args.Length == 0
-                ? 24
-                : int.Parse(args[1]) + 1;
-
-            for(var i = start; i < end; i++)
-            {
-                sb.Append($"{i.ToString().PadLeft(2, '0')}:00 ");
-                sb.Append(weatherDomain.GetEmoji(response.WeatherData.WeatherCodes[i]));
-                sb.Append(' ');
-                sb.Append($"{response.WeatherData.TemperaturePoints[i]}°C\n");
-            }
-
-            return sb.ToString();
-        }
-
         //Dublicate?
         private HttpContent GetValues()
         {
@@ -85,6 +67,7 @@ namespace WeatherBotDomain.Commands
                   { "latitude", "56.823457" },
                   { "longitude", "60.551424" },
                   { "hourly", "temperature_2m,weather_code" },
+                  { "daily", "sunrise,sunset" },
                   { "forecast_days", "1" },
                   { "timezone", "auto" }
             };

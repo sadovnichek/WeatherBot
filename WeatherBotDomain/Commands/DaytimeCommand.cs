@@ -31,16 +31,16 @@ namespace WeatherBotDomain.Commands
             var sunrise = parsedJson.DailyData.Sunrise[0];
             var sunset = parsedJson.DailyData.Sunset[0];
             
-            await messageBus.WriteAsync(GetReply(sunrise, sunset).BuildMessage());
+            await messageBus.WriteAsync(GetDaytimeReply(sunrise, sunset).BuildMessage());
         }
 
-        public static IReply GetReply(string sunriseTime, string sunsetTime)
+        public IReply GetDaytimeReply(string sunriseTime, string sunsetTime)
         {
             var timeSegment = GetDayTime(sunriseTime, sunsetTime);
             return new DaytimeReply(timeSegment);
         }
 
-        public static TimeSegment GetDayTime(string sunriseTime, string sunsetTime)
+        public TimeSegment GetDayTime(string sunriseTime, string sunsetTime)
         {
             var start = TimeOnly.Parse(sunriseTime);
             var end = TimeOnly.Parse(sunsetTime);
