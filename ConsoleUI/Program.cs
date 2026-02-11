@@ -40,7 +40,7 @@ namespace ConsoleUI
 
             var commandHandler = new CommandHandler(commands, help);
 
-            await commandHandler.HandleCommand("/daytime", []);
+            await commandHandler.HandleCommand("/hourly", []);
 
             while (bus.Reader.Count > 0)
             {
