@@ -30,10 +30,10 @@ var bus = Channel.CreateUnbounded<string>();
 
 var commands = new Dictionary<string, ICommand>()
 {
+    {  "/start", new StartCommand(bus) },
     {  "/today", new TodayCommand(client, domain, bus, uri) },
     {  "/tomorrow", new TomorrowCommand(client, domain, bus, uri) },
     {  "/hourly", new HourlyCommand(client, uri, bus, domain) },
-    {  "/start", new StartCommand(bus) },
     {  "/daytime", new DaytimeCommand(client, uri, bus) }
 }.ToFrozenDictionary();
 

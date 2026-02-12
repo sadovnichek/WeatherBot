@@ -40,7 +40,7 @@ namespace WeatherBotDomain.Commands
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
 
             var startIndex = args.Length > 0 ? int.Parse(args[0]) : 0;
-            var endIndex = args.Length > 0 ? int.Parse(args[1]) : 24;
+            var endIndex = args.Length > 0 ? int.Parse(args[1]) + 1 : 24;
 
             var reply = new HourlyForecastReply();
             var daytime = new TimeSegment(TimeOnly.Parse(parsedJson.DailyData.Sunrise[0]),
