@@ -1,4 +1,5 @@
 ﻿using System.Collections.Frozen;
+using System.Threading.Channels;
 
 namespace BotInfrastructure
 {

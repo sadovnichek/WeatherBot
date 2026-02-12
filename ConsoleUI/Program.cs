@@ -28,11 +28,10 @@ namespace ConsoleUI
 
             var commands = new Dictionary<string, ICommand>()
             {
-                {  "/time", new TimeCommand() },
+                {  "/start", new StartCommand(bus) },
                 {  "/today", new TodayCommand(client, core, bus, uri) },
                 {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) },
                 {  "/hourly", new HourlyCommand(client, uri, bus, core) },
-                {  "/start", new StartCommand(bus) },
                 {  "/daytime", new DaytimeCommand(client, uri, bus) }
             }.ToFrozenDictionary();
 
@@ -40,7 +39,7 @@ namespace ConsoleUI
 
             var commandHandler = new CommandHandler(commands, help);
 
-            await commandHandler.HandleCommand("/hourly", ["10", "15"]);
+            await commandHandler.HandleCommand("/today", ["10", "15"]);
 
             while (bus.Reader.Count > 0)
             {

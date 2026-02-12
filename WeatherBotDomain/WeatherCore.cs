@@ -180,8 +180,13 @@ namespace WeatherBotDomain
             }
 
             var emojies = string.Join("", weatherCodesModes.Select(x => GetEmoji(x)).Distinct());
-            var withWording = string.Join(" и ", weatherCodesModes.Where(IsWordingNeeded).Select(GetDescription).ToHashSet());
-            var withoutWording = string.Join(", ", weatherCodesModes.Where(x => !IsWordingNeeded(x)).Select(GetDescription));
+            var withWording = weatherCodesModes.Where(IsWordingNeeded)
+                .Select(GetDescription)
+                .Distinct()
+                .ToArray();
+            var withoutWording = weatherCodesModes.Where(x => !IsWordingNeeded(x))
+                .Select(GetDescription)
+                .ToArray();
 
             return new CompoundWeatherReply()
             {
