@@ -209,13 +209,13 @@ namespace WeatherBotDomain
         private string GetGreeting(DateTime time)
         {
             if (time.Hour >= 22 && time.Hour < 4)
-                return "Доброй ночи!";
+                return "Доброй ночи\\!";
             if (time.Hour >= 4 && time.Hour < 10)
-                return "Доброе утро!";
+                return "Доброе утро\\!";
             if (time.Hour >= 10 && time.Hour < 16)
-                return "Добрый день!";
+                return "Добрый день\\!";
 
-            return "Добрый вечер!";
+            return "Добрый вечер\\!";
         }
 
         public IReply GetPrecipitationForecast(int[] weatherCodes)
