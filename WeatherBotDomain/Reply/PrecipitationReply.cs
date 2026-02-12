@@ -15,7 +15,7 @@ namespace WeatherBotDomain.Reply
             foreach (var item in WeatherSegments)
             {
                 var readableTimeSegments = item.TimeSegments.Select(segment => segment.GetStringRepresentation());
-                builder.Append($"*{item.Description}*")
+                builder.Append($"**{item.Description}**")
                     .Append(' ')
                     .Append(item.Emoji)
                     .Append(' ')
