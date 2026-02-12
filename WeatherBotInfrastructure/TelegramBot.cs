@@ -34,7 +34,7 @@ namespace BotInfrastructure
                     while (messageBus.Count > 0)
                     {
                         var reply = await messageBus.ReadAsync();
-                        await bot.SendMessage(update.Message.Chat.Id, reply);
+                        await bot.SendMessage(update.Message.Chat.Id, reply, Telegram.Bot.Types.Enums.ParseMode.MarkdownV2);
                     }
                 }
             }
