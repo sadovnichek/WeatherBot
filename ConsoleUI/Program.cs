@@ -1,5 +1,4 @@
 ﻿using BotInfrastructure;
-using System.Collections.Frozen;
 using System.Threading.Channels;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
@@ -22,24 +21,21 @@ namespace ConsoleUI
 
             var uri = "https://api.open-meteo.com/v1/forecast";
 
-            var core = new WeatherCore();
+            var domain = new WeatherCore();
 
             var bus = Channel.CreateUnbounded<string>();
 
-            var commands = new Dictionary<string, ICommand>()
-            {
-                {  "/start", new StartCommand(bus) },
-                {  "/today", new TodayCommand(client, core, bus, uri) },
-                {  "/tomorrow", new TomorrowCommand(client, core, bus, uri) },
-                {  "/hourly", new HourlyCommand(client, uri, bus, core) },
-                {  "/daytime", new DaytimeCommand(client, uri, bus) }
-            }.ToFrozenDictionary();
+            var commands = new Dictionary<string, ICommand>();
+            commands.Add("/start", new StartCommand(bus));
+            commands.Add("/today", new TodayCommand(client, domain, bus, uri));
+            commands.Add("/tomorrow", new TomorrowCommand(client, domain, bus, uri));
+            commands.Add("/hourly", new HourlyCommand(client, uri, bus, domain));
+            commands.Add("/daytime", new DaytimeCommand(client, uri, bus));
+            commands.Add("/help", new HelpCommand(commands, bus));
 
-            var help = new HelpCommand(commands, bus);
+            var commandHandler = new CommandHandler(commands);
 
-            var commandHandler = new CommandHandler(commands, help);
-
-            await commandHandler.HandleCommand("/today", ["10", "15"]);
+            await commandHandler.HandleCommand("/hourly", ["10", "15"]);
 
             while (bus.Reader.Count > 0)
             {

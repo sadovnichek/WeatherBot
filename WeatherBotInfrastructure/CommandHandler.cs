@@ -6,11 +6,9 @@ namespace BotInfrastructure
     {
         private Dictionary<string, ICommand> botCommands;
 
-        public CommandHandler(FrozenDictionary<string, ICommand> commands,
-            HelpCommand help)
+        public CommandHandler(Dictionary<string, ICommand> commands)
         {
-            botCommands = commands.ToDictionary(kv => kv.Key, kv => kv.Value);
-            botCommands.Add("/help", help);
+            botCommands = commands;
         }
 
         public bool IsCommandExists(string command)
