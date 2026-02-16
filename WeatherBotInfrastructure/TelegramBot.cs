@@ -27,17 +27,22 @@ namespace BotInfrastructure
                 var command = messageTextTokens?[0].Trim();
                 var args = messageTextTokens?.Skip(1).ToArray();
 
-                if (commandHandler.IsCommandExists(command))
+                if (!commandHandler.IsCommandExists(command))
                 {
-                    await commandHandler.HandleCommand(command, args);
-
-                    while (messageBus.Count > 0)
-                    {
-                        var reply = await messageBus.ReadAsync();
-                        await bot.SendMessage(update.Message.Chat.Id, 
-                            reply,
+                    await bot.SendMessage(update.Message.Chat.Id,
+                            "Неизвестная команда",
                             Telegram.Bot.Types.Enums.ParseMode.Markdown);
-                    }
+                    return;
+                }
+
+                await commandHandler.HandleCommand(command, args);
+
+                while (messageBus.Count > 0)
+                {
+                    var reply = await messageBus.ReadAsync();
+                    await bot.SendMessage(update.Message.Chat.Id,
+                        reply,
+                        Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
             }
         }
