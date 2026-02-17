@@ -1,5 +1,4 @@
 ﻿using BotInfrastructure;
-using System.Threading.Channels;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
 
@@ -14,10 +13,7 @@ namespace ConsoleUI
                 UseProxy = false,
             };
 
-            var client = new HttpClient(handler)
-            {
-                Timeout = new TimeSpan(0, 0, 5)
-            };
+            using var client = new HttpClient(handler);
 
             var uri = "https://api.open-meteo.com/v1/forecast";
 

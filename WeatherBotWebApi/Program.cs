@@ -10,12 +10,12 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 var app = builder.Build();
 var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
 
-var handler = new HttpClientHandler()
+using var handler = new HttpClientHandler()
 {
     UseProxy = false,
 };
 
-var client = new HttpClient(handler)
+using var client = new HttpClient(handler)
 {
     Timeout = new TimeSpan(0, 0, 5)
 };

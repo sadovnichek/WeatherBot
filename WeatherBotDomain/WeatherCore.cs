@@ -1,56 +1,15 @@
 ﻿using BotInfrastructure;
-using Telegram.Bot.Extensions;
-using Telegram.Bot.Types;
 using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain
 {
-    public enum Weather
-    {
-        Sunny,
-        PartlyCloudy,
-        Cloudy,
-        Rainy,
-        Fog,
-        SlightlyRainy,
-        Snowy,
-        Shower,
-        Thunderstorm
-    }
-
-    public class WeatherDescriptor
-    {
-        public string Description { get; init; }
-
-        public string DayEmoji { get; init; }
-
-        public string NightEmoji { get; init; }
-
-        public bool IsWordingNeeded { get; init; }
-
-        public bool IsPrecipitation { get; init; }
-
-        public WeatherDescriptor(string description, 
-            string dayEmoji, 
-            string nightEmoji, 
-            bool isWordingNeeded, 
-            bool isPrecipitation) 
-        {
-            Description = description;
-            DayEmoji = dayEmoji;
-            NightEmoji = nightEmoji;
-            IsWordingNeeded = isWordingNeeded;
-            IsPrecipitation = isPrecipitation;
-        }
-    }
-
     public class WeatherCore
     {
         private static readonly Dictionary<Weather, WeatherDescriptor> weatherData = new()
         {
             { Weather.Sunny, new WeatherDescriptor("солнечная", "☀️", "🌙", true, false) },
             { Weather.PartlyCloudy, new WeatherDescriptor("переменная облачность", "⛅", "🌙", false, false) },
-            { Weather.Cloudy, new WeatherDescriptor("облачная", "☁️", "🌙", true, false) },
+            { Weather.Cloudy, new WeatherDescriptor("облачная", "☁️", "☁️", true, false) },
             { Weather.Fog, new WeatherDescriptor("туман", "🌫️", "🌫️", false, false) },
             { Weather.Rainy, new WeatherDescriptor("дождь", "🌧️", "🌧️", false, true) },
             { Weather.SlightlyRainy, new WeatherDescriptor("небольшой дождь", "💧", "💧", false, true) },
@@ -124,10 +83,10 @@ namespace WeatherBotDomain
         /// <exception cref="ArgumentException"></exception>
         public Weather GetWeather(int weatherCode)
         {
-            if (weatherGrouping.TryGetValue(weatherCode, out var weather))
-                return weather;
+            if (!weatherGrouping.TryGetValue(weatherCode, out var weather))
+                throw new ArgumentException($"Unknown weather code: {weatherCode}");
 
-            throw new ArgumentException($"Unknown weather code: {weatherCode}");
+            return weather;
         }
 
         /// <exception cref="ArgumentException"></exception>
