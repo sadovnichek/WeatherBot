@@ -1,7 +1,6 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Channels;
 using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain.Commands
@@ -10,28 +9,28 @@ namespace WeatherBotDomain.Commands
     {
         private readonly HttpClient httpClient;
         private readonly string uriAddress;
-        private readonly ChannelWriter<string> messageBus;
         private readonly WeatherCore weatherDomain;
 
         public string Description => "Погода и температура на каждый час сегодня";
 
         public HourlyCommand(HttpClient client, 
-            string uri, 
-            ChannelWriter<string> bus,
+            string uri,
             WeatherCore domain)
         {
             httpClient = client;
             uriAddress = uri;
-            messageBus = bus;
             weatherDomain = domain;
         }
 
-        public async Task Execute(string[] args)
+        public async IAsyncEnumerable<IReply> Execute(string[] args)
         {
             if (!AreArgumentsValid(args))
             {
-                await messageBus.WriteAsync("Неверные аргументы.\nНужно указать два числа - начало и конец временного промежутка от 0 до 23 часов");
-                return;
+                yield return new PlainReply("""
+                    Неверные аргументы.
+                    Нужно указать два числа - начало и конец временного промежутка от 0 до 23 часов
+                    """);
+                yield break;
             }
             
             var request = GetValues();
@@ -55,7 +54,7 @@ namespace WeatherBotDomain.Commands
                 reply.AppendData(data);
             }
 
-            await messageBus.WriteAsync(reply.BuildMessage());
+            yield return reply;
         }
 
         private bool AreArgumentsValid(string[] args)

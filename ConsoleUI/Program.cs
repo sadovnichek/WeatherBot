@@ -23,24 +23,19 @@ namespace ConsoleUI
 
             var domain = new WeatherCore();
 
-            var bus = Channel.CreateUnbounded<string>();
-
             var commands = new Dictionary<string, ICommand>();
-            commands.Add("/start", new StartCommand(bus));
-            commands.Add("/today", new TodayCommand(client, domain, bus, uri));
-            commands.Add("/tomorrow", new TomorrowCommand(client, domain, bus, uri));
-            commands.Add("/hourly", new HourlyCommand(client, uri, bus, domain));
-            commands.Add("/daytime", new DaytimeCommand(client, uri, bus));
-            commands.Add("/help", new HelpCommand(commands, bus));
+            commands.Add("/start", new StartCommand());
+            commands.Add("/today", new TodayCommand(client, domain, uri));
+            commands.Add("/tomorrow", new TomorrowCommand(client, domain, uri));
+            commands.Add("/hourly", new HourlyCommand(client, uri, domain));
+            commands.Add("/daytime", new DaytimeCommand(client, uri));
+            commands.Add("/help", new HelpCommand(commands));
 
             var commandHandler = new CommandHandler(commands);
 
-            await commandHandler.HandleCommand("/today", ["10", "15"]);
-
-            while (bus.Reader.Count > 0)
+            await foreach (var reply in commandHandler.HandleCommand("/today", ["10", "15"]))
             {
-                var reply = await bus.Reader.ReadAsync();
-                Console.WriteLine(reply);
+                Console.WriteLine(reply.BuildMessage());
             }
         }
     }

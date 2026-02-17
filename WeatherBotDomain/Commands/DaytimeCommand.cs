@@ -1,6 +1,5 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
-using System.Threading.Channels;
 using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain.Commands
@@ -9,20 +8,17 @@ namespace WeatherBotDomain.Commands
     {
         private readonly HttpClient httpClient;
         private readonly string uriAddress;
-        private readonly ChannelWriter<string> messageBus;
 
         public string Description => "Время заката и рассвета сегодня";
 
         public DaytimeCommand(HttpClient client, 
-            string uri, 
-            ChannelWriter<string> bus)
+            string uri)
         {
             httpClient = client;
             uriAddress = uri;
-            messageBus = bus;
         }
 
-        public async Task Execute(string[] args)
+        public async IAsyncEnumerable<IReply> Execute(string[] args)
         {
             var request = GetValues();
             var response = await httpClient.PostAsync(uriAddress, request);
@@ -31,7 +27,7 @@ namespace WeatherBotDomain.Commands
             var sunrise = parsedJson.DailyData.Sunrise[0];
             var sunset = parsedJson.DailyData.Sunset[0];
             
-            await messageBus.WriteAsync(GetDaytimeReply(sunrise, sunset).BuildMessage());
+            yield return GetDaytimeReply(sunrise, sunset);
         }
 
         public IReply GetDaytimeReply(string sunriseTime, string sunsetTime)

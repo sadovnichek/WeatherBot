@@ -1,22 +1,14 @@
 ﻿using BotInfrastructure;
-using System.Threading.Channels;
 
 namespace WeatherBotDomain.Commands
 {
     public class StartCommand : ICommand
     {
-        private ChannelWriter<string> messageBus;
-
         public string Description => "начать работу с ботом";
 
-        public StartCommand(ChannelWriter<string> bus)
+        public async IAsyncEnumerable<IReply> Execute(string[] args)
         {
-            messageBus = bus;
-        }
-
-        public async Task Execute(string[] args)
-        {
-            await messageBus.WriteAsync("""
+            yield return new PlainReply("""
                 Добро пожаловать в WeatherBot! 
                 Бот умеет давать прогноз погоды, температуру воздуха и информацию об осадках на сегодня/завтра.
                 Достаточно ввести команды /today или /tomorrow.

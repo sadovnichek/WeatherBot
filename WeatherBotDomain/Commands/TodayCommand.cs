@@ -1,12 +1,13 @@
-﻿using System.Threading.Channels;
-using WeatherBotDomain.Reply;
+﻿using BotInfrastructure;
 
 namespace WeatherBotDomain.Commands
 {
     public class TodayCommand : WeatherCommand
     {
-        public TodayCommand(HttpClient client, WeatherCore domain, ChannelWriter<string> bus, string uri) 
-            : base(client, domain, bus, uri)
+        public TodayCommand(HttpClient client, 
+            WeatherCore domain,
+            string uri) 
+            : base(client, domain, uri)
         {
 
         }

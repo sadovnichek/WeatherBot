@@ -1,5 +1,4 @@
 using BotInfrastructure;
-using System.Threading.Channels;
 using Telegram.Bot.Types;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
@@ -25,17 +24,15 @@ var domain = new WeatherCore();
 
 var uri = "https://api.open-meteo.com/v1/forecast";
 
-var bus = Channel.CreateUnbounded<string>();
-
 var commands = new Dictionary<string, ICommand>();
-commands.Add("/start", new StartCommand(bus));
-commands.Add("/today", new TodayCommand(client, domain, bus, uri));
-commands.Add("/tomorrow", new TomorrowCommand(client, domain, bus, uri));
-commands.Add("/hourly", new HourlyCommand(client, uri, bus, domain));
-commands.Add("/daytime", new DaytimeCommand(client, uri, bus));
-commands.Add("/help", new HelpCommand(commands, bus));
+commands.Add("/start", new StartCommand());
+commands.Add("/today", new TodayCommand(client, domain, uri));
+commands.Add("/tomorrow", new TomorrowCommand(client, domain, uri));
+commands.Add("/hourly", new HourlyCommand(client, uri, domain));
+commands.Add("/daytime", new DaytimeCommand(client, uri));
+commands.Add("/help", new HelpCommand(commands));
 
-var bot = new TelegramBot(new CommandHandler(commands), bus, token);
+var bot = new TelegramBot(new CommandHandler(commands), token);
 
 app.MapPost("/webhook", async (Update u) =>
     {

@@ -6,20 +6,17 @@ namespace BotInfrastructure
     public class HelpCommand : ICommand
     {
         private Dictionary<string, ICommand> _commands;
-        private ChannelWriter<string> _bus;
 
         public string Description => "вывести список команд";
 
-        public HelpCommand(Dictionary<string, ICommand> commands,
-            ChannelWriter<string> bus)
+        public HelpCommand(Dictionary<string, ICommand> commands)
         {
             _commands = commands;
-            _bus = bus;
         }
 
-        public async Task Execute(string[] args)
+        public async IAsyncEnumerable<IReply> Execute(string[] args)
         {
-            await _bus.WriteAsync(GetHelp());
+            yield return new PlainReply(GetHelp());
         }
 
         private string GetHelp()

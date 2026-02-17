@@ -8,15 +8,12 @@ namespace BotInfrastructure
     {
         private readonly TelegramBotClient bot;
         private readonly CommandHandler commandHandler;
-        private readonly ChannelReader<string> messageBus;
 
         public TelegramBot(CommandHandler handler,
-            ChannelReader<string> bus,
             string token)
         {
             bot = new TelegramBotClient(token);
             commandHandler = handler;
-            messageBus = bus;
         }
 
         public async Task ReceiveAsync(Update update)
@@ -35,13 +32,12 @@ namespace BotInfrastructure
                     return;
                 }
 
-                await commandHandler.HandleCommand(command, args);
-
-                while (messageBus.Count > 0)
+                await foreach (var reply in 
+                    commandHandler.HandleCommand(command, args))
                 {
-                    var reply = await messageBus.ReadAsync();
+                    var text = reply.BuildMessage();
                     await bot.SendMessage(update.Message.Chat.Id,
-                        reply,
+                        text,
                         Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
             }

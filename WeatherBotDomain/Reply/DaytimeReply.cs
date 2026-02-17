@@ -1,4 +1,6 @@
-﻿namespace WeatherBotDomain.Reply
+﻿using BotInfrastructure;
+
+namespace WeatherBotDomain.Reply
 {
     public record DaytimeReply(TimeSegment TimeSegment) : IReply
     {

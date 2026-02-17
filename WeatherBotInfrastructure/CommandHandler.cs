@@ -1,6 +1,4 @@
-﻿using System.Collections.Frozen;
-
-namespace BotInfrastructure
+﻿namespace BotInfrastructure
 {
     public class CommandHandler
     {
@@ -17,20 +15,15 @@ namespace BotInfrastructure
         }
 
         /// <exception cref="ArgumentException"></exception>
-        public async Task HandleCommand(string command, string[] args)
+        public async IAsyncEnumerable<IReply> HandleCommand(string command, string[] args)
         {
-            if (botCommands.TryGetValue(command, out var instance))
+            if(!botCommands.TryGetValue(command, out var instance)) 
+                throw new ArgumentException($"Unknown command {command}");
+
+            await foreach (var reply in instance.Execute(args))
             {
-                await instance.Execute(args);
-                return;
+                yield return reply;
             }
-
-            throw new ArgumentException($"Unknown command {command}");
-        }
-
-        public IEnumerable<string> GetCommands()
-        {
-            return botCommands.Keys;
         }
     }
 }
