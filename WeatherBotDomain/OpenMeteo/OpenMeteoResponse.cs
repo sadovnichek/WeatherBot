@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace WeatherBotDomain
+namespace WeatherBotDomain.OpenMeteo
 {
     public class DailyData
     {

@@ -1,9 +1,10 @@
-﻿using System.Threading.Channels;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotInfrastructure
 {
+    // Fluent interface for adding commands?
+
     public class TelegramBot
     {
         private readonly TelegramBotClient bot;

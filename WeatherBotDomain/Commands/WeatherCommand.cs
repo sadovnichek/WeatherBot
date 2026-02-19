@@ -1,6 +1,7 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
 using System.Threading.Channels;
+using WeatherBotDomain.OpenMeteo;
 
 namespace WeatherBotDomain.Commands
 {

@@ -1,6 +1,7 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain.Commands

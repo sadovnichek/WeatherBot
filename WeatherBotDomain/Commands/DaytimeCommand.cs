@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using Newtonsoft.Json;
+using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain.Commands
@@ -8,14 +9,17 @@ namespace WeatherBotDomain.Commands
     {
         private readonly HttpClient httpClient;
         private readonly string uriAddress;
+        private readonly IWeatherApiController _controller;
 
         public string Description => "Время заката и рассвета сегодня";
 
         public DaytimeCommand(HttpClient client, 
-            string uri)
+            string uri,
+            IWeatherApiController controller)
         {
             httpClient = client;
             uriAddress = uri;
+            _controller = controller;
         }
 
         public async IAsyncEnumerable<IReply> Execute(string[] args)
@@ -26,7 +30,13 @@ namespace WeatherBotDomain.Commands
             var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
             var sunrise = parsedJson.DailyData.Sunrise[0];
             var sunset = parsedJson.DailyData.Sunset[0];
-            
+
+            var output = await _controller.SendRequest();
+            var srise = output.Sunrise;
+            var sset = output.Sunset;
+            var seg = new TimeSegment(srise, sset);
+            var repl = new DaytimeReply(seg);
+
             yield return GetDaytimeReply(sunrise, sunset);
         }
 

@@ -18,6 +18,7 @@ namespace WeatherBotDomain
             { Weather.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "⛈", false, true) }
         };
 
+        // what if there will be another weather code?
         private static readonly Dictionary<int, Weather> weatherGrouping = new()
         {
             {0, Weather.Sunny },
