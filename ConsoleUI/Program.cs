@@ -13,18 +13,21 @@ namespace ConsoleUI
                 UseProxy = false,
             };
 
-            using var client = new HttpClient(handler);
-
-            var uri = "https://api.open-meteo.com/v1/forecast";
+            using var client = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://api.open-meteo.com/v1/forecast")
+            };
 
             var domain = new WeatherCore();
 
+            var controller = new OpenMeteoController(client);
+
             var commands = new Dictionary<string, ICommand>();
             commands.Add("/start", new StartCommand());
-            commands.Add("/today", new TodayCommand(client, domain, uri));
-            commands.Add("/tomorrow", new TomorrowCommand(client, domain, uri));
-            commands.Add("/hourly", new HourlyCommand(client, uri, domain));
-            commands.Add("/daytime", new DaytimeCommand(client, uri));
+            commands.Add("/today", new TodayCommand(controller, domain));
+            commands.Add("/tomorrow", new TomorrowCommand(controller, domain));
+            commands.Add("/hourly", new HourlyCommand(controller, domain));
+            commands.Add("/daytime", new DaytimeCommand(controller));
             commands.Add("/help", new HelpCommand(commands));
 
             var commandHandler = new CommandHandler(commands);

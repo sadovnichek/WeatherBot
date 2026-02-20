@@ -1,25 +1,20 @@
 ﻿using BotInfrastructure;
-using Newtonsoft.Json;
 using System.Text.RegularExpressions;
-using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Reply;
 
 namespace WeatherBotDomain.Commands
 {
     public class HourlyCommand : ICommand
     {
-        private readonly HttpClient httpClient;
-        private readonly string uriAddress;
+        private readonly IWeatherApiController _controller;
         private readonly WeatherCore weatherDomain;
 
         public string Description => "Погода и температура на каждый час сегодня";
 
-        public HourlyCommand(HttpClient client, 
-            string uri,
+        public HourlyCommand(IWeatherApiController controller,
             WeatherCore domain)
         {
-            httpClient = client;
-            uriAddress = uri;
+            _controller = controller;
             weatherDomain = domain;
         }
 
@@ -33,24 +28,20 @@ namespace WeatherBotDomain.Commands
                     """);
                 yield break;
             }
-            
-            var request = GetValues();
-            var response = await httpClient.PostAsync(uriAddress, request);
-            var content = await response.Content.ReadAsStringAsync();
-            var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
+
+            var dto = await _controller.SendRequest();
 
             var startIndex = args.Length > 0 ? int.Parse(args[0]) : 0;
             var endIndex = args.Length > 0 ? int.Parse(args[1]) + 1 : 24;
 
             var reply = new HourlyForecastReply();
-            var daytime = new TimeSegment(TimeOnly.Parse(parsedJson.DailyData.Sunrise[0]),
-                TimeOnly.Parse(parsedJson.DailyData.Sunset[0]));
+            var daytime = new TimeSegment(dto.Sunrise, dto.Sunset);
             for(var i = startIndex; i < endIndex; i++)
             {
                 var time = new TimeOnly(i, 0);
                 var isDay = daytime.IsTimeInSegment(time);
-                var emoji = weatherDomain.GetEmoji(parsedJson.WeatherData.WeatherCodes[i], !isDay);
-                var temperature = parsedJson.WeatherData.TemperaturePoints[i];
+                var emoji = weatherDomain.GetEmoji(dto.WeatherCodes[i], !isDay);
+                var temperature = dto.Temperatures[i];
                 var data = new HourlyForecastData(time, emoji, temperature);
                 reply.AppendData(data);
             }
@@ -70,21 +61,6 @@ namespace WeatherBotDomain.Commands
             }
 
             return false;
-        }
-
-        //Dublicate?
-        private HttpContent GetValues()
-        {
-            var values = new Dictionary<string, string>
-            {
-                  { "latitude", "56.823457" },
-                  { "longitude", "60.551424" },
-                  { "hourly", "temperature_2m,weather_code" },
-                  { "daily", "sunrise,sunset" },
-                  { "forecast_days", "1" },
-                  { "timezone", "auto" }
-            };
-            return new FormUrlEncodedContent(values);
         }
     }
 }

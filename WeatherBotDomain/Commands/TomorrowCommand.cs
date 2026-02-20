@@ -1,35 +1,30 @@
 ﻿using BotInfrastructure;
-using WeatherBotDomain.OpenMeteo;
 
 namespace WeatherBotDomain.Commands
 {
     public class TomorrowCommand : WeatherCommand
     {
-        public TomorrowCommand(HttpClient client, 
-            WeatherCore domain,
-            string uri)
-            : base(client, domain, uri)
+        public TomorrowCommand(IWeatherApiController controller, 
+            WeatherCore domain)
+            : base(controller, domain)
         {
 
         }
 
         public override string Description => "Погода, температура и осадки на завтра";
         
-        protected override IReply GetPrecipitationForecast(OpenMeteoResponse response)
+        protected override IReply GetPrecipitationForecast(WeatherDTO dto)
         {
-            var weatherCodes = response.WeatherData.WeatherCodes.Skip(24).Take(24).ToArray();
-            return weatherDomain.GetPrecipitationForecast(weatherCodes);
+            var weatherCodes = dto.WeatherCodes.Skip(24).Take(24).ToArray();
+            return _domain.GetPrecipitationForecast(weatherCodes);
         }
 
-        protected override IReply ProcessResponse(OpenMeteoResponse response)
+        protected override IReply ProcessResponse(WeatherDTO dto)
         {
-            var utcOffset = response.UtcOffsetSeconds;
-            var timeNow = DateTime.UtcNow.AddSeconds(utcOffset);
+            var temperatures = dto.Temperatures.Skip(24).ToArray();
+            var weatherCodes = dto.WeatherCodes.Skip(24).ToArray();
 
-            var temperatures = response.WeatherData.TemperaturePoints.Skip(24).ToArray();
-            var weatherCodes = response.WeatherData.WeatherCodes.Skip(24).ToArray();
-
-            return weatherDomain.GetReply("Завтра", timeNow, weatherCodes, temperatures);
+            return _domain.GetReply("Завтра", dto.Now, weatherCodes, temperatures);
         }
     }
 }

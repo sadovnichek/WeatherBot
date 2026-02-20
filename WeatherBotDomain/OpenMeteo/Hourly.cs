@@ -2,7 +2,7 @@
 
 namespace WeatherBotDomain.OpenMeteo
 {
-    public class WeatherData
+    public class Hourly
     {
         [JsonProperty("temperature_2m")]
         public double[] TemperaturePoints { get; set; }

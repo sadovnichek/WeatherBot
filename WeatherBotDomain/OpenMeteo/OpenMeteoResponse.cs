@@ -2,7 +2,7 @@
 
 namespace WeatherBotDomain.OpenMeteo
 {
-    public class DailyData
+    public class Daily
     {
         [JsonProperty("sunrise")]
         public string[] Sunrise { get; set; }
@@ -17,9 +17,9 @@ namespace WeatherBotDomain.OpenMeteo
         public int UtcOffsetSeconds { get; set; }
 
         [JsonProperty("hourly")]
-        public WeatherData WeatherData { get; set; }
+        public Hourly WeatherData { get; set; }
 
         [JsonProperty("daily")]
-        public DailyData DailyData { get; set; }
+        public Daily DailyData { get; set; }
     }
 }

@@ -1,55 +1,32 @@
 ﻿using BotInfrastructure;
-using Newtonsoft.Json;
-using System.Threading.Channels;
-using WeatherBotDomain.OpenMeteo;
 
 namespace WeatherBotDomain.Commands
 {
     public abstract class WeatherCommand : ICommand
     {
-        private readonly HttpClient httpClient;
-        private readonly string uriAddress;
+        private readonly IWeatherApiController _controller;
 
-        protected readonly WeatherCore weatherDomain;
+        protected readonly WeatherCore _domain;
 
         public abstract string Description { get; }
 
-        public WeatherCommand(HttpClient client, 
-            WeatherCore domain,
-            string uri)
+        public WeatherCommand(IWeatherApiController controller, 
+            WeatherCore domain)
         {
-            httpClient = client;
-            weatherDomain = domain;
-            uriAddress = uri;
+            _controller = controller;
+            _domain = domain;
         }
 
         public async IAsyncEnumerable<IReply> Execute(string[] args)
         {
-            var request = GetValues();
-            var response = await httpClient.PostAsync(uriAddress, request);
-            var content = await response.Content.ReadAsStringAsync();
-            var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(content);
+            var dto = await _controller.SendRequest();
 
-            yield return ProcessResponse(parsedJson);
-            yield return GetPrecipitationForecast(parsedJson);
+            yield return ProcessResponse(dto);
+            yield return GetPrecipitationForecast(dto);
         }
 
-        protected abstract IReply ProcessResponse(OpenMeteoResponse response);
+        protected abstract IReply ProcessResponse(WeatherDTO dto);
 
-        protected abstract IReply GetPrecipitationForecast(OpenMeteoResponse response);
-
-        //Dublicate
-        private HttpContent GetValues()
-        {
-            var values = new Dictionary<string, string>
-            {
-                  { "latitude", "56.823457" },
-                  { "longitude", "60.551424" },
-                  { "hourly", "temperature_2m,weather_code" },
-                  { "forecast_days", "2" },
-                  { "timezone", "auto" }
-            };
-            return new FormUrlEncodedContent(values);
-        }
+        protected abstract IReply GetPrecipitationForecast(WeatherDTO dto);
     }
 }
