@@ -19,7 +19,10 @@ namespace WeatherBotDomain.Commands
 
         public async IAsyncEnumerable<IReply> Execute(string[] args)
         {
-            var dto = await _controller.SendRequest();
+            var dto = await _controller.TrySendRequest();
+
+            if (dto is null)
+                yield break;
 
             yield return ProcessResponse(dto);
             yield return GetPrecipitationForecast(dto);

@@ -29,7 +29,10 @@ namespace WeatherBotDomain.Commands
                 yield break;
             }
 
-            var dto = await _controller.SendRequest();
+            var dto = await _controller.TrySendRequest();
+
+            if (dto is null)
+                yield break;
 
             var startIndex = args.Length > 0 ? int.Parse(args[0]) : 0;
             var endIndex = args.Length > 0 ? int.Parse(args[1]) + 1 : 24;

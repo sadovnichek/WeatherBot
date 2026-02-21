@@ -1,6 +1,7 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
+using WeatherBotDomain.OpenMeteo;
 
 namespace ConsoleUI
 {
