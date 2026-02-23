@@ -33,7 +33,7 @@ namespace ConsoleUI
 
             var commandHandler = new CommandHandler(commands);
 
-            await foreach (var reply in commandHandler.HandleCommand("/today", ["10", "15"]))
+            await foreach (var reply in commandHandler.HandleCommand("/today", []))
             {
                 Console.WriteLine(reply.BuildMessage());
             }
