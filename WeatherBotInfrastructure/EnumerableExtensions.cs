@@ -23,24 +23,25 @@ namespace BotInfrastructure
         }
 
         [Pure]
-        public static IEnumerable<T> Mode<T>(this IEnumerable<T> source)
+        public static IEnumerable<T> Mode<T>(this IEnumerable<T> source, uint discrepancy = 0)
             where T : notnull
         {
             ArgumentNullException.ThrowIfNull(source);
 
             if (!source.Any())
-                throw new InvalidOperationException("Sequence is empty");
+                throw new InvalidOperationException("Unable to calculate mode. Sequence is empty");
 
             var frequency = new Dictionary<T, int>();
 
+            var max = 0;
             foreach(var element in source)
             {
                 frequency[element] = frequency.GetValueOrDefault(element) + 1;
+                if (frequency[element] > max)
+                    max = frequency[element];
             }
 
-            var max = frequency.Max(kv => kv.Value);
-
-            return frequency.Where(kv => kv.Value == max).Select(kv => kv.Key);
+            return frequency.Where(kv => Math.Abs(kv.Value - max) <= discrepancy).Select(kv => kv.Key);
         }
     }
 }

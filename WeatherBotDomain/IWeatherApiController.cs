@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using WeatherBotDomain.OpenMeteo;
-
-namespace WeatherBotDomain
+﻿namespace WeatherBotDomain
 {
     public interface IWeatherApiController
     {
