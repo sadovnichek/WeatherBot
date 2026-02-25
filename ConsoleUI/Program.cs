@@ -31,7 +31,7 @@ namespace ConsoleUI
             commands.Add("/daytime", new DaytimeCommand(controller));
             commands.Add("/help", new HelpCommand(commands));
 
-            await foreach (var reply in commands["/today"].Execute([]))
+            await foreach (var reply in commands["/tomorrow"].Execute([]))
             {
                 Console.WriteLine(reply.BuildMessage());
             }

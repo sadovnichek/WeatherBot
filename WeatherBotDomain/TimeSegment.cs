@@ -4,7 +4,7 @@
     {
         public string GetStringRepresentation()
         {
-            return $"{Start} - {End}";
+            return $"с {Start} до {End}";
         }
 
         public bool IsTimeInSegment(TimeOnly time)
