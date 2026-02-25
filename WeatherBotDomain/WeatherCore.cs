@@ -9,13 +9,13 @@ namespace WeatherBotDomain
         {
             { Weather.Sunny, new WeatherDescriptor("солнечная", "☀️", "🌙", true, false) },
             { Weather.PartlyCloudy, new WeatherDescriptor("переменная облачность", "⛅", "🌙", false, false) },
-            { Weather.Cloudy, new WeatherDescriptor("облачная", "☁️", "☁️", true, false) },
-            { Weather.Fog, new WeatherDescriptor("туман", "🌫️", "🌫️", false, false) },
-            { Weather.Rainy, new WeatherDescriptor("дождь", "🌧️", "🌧️", false, true) },
-            { Weather.SlightlyRainy, new WeatherDescriptor("небольшой дождь", "💧", "💧", false, true) },
-            { Weather.Snowy, new WeatherDescriptor("снег", "🌨️", "🌨️", false, true) },
-            { Weather.Shower, new WeatherDescriptor("ливень", "☔", "☔", false, true) },
-            { Weather.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "⛈", false, true) }
+            { Weather.Cloudy, new WeatherDescriptor("облачная", "☁️", "🌙", true, false) },
+            { Weather.Fog, new WeatherDescriptor("туман", "🌫️", "🌙", false, false) },
+            { Weather.Rainy, new WeatherDescriptor("дождь", "🌧️", "🌙", false, true) },
+            { Weather.SlightlyRainy, new WeatherDescriptor("небольшой дождь", "💧", "🌙", false, true) },
+            { Weather.Snowy, new WeatherDescriptor("снег", "🌨️", "🌙", false, true) },
+            { Weather.Shower, new WeatherDescriptor("ливень", "☔", "🌙", false, true) },
+            { Weather.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "🌙", false, true) }
         };
 
         // what if there will be another weather code?

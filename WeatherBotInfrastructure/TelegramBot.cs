@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using System.Collections.Frozen;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotInfrastructure
@@ -8,13 +9,13 @@ namespace BotInfrastructure
     public class TelegramBot
     {
         private readonly TelegramBotClient bot;
-        private readonly CommandHandler commandHandler;
+        private FrozenDictionary<string, ICommand> botCommands;
 
-        public TelegramBot(CommandHandler handler,
+        public TelegramBot(Dictionary<string, ICommand> commands,
             string token)
         {
             bot = new TelegramBotClient(token);
-            commandHandler = handler;
+            botCommands = commands.ToFrozenDictionary();
         }
 
         public async Task ReceiveAsync(Update update)
@@ -25,7 +26,7 @@ namespace BotInfrastructure
                 var command = messageTextTokens?[0].Trim();
                 var args = messageTextTokens?.Skip(1).ToArray();
 
-                if (!commandHandler.IsCommandExists(command))
+                if (!botCommands.TryGetValue(command, out var instance))
                 {
                     await bot.SendMessage(update.Message.Chat.Id,
                             "Неизвестная команда",
@@ -33,8 +34,7 @@ namespace BotInfrastructure
                     return;
                 }
 
-                await foreach (var reply in 
-                    commandHandler.HandleCommand(command, args))
+                await foreach (var reply in instance.Execute(args))
                 {
                     var text = reply.BuildMessage();
                     await bot.SendMessage(update.Message.Chat.Id,

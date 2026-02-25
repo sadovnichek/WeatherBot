@@ -33,7 +33,7 @@ commands.Add("/hourly", new HourlyCommand(controller, domain));
 commands.Add("/daytime", new DaytimeCommand(controller));
 commands.Add("/help", new HelpCommand(commands));
 
-var bot = new TelegramBot(new CommandHandler(commands), token);
+var bot = new TelegramBot(commands, token);
 
 app.MapPost("/webhook", async (Update u) =>
     {
