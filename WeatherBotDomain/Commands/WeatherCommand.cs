@@ -28,8 +28,8 @@ namespace WeatherBotDomain.Commands
             yield return GetPrecipitationForecast(dto);
         }
 
-        protected abstract IReply ProcessResponse(WeatherDTO dto);
+        protected abstract IReply ProcessResponse(WeatherReply dto);
 
-        protected abstract IReply GetPrecipitationForecast(WeatherDTO dto);
+        protected abstract IReply GetPrecipitationForecast(WeatherReply dto);
     }
 }

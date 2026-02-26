@@ -2,6 +2,6 @@
 {
     public interface IWeatherApiController
     {
-        Task<WeatherDTO?> TrySendRequest();
+        Task<WeatherReply?> TrySendRequest();
     }
 }

@@ -5,38 +5,38 @@ namespace WeatherBotDomain
 {
     public class WeatherCore
     {
-        private static readonly Dictionary<Weather, WeatherDescriptor> weatherData = new()
+        private static readonly Dictionary<WeatherType, WeatherDescriptor> weatherData = new()
         {
-            { Weather.Sunny, new WeatherDescriptor("солнечная", "☀️", "🌙", true, false) },
-            { Weather.PartlyCloudy, new WeatherDescriptor("переменная облачность", "⛅", "🌙", false, false) },
-            { Weather.Cloudy, new WeatherDescriptor("облачная", "☁️", "🌙", true, false) },
-            { Weather.Fog, new WeatherDescriptor("туман", "🌫️", "🌙", false, false) },
-            { Weather.Rainy, new WeatherDescriptor("дождь", "🌧️", "🌙", false, true) },
-            { Weather.SlightlyRainy, new WeatherDescriptor("небольшой дождь", "💧", "🌙", false, true) },
-            { Weather.Snowy, new WeatherDescriptor("снег", "🌨️", "🌙", false, true) },
-            { Weather.Shower, new WeatherDescriptor("ливень", "☔", "🌙", false, true) },
-            { Weather.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "🌙", false, true) }
+            { WeatherType.Sunny, new WeatherDescriptor("солнечная", "☀️", "🌙", true, false) },
+            { WeatherType.PartlyCloudy, new WeatherDescriptor("переменная облачность", "⛅", "🌙", false, false) },
+            { WeatherType.Cloudy, new WeatherDescriptor("облачная", "☁️", "🌙", true, false) },
+            { WeatherType.Fog, new WeatherDescriptor("туман", "🌫️", "🌙", false, false) },
+            { WeatherType.Rainy, new WeatherDescriptor("дождь", "🌧️", "🌙", false, true) },
+            { WeatherType.SlightlyRainy, new WeatherDescriptor("небольшой дождь", "💧", "🌙", false, true) },
+            { WeatherType.Snowy, new WeatherDescriptor("снег", "🌨️", "🌙", false, true) },
+            { WeatherType.Shower, new WeatherDescriptor("ливень", "☔", "🌙", false, true) },
+            { WeatherType.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "🌙", false, true) }
         };
 
         // what if there will be another weather code?
-        private static readonly Dictionary<int, Weather> weatherGrouping = new()
+        private static readonly Dictionary<int, WeatherType> weatherGrouping = new()
         {
-            {0, Weather.Sunny },
-            {1, Weather.Sunny },
-            {2, Weather.PartlyCloudy },
-            {3, Weather.Cloudy },
-            {45, Weather.Fog },
-            {51, Weather.Rainy },
-            {53, Weather.Rainy },
-            {55, Weather.Rainy },
-            {61, Weather.SlightlyRainy },
-            {71, Weather.Snowy },
-            {73, Weather.Snowy },
-            {77, Weather.Snowy },
-            {80, Weather.Shower },
-            {81, Weather.Shower },
-            {85, Weather.Snowy },
-            {95, Weather.Thunderstorm }
+            {0, WeatherType.Sunny },
+            {1, WeatherType.Sunny },
+            {2, WeatherType.PartlyCloudy },
+            {3, WeatherType.Cloudy },
+            {45, WeatherType.Fog },
+            {51, WeatherType.Rainy },
+            {53, WeatherType.Rainy },
+            {55, WeatherType.Rainy },
+            {61, WeatherType.SlightlyRainy },
+            {71, WeatherType.Snowy },
+            {73, WeatherType.Snowy },
+            {77, WeatherType.Snowy },
+            {80, WeatherType.Shower },
+            {81, WeatherType.Shower },
+            {85, WeatherType.Snowy },
+            {95, WeatherType.Thunderstorm }
         };
 
         public string GetDescription(int weatherCode)
@@ -44,7 +44,7 @@ namespace WeatherBotDomain
             return GetDescription(GetWeather(weatherCode));
         }
 
-        public string GetDescription(Weather weather)
+        public string GetDescription(WeatherType weather)
         {
             return weatherData[weather].Description;
         }
@@ -54,7 +54,7 @@ namespace WeatherBotDomain
             return GetEmoji(GetWeather(weatherCode), isNight);
         }
 
-        public string GetEmoji(Weather weather, bool isNight = false)
+        public string GetEmoji(WeatherType weather, bool isNight = false)
         {
             return isNight
                 ? weatherData[weather].NightEmoji
@@ -76,13 +76,13 @@ namespace WeatherBotDomain
             return IsPrecipitation(GetWeather(weatherCode));
         }
 
-        public bool IsPrecipitation(Weather weather)
+        public bool IsPrecipitation(WeatherType weather)
         {
             return weatherData[weather].IsPrecipitation;
         }
 
         /// <exception cref="ArgumentException"></exception>
-        public Weather GetWeather(int weatherCode)
+        public WeatherType GetWeather(int weatherCode)
         {
             if (!weatherGrouping.TryGetValue(weatherCode, out var weather))
                 throw new ArgumentException($"Unknown weather code: {weatherCode}");
@@ -111,7 +111,7 @@ namespace WeatherBotDomain
             return result;
         }
 
-        public WeatherReply GetReply(string timePointer,
+        public Reply.WeatherReply GetReply(string timePointer,
             DateTime timeNow,
             int[] weatherCodes,
             double[] temperatures)
@@ -193,7 +193,8 @@ namespace WeatherBotDomain
                             var start = new TimeOnly(p.Value.Item1, 0);
                             var end = new TimeOnly(p.Value.Item2, 0).AddHours(1);
                             return new TimeSegment(start, end);
-                        }).ToArray()
+                        })
+                    .ToArray()
                         ));
 
             var reply = new PrecipitationReply(weatherSegments);

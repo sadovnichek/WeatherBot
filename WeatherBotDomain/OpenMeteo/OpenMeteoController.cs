@@ -3,6 +3,32 @@ using System.Globalization;
 
 namespace WeatherBotDomain.OpenMeteo
 {
+    public abstract class WeatherRequest
+    {
+        public double Latitude { get; init; }
+
+        public double Longitude { get; init; }
+
+        public abstract HttpContent GetValues();
+    }
+
+    public class OpenMeteoWeatherRequest : WeatherRequest
+    {
+        public override HttpContent GetValues()
+        {
+            var values = new Dictionary<string, string>
+            {
+                  { "latitude", Latitude.ToString(CultureInfo.InvariantCulture) },
+                  { "longitude", Longitude.ToString(CultureInfo.InvariantCulture) },
+                  { "daily", "sunrise,sunset" },
+                  { "hourly", "temperature_2m,weather_code" },
+                  { "timezone", "auto" },
+                  { "forecast_days", "2" }
+            };
+            return new FormUrlEncodedContent(values);
+        }
+    }
+
     public class OpenMeteoController : IWeatherApiController
     {
         public readonly HttpClient _client;
@@ -13,10 +39,11 @@ namespace WeatherBotDomain.OpenMeteo
         }
 
         /// <exception cref="JsonException"></exception>
-        public async Task<WeatherDTO?> TrySendRequest()
+        public async Task<WeatherReply?> TrySendRequest()
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress);
-            var content = GetValues();
+            var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
+            var content = request.GetValues();
             httpRequest.Content = content;
 
             var response = await _client.SendAsync(httpRequest);
@@ -30,7 +57,7 @@ namespace WeatherBotDomain.OpenMeteo
                 var sunset = TimeOnly.Parse(parsedJson.DailyData.Sunset[0]);
                 var now = DateTime.UtcNow.AddSeconds(parsedJson.UtcOffsetSeconds);
 
-                return new WeatherDTO()
+                return new WeatherReply()
                 {
                     Sunrise = sunrise,
                     Sunset = sunset,
@@ -46,20 +73,6 @@ namespace WeatherBotDomain.OpenMeteo
                 Console.WriteLine(await content.ReadAsStringAsync());
                 return default;
             }
-        }
-
-        private HttpContent GetValues(double latitude = 56.82, double longitude = 60.55)
-        {
-            var values = new Dictionary<string, string>
-            {
-                  { "latitude", latitude.ToString(CultureInfo.InvariantCulture) },
-                  { "longitude", longitude.ToString(CultureInfo.InvariantCulture) },
-                  { "daily", "sunrise,sunset" },
-                  { "hourly", "temperature_2m,weather_code" },
-                  { "timezone", "auto" },
-                  { "forecast_days", "2" }
-            };
-            return new FormUrlEncodedContent(values);
         }
     }
 }
