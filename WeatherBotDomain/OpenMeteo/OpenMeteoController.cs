@@ -38,7 +38,6 @@ namespace WeatherBotDomain.OpenMeteo
             _client = client;
         }
 
-        /// <exception cref="JsonException"></exception>
         public async Task<WeatherReply?> TrySendRequest()
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress);
