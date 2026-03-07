@@ -180,9 +180,9 @@ namespace WeatherBotDomain
             return "Добрый вечер!";
         }
 
-        public IReply GetPrecipitationForecast(int[] weatherCodes)
+        public IEnumerable<WeatherSegment> GetWeatherSegments(int[] weatherCodes)
         {
-            var weatherSegments = ClassifyItemsByIndex(weatherCodes.Select(GetWeather).ToArray())
+            return ClassifyItemsByIndex(weatherCodes.Select(GetWeather).ToArray())
                     .Where(kv => IsPrecipitation(kv.Key))
                     .GroupBy(kv => kv.Key)
                     .Select(group => new WeatherSegment(
@@ -194,8 +194,12 @@ namespace WeatherBotDomain
                             var end = new TimeOnly(p.Value.Item2, 0).AddHours(1);
                             return new TimeSegment(start, end);
                         })
-                    .ToArray()
-                        ));
+                    .ToArray()));
+        }
+
+        public IReply GetPrecipitationForecast(int[] weatherCodes)
+        {
+            var weatherSegments = GetWeatherSegments(weatherCodes);
 
             var reply = new PrecipitationReply(weatherSegments);
 

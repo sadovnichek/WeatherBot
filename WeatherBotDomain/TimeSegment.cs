@@ -4,10 +4,13 @@
     {
         public string GetStringRepresentation()
         {
-            if (Start.Hour == 0 && Start.Minute == 0)
+            if (Start.Hour == 0 && End.Hour == 0)
+                return $"весь день";
+
+            if (Start.Hour == 0)
                 return $"до {End}";
 
-            if (End.Hour == 0 && End.Minute == 0)
+            if (End.Hour == 0)
                 return $"с {Start}";
 
             return $"с {Start} до {End}";

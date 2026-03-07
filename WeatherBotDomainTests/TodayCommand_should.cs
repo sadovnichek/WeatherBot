@@ -54,5 +54,18 @@ namespace WeatherBotDomainTests
 
             Console.WriteLine(reply.BuildMessage());
         }
+
+        [Test]
+        public void GetReply_ShouldReturnProperTimeSegment_WhenPrecipitationsAllDay()
+        {
+            var weatherCodes = Enumerable.Repeat(51, 24).ToArray();
+
+            var segment = weatherCore.GetWeatherSegments(weatherCodes)
+                .Single()
+                .TimeSegments
+                .Single();
+
+            Assert.That(segment.GetStringRepresentation(), Is.EqualTo("весь день"));
+        }
     }
 }
