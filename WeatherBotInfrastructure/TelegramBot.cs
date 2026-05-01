@@ -20,27 +20,35 @@ namespace BotInfrastructure
 
         public async Task ReceiveAsync(Update update)
         {
-            if (update.Message != null && update.Message.Text != null)
+            try
             {
-                var messageTextTokens = update.Message?.Text?.Split(" ");
-                var command = messageTextTokens?[0].Trim();
-                var args = messageTextTokens?.Skip(1).ToArray();
-
-                if (!botCommands.TryGetValue(command, out var instance))
+                if (update.Message != null && update.Message.Text != null)
                 {
-                    await bot.SendMessage(update.Message.Chat.Id,
-                            "Неизвестная команда",
+                    var messageTextTokens = update.Message?.Text?.Split(" ");
+                    var command = messageTextTokens?[0].Trim();
+                    var args = messageTextTokens?.Skip(1).ToArray();
+
+                    if (!botCommands.TryGetValue(command, out var instance))
+                    {
+                        await bot.SendMessage(update.Message.Chat.Id,
+                                "Неизвестная команда",
+                                Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        return;
+                    }
+
+                    await foreach (var reply in instance.Execute(args))
+                    {
+                        var text = reply.BuildMessage();
+                        await bot.SendMessage(update.Message.Chat.Id,
+                            text,
                             Telegram.Bot.Types.Enums.ParseMode.Markdown);
-                    return;
+                    }
                 }
-
-                await foreach (var reply in instance.Execute(args))
-                {
-                    var text = reply.BuildMessage();
-                    await bot.SendMessage(update.Message.Chat.Id,
-                        text,
-                        Telegram.Bot.Types.Enums.ParseMode.Markdown);
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
         }
     }
