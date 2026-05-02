@@ -82,7 +82,7 @@ namespace WeatherBotDomainTests
             var timeSegment = new TimeSegment(new TimeOnly(10, 24), new TimeOnly(15, 43));
             var strRepresenation = timeSegment.GetStringRepresentation();
 
-            Assert.That(strRepresenation, Is.EqualTo("10:24 - 15:43"));
+            Assert.That(strRepresenation, Is.EqualTo("с 10:24 до 15:43"));
         }
     }
 }
