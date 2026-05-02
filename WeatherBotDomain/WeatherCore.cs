@@ -1,5 +1,5 @@
 ﻿using BotInfrastructure;
-using WeatherBotDomain.Reply;
+using WeatherBotDomain.Replies;
 
 namespace WeatherBotDomain
 {
@@ -111,7 +111,7 @@ namespace WeatherBotDomain
             return result;
         }
 
-        public Reply.WeatherReply GetReply(string timePointer,
+        public Replies.WeatherReply GetReply(string timePointer,
             DateTime timeNow,
             int[] weatherCodes,
             double[] temperatures)
@@ -197,7 +197,7 @@ namespace WeatherBotDomain
                     .ToArray()));
         }
 
-        public IReply GetPrecipitationForecast(int[] weatherCodes)
+        public Reply GetPrecipitationForecast(int[] weatherCodes)
         {
             var weatherSegments = GetWeatherSegments(weatherCodes);
 

@@ -13,13 +13,13 @@ namespace WeatherBotDomain.Commands
 
         public override string Description => "Погода, температура и осадки на завтра";
         
-        protected override IReply GetPrecipitationForecast(WeatherReply dto)
+        protected override Reply GetPrecipitationForecast(WeatherReply dto)
         {
             var weatherCodes = dto.WeatherCodes.Skip(24).Take(24).ToArray();
             return _domain.GetPrecipitationForecast(weatherCodes);
         }
 
-        protected override IReply ProcessResponse(WeatherReply dto)
+        protected override Reply ProcessResponse(WeatherReply dto)
         {
             var temperatures = dto.Temperatures.Skip(24).ToArray();
             var sunriseHour = dto.Sunrise.Hour;

@@ -1,13 +1,13 @@
 ﻿using BotInfrastructure;
 
-namespace WeatherBotDomain.Reply
+namespace WeatherBotDomain.Replies
 {
-    public record DaytimeReply(TimeSegment TimeSegment) : IReply
+    public class DaytimeReply(TimeSegment TimeSegment) : Reply
     {
         private readonly string sunriseEmoji = "☀️";
         private readonly string sunsetEmoji = "🌙";
 
-        public string BuildMessage()
+        public override string BuildMessage()
         {
             return $"Рассвет: {sunriseEmoji} {TimeSegment.Start}\nЗакат: {sunsetEmoji} {TimeSegment.End}";
         }

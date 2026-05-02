@@ -36,12 +36,15 @@ namespace BotInfrastructure
                         return;
                     }
 
-                    await foreach (var reply in instance.Execute(args))
+                    var reply = await instance.Execute(args);
+                 
+                    while (reply != null)
                     {
                         var text = reply.BuildMessage();
                         await bot.SendMessage(update.Message.Chat.Id,
                             text,
                             Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        reply = reply.Next;
                     }
                 }
             }

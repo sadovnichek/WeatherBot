@@ -14,9 +14,9 @@ namespace BotInfrastructure
             _commands = commands;
         }
 
-        public async IAsyncEnumerable<IReply> Execute(string[] args)
+        public async Task<Reply?> Execute(string[] args)
         {
-            yield return new PlainReply(GetHelp());
+            return new PlainReply(GetHelp());
         }
 
         private string GetHelp()

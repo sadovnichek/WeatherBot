@@ -4,6 +4,6 @@
     {
         string Description { get; }
 
-        IAsyncEnumerable<IReply> Execute(string[] args);
+        Task<Reply?> Execute(string[] args);
     }
 }

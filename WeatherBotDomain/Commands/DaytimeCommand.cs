@@ -1,5 +1,5 @@
 ﻿using BotInfrastructure;
-using WeatherBotDomain.Reply;
+using WeatherBotDomain.Replies;
 
 namespace WeatherBotDomain.Commands
 {
@@ -14,16 +14,16 @@ namespace WeatherBotDomain.Commands
             _controller = controller;
         }
 
-        public async IAsyncEnumerable<IReply> Execute(string[] args)
+        public async Task<Reply?> Execute(string[] args)
         {
             var dto = await _controller.TrySendRequest();
 
             if (dto is null)
-                yield break;
+                return null;
 
             var segment = new TimeSegment(dto.Sunrise, dto.Sunset);
 
-            yield return new DaytimeReply(segment);
+            return new DaytimeReply(segment);
         }
     }
 }

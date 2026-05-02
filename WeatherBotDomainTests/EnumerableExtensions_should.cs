@@ -1,6 +1,6 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain;
-using WeatherBotDomain.Reply;
+using WeatherBotDomain.Replies;
 
 namespace WeatherBotDomainTests
 {

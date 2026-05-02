@@ -1,6 +1,6 @@
 ﻿using BotInfrastructure;
 using System.Text.RegularExpressions;
-using WeatherBotDomain.Reply;
+using WeatherBotDomain.Replies;
 
 namespace WeatherBotDomain.Commands
 {
@@ -18,21 +18,20 @@ namespace WeatherBotDomain.Commands
             weatherDomain = domain;
         }
 
-        public async IAsyncEnumerable<IReply> Execute(string[] args)
+        public async Task<Reply?> Execute(string[] args)
         {
             if (!AreArgumentsValid(args))
             {
-                yield return new PlainReply("""
+                return new PlainReply("""
                     Неверные аргументы.
                     Нужно указать два числа - начало и конец временного промежутка от 0 до 23 часов
                     """);
-                yield break;
             }
 
             var dto = await _controller.TrySendRequest();
 
             if (dto is null)
-                yield break;
+                return null;
 
             var startIndex = args.Length > 0 ? int.Parse(args[0]) : 0;
             var endIndex = args.Length > 0 ? int.Parse(args[1]) + 1 : 24;
@@ -49,7 +48,7 @@ namespace WeatherBotDomain.Commands
                 reply.AppendData(data);
             }
 
-            yield return reply;
+            return reply;
         }
 
         private bool AreArgumentsValid(string[] args)

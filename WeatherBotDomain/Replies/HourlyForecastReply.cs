@@ -1,11 +1,11 @@
 ﻿using BotInfrastructure;
 using System.Text;
 
-namespace WeatherBotDomain.Reply
+namespace WeatherBotDomain.Replies
 {
     public record HourlyForecastData(TimeOnly Time, string Emoji, double Temperature);
 
-    public class HourlyForecastReply : IReply
+    public class HourlyForecastReply : Reply
     {
         private List<HourlyForecastData> _data;
 
@@ -24,7 +24,7 @@ namespace WeatherBotDomain.Reply
             _data.Add(data);
         }
 
-        public string BuildMessage()
+        public override string BuildMessage()
         {
             var sb = new StringBuilder();
 

@@ -1,11 +1,18 @@
 ﻿using BotInfrastructure;
 using System.Text;
 
-namespace WeatherBotDomain.Reply
+namespace WeatherBotDomain.Replies
 {
-    public record PrecipitationReply(IEnumerable<WeatherSegment> WeatherSegments) : IReply
+    public class PrecipitationReply : Reply
     {
-        public string BuildMessage()
+        public IEnumerable<WeatherSegment> WeatherSegments { get; }
+
+        public PrecipitationReply(IEnumerable<WeatherSegment> weatherSegments)
+        {
+            WeatherSegments = weatherSegments;
+        }
+
+        public override string BuildMessage()
         {
             if (!WeatherSegments.Any())
                 return "Осадки не ожидаются";

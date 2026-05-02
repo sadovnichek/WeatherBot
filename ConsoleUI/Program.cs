@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using Telegram.Bot.Types;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
 using WeatherBotDomain.OpenMeteo;
@@ -31,9 +32,13 @@ namespace ConsoleUI
             commands.Add("/daytime", new DaytimeCommand(controller));
             commands.Add("/help", new HelpCommand(commands));
 
-            await foreach (var reply in commands["/today"].Execute([]))
+            var reply = await commands["/hourly"].Execute([]);
+
+            while (reply != null)
             {
-                Console.WriteLine(reply.BuildMessage());
+                var text = reply.BuildMessage();
+                Console.WriteLine(text);
+                reply = reply.Next;
             }
         }
     }

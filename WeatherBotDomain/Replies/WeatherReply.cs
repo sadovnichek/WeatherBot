@@ -1,8 +1,8 @@
 ﻿using BotInfrastructure;
 
-namespace WeatherBotDomain.Reply
+namespace WeatherBotDomain.Replies
 {
-    public abstract class WeatherReply : IReply
+    public abstract class WeatherReply : Reply
     {
         public string TimePointer { get; init; }
 
@@ -16,6 +16,6 @@ namespace WeatherBotDomain.Reply
 
         public double MaxTemperature { get; init; }
 
-        public abstract string BuildMessage();
+        public abstract override string BuildMessage();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BotInfrastructure
 {
-    public class PlainReply : IReply
+    public class PlainReply : Reply
     {
         private string _text;
 
@@ -9,7 +9,7 @@
             _text = text;
         }
 
-        public string BuildMessage()
+        public override string BuildMessage()
         {
             return _text;
         }

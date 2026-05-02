@@ -1,5 +1,5 @@
 ﻿using WeatherBotDomain.Commands;
-using WeatherBotDomain.Reply;
+using WeatherBotDomain.Replies;
 
 namespace WeatherBotDomainTests
 {

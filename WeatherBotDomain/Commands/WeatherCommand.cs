@@ -17,19 +17,19 @@ namespace WeatherBotDomain.Commands
             _domain = domain;
         }
 
-        public async IAsyncEnumerable<IReply> Execute(string[] args)
+        public async Task<Reply?> Execute(string[] args)
         {
             var dto = await _controller.TrySendRequest();
 
             if (dto is null)
-                yield break;
+                return null;
 
-            yield return ProcessResponse(dto);
-            yield return GetPrecipitationForecast(dto);
+            return ProcessResponse(dto)
+                .FollowWith(GetPrecipitationForecast(dto));
         }
 
-        protected abstract IReply ProcessResponse(WeatherReply dto);
+        protected abstract Reply ProcessResponse(WeatherReply dto);
 
-        protected abstract IReply GetPrecipitationForecast(WeatherReply dto);
+        protected abstract Reply GetPrecipitationForecast(WeatherReply dto);
     }
 }
