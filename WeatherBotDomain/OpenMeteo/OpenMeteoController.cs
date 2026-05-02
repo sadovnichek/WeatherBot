@@ -47,6 +47,7 @@ namespace WeatherBotDomain.OpenMeteo
 
             var response = await _client.SendAsync(httpRequest);
             var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseContent);
 
             try
             {
