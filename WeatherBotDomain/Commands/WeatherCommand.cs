@@ -28,8 +28,8 @@ namespace WeatherBotDomain.Commands
                 .FollowWith(GetPrecipitationForecast(dto));
         }
 
-        protected abstract Reply ProcessResponse(WeatherReply dto);
+        protected abstract Reply ProcessResponse(WeatherApiResponse dto);
 
-        protected abstract Reply GetPrecipitationForecast(WeatherReply dto);
+        protected abstract Reply GetPrecipitationForecast(WeatherApiResponse dto);
     }
 }

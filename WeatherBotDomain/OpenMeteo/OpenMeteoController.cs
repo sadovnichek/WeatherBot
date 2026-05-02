@@ -38,7 +38,7 @@ namespace WeatherBotDomain.OpenMeteo
             _client = client;
         }
 
-        public async Task<WeatherReply?> TrySendRequest()
+        public async Task<WeatherApiResponse?> TrySendRequest()
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress);
             var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
@@ -47,17 +47,22 @@ namespace WeatherBotDomain.OpenMeteo
 
             var response = await _client.SendAsync(httpRequest);
             var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseContent);
 
             try
             {
                 var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(responseContent);
 
+                if (parsedJson.Error)
+                {
+                    Console.WriteLine(parsedJson.ErrorReason);
+                    return default;
+                }
+
                 var sunrise = TimeOnly.Parse(parsedJson.DailyData.Sunrise[0]);
                 var sunset = TimeOnly.Parse(parsedJson.DailyData.Sunset[0]);
                 var now = DateTime.UtcNow.AddSeconds(parsedJson.UtcOffsetSeconds);
 
-                return new WeatherReply()
+                return new WeatherApiResponse()
                 {
                     Sunrise = sunrise,
                     Sunset = sunset,

@@ -21,5 +21,11 @@ namespace WeatherBotDomain.OpenMeteo
 
         [JsonProperty("daily")]
         public Daily DailyData { get; set; }
+
+        [JsonProperty("error")]
+        public bool Error { get; set; }
+
+        [JsonProperty("reason")]
+        public string ErrorReason { get; set; }
     }
 }
