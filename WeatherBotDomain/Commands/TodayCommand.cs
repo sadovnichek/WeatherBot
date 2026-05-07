@@ -24,7 +24,7 @@ namespace WeatherBotDomain.Commands
             var temperatures = dto.Temperatures.Take(24).ToArray();
             var sunriseHour = dto.Sunrise.Hour;
             var sunsetHour = dto.Sunset.Hour;
-            var weatherCodes = dto.WeatherCodes.Skip(sunriseHour + 1)
+            var weatherCodes = dto.WeatherCodes.Skip(sunriseHour)
                 .Take(sunsetHour - sunriseHour)
                 .ToArray();
 
