@@ -1,23 +1,23 @@
 # Telegram Weather Bot
-This is a Telegram bot that gives user precisely enough weather forecast today, tomorrow and hourly in a human readable format.
+This is a Telegram bot that provides user with precise weather forecast for today, tomorrow and hourly in a human readable format.
 
 ## Available commands
 | Command      | Description                       |
 |--------------|--------------------------------|
-| **/today**    | today forecast |
-| **/tomorrow** | tomorrow forecast |
-| **/hourly**   | hourly today forecast |
+| **/today**    | today's forecast |
+| **/tomorrow** | tomorrow's forecast |
+| **/hourly**   | hourly forecast for today |
 
 ## Details
-- **Written on:** C#  
+- **Written in:** C#  
 - **Platform:** .NET 9  
 - **Deployed on:** [Render](https://render.com/)  
 
-This project is implemented using Domain Driven Design (DDD). Application is devided by several layers, all the dependencies are directed in one direction.
-That makes possible to reuse code. An abstraction system makes possible to change an outer api for retreiving a forecast, just changing a configuration.
+This project is implemented using Domain Driven Design (DDD). Application is divided into several layers, and all dependencies are directed in a single direction.
+That makes possible to reuse code. The abstraction system makes it possible to change the external API for retreiving a forecast, by changing the configuration.
 
 ## Launch
 - Clone repository.
 - Notice that you can launch only the ConsoleUI assembly locally: ```cd ConsoleUI```
-- ```dotnet build```
-- ```dotnet run```
+- Build the project: ```dotnet build```
+- Run the project: ```dotnet run```
