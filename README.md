@@ -1,26 +1,23 @@
 # Telegram Weather Bot
-Телеграм-бот, который предоставляет точный прогноз погоды пользователям в удобном формате. 
-Позволяет получать прогноз на день, на завтра и почасовой прогноз.
+This is a Telegram bot that gives user precisely enough weather forecast today, tomorrow and hourly in a human readable format.
 
-## Доступные команды
-| Команда      | Описание                       |
+## Available commands
+| Command      | Description                       |
 |--------------|--------------------------------|
-| **/today**    | Просмотр прогноза погоды на сегодня |
-| **/tomorrow** | Просмотр прогноза погоды на завтра |
-| **/hourly**   | Просмотр почасового прогноза на сегодня |
+| **/today**    | today forecast |
+| **/tomorrow** | tomorrow forecast |
+| **/hourly**   | hourly today forecast |
 
-## Технические детали
-- **Язык разработки:** C#  
-- **Платформа:** .NET 9  
-- **Хостинг:** [Render](https://render.com/)  
+## Details
+- **Written on:** C#  
+- **Platform:** .NET 9  
+- **Deployed on:** [Render](https://render.com/)  
 
-Проект реализован в стиле Domain Driven Design (DDD) - приложение разделено на несколько слоев, зависимости между которыми направлены в одну сторону.
-Это позволяет переиспользовать написанный ранее код для создания множества Telegram ботов. 
-Удобная система абстракций также позволяет подменять источник данных о погоде, меняя всего одну строку в конфигурации.
+This project is implemented using Domain Driven Design (DDD). Application is devided by several layers, all the dependencies are directed in one direction.
+That makes possible to reuse code. An abstraction system makes possible to change a outer api for retreiving a forecast, just changing a configuration.
 
-## Запуск проекта
-- Клонирование репозитория
-- Локально можно запустить только сборку ConsoleUI: cd ConsoleUI
-- dotnet build
-- dotnet run
-- (опционально) Конфигурация настраивается в файле ConsoleUI/Program.cs
+## Launch
+- Clone repository.
+- Notice that you can launch only the ConsoleUI assembly: ```cd ConsoleUI```
+- ```dotnet build```
+- ```dotnet run```
