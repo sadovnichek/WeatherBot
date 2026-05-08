@@ -32,7 +32,7 @@ namespace ConsoleUI
             commands.Add("/daytime", new DaytimeCommand(controller));
             commands.Add("/help", new HelpCommand(commands));
 
-            var reply = await commands["/tomorrow"].Execute([]);
+            var reply = await commands["/hourly"].Execute([]);
 
             while (reply != null)
             {

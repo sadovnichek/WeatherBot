@@ -111,7 +111,7 @@ namespace WeatherBotDomain
             return result;
         }
 
-        public WeatherReply GetReply(string timePointer,
+        public Replies.WeatherReply GetReply(string timePointer,
             DateTime timeNow,
             int[] weatherCodes,
             double[] temperatures)
@@ -120,7 +120,7 @@ namespace WeatherBotDomain
             var medianTemperatureWithinDay = GetValueRounded(temperatures, xs => xs.Median());
             var minTemperature = GetValueRounded(temperatures, xs => xs.Min());
             var maxTemperature = GetValueRounded(temperatures, xs => xs.Max());
-            var weatherCodesModes = weatherCodes.Mode(1).ToList();
+            var weatherCodesModes = weatherCodes.Mode().ToList();
 
             if (weatherCodesModes.Count == 1)
             {
