@@ -18,7 +18,7 @@ namespace WeatherBotDomain
             { WeatherType.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "🌙", false, true) }
         };
 
-        // what if there will be another weather code?
+        // TODO: what if there will be another weather code?
         private static readonly Dictionary<int, WeatherType> weatherGrouping = new()
         {
             {0, WeatherType.Sunny },
@@ -111,7 +111,7 @@ namespace WeatherBotDomain
             return result;
         }
 
-        public Replies.WeatherReply GetReply(string timePointer,
+        public WeatherReply GetReply(string timePointer,
             DateTime timeNow,
             int[] weatherCodes,
             double[] temperatures)
@@ -120,7 +120,7 @@ namespace WeatherBotDomain
             var medianTemperatureWithinDay = GetValueRounded(temperatures, xs => xs.Median());
             var minTemperature = GetValueRounded(temperatures, xs => xs.Min());
             var maxTemperature = GetValueRounded(temperatures, xs => xs.Max());
-            var weatherCodesModes = weatherCodes.Mode().ToList();
+            var weatherCodesModes = weatherCodes.Mode(1).ToList();
 
             if (weatherCodesModes.Count == 1)
             {
@@ -197,7 +197,7 @@ namespace WeatherBotDomain
                     .ToArray()));
         }
 
-        public Reply GetPrecipitationForecast(int[] weatherCodes)
+        public PrecipitationReply GetPrecipitationForecast(int[] weatherCodes)
         {
             var weatherSegments = GetWeatherSegments(weatherCodes);
 

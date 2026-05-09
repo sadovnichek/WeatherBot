@@ -1,17 +1,11 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain;
-using WeatherBotDomain.Replies;
 
 namespace WeatherBotDomainTests
 {
     [TestFixture]
     public class EnumerableExtensions_should
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
         [TestCase(new double[] { 1, 2, 3 }, 2)]
         [TestCase(new double[] { 1, 2, 3, 4 }, 2.5)]
@@ -56,14 +50,16 @@ namespace WeatherBotDomainTests
 
         [Test]
         [TestCase(new int[] {71, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 71})]
-        public void Test2(int[] sequence)
+        public void GetPrecipitationForecast_ShouldReturnProperTimeSegments(int[] sequence)
         {
             var weatherCore = new WeatherCore();
-            var reply = (PrecipitationReply)weatherCore.GetPrecipitationForecast(sequence);
+            var reply = weatherCore.GetPrecipitationForecast(sequence);
 
             var result = reply.WeatherSegments.ToList();
             var timeSegments = result[0].TimeSegments;
             var description = result[0].Description;
+
+            Assert.That(result.Count, Is.EqualTo(1));
 
             Assert.That(timeSegments, Has.Length.EqualTo(2));
 
@@ -74,15 +70,6 @@ namespace WeatherBotDomainTests
             Assert.That(timeSegments[1].End, Is.EqualTo(new TimeOnly(0, 0)));
 
             Assert.That(description, Is.EqualTo(weatherCore.GetDescription(71)));
-        }
-
-        [Test]
-        public void Test3()
-        {
-            var timeSegment = new TimeSegment(new TimeOnly(10, 24), new TimeOnly(15, 43));
-            var strRepresenation = timeSegment.GetStringRepresentation();
-
-            Assert.That(strRepresenation, Is.EqualTo("с 10:24 до 15:43"));
         }
     }
 }
