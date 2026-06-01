@@ -30,6 +30,7 @@ namespace WeatherBotDomain
             {53, WeatherType.Rainy },
             {55, WeatherType.Rainy },
             {61, WeatherType.SlightlyRainy },
+            {63, WeatherType.Rainy },
             {71, WeatherType.Snowy },
             {73, WeatherType.Snowy },
             {77, WeatherType.Snowy },
