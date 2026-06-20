@@ -18,7 +18,9 @@ namespace WeatherBotDomain.Replies
                 return "Осадки не ожидаются";
 
             var builder = new StringBuilder();
-            builder.Append("Ожидаются осадки:\n");
+            var joinedSegments = TimeSegment.Join(WeatherSegments.SelectMany(x => x.TimeSegments).ToArray())
+                .Select(s => s.GetStringRepresentation());
+            builder.Append($"Ожидаются осадки: { string.Join(',', joinedSegments) }\n");
 
             foreach (var item in WeatherSegments)
             {

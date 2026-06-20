@@ -45,11 +45,10 @@ namespace WeatherBotDomain.OpenMeteo
             var content = request.GetValues();
             httpRequest.Content = content;
 
-            var response = await _client.SendAsync(httpRequest);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
             try
             {
+                var response = await _client.SendAsync(httpRequest);
+                var responseContent = await response.Content.ReadAsStringAsync();
                 var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(responseContent);
 
                 if (parsedJson.Error)
@@ -71,11 +70,18 @@ namespace WeatherBotDomain.OpenMeteo
                     Now = now
                 };
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
                 Console.WriteLine("A problem occured while parsing JSON reply from server");
                 Console.WriteLine("The request was: ");
                 Console.WriteLine(await content.ReadAsStringAsync());
+                Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
+                return default;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine("A problem occured while sending request to server");
+                Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
                 return default;
             }
         }
