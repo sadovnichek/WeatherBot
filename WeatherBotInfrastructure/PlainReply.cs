@@ -13,7 +13,5 @@
         {
             return _text;
         }
-
-        public static PlainReply OnError => new("🛠️ Произошла ошибка. Мы уже занимаемя ее исправлением");
     }
 }
