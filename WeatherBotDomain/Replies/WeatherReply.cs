@@ -6,6 +6,8 @@ namespace WeatherBotDomain.Replies
     {
         public string TimePointer { get; init; }
 
+        public DateTime Date { get; init; }
+
         public string Greeting { get; init; }
 
         public string Emoji { get; init; }

@@ -31,6 +31,7 @@ namespace WeatherBotDomain
             {55, WeatherType.Rainy },
             {61, WeatherType.SlightlyRainy },
             {63, WeatherType.Rainy },
+            {65, WeatherType.Shower },
             {71, WeatherType.Snowy },
             {73, WeatherType.Snowy },
             {77, WeatherType.Snowy },
@@ -139,6 +140,7 @@ namespace WeatherBotDomain
                     MinTemperature = minTemperature,
                     MaxTemperature = maxTemperature,
                     Emoji = emoji,
+                    Date = timeNow
                 };
             }
 
@@ -160,7 +162,8 @@ namespace WeatherBotDomain
                 MaxTemperature = maxTemperature,
                 Emoji = emojies,
                 WeathersWithWording = withWording,
-                WeathersWithoutWording = withoutWording
+                WeathersWithoutWording = withoutWording,
+                Date = timeNow
             };
         }
 

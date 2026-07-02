@@ -20,7 +20,7 @@ namespace WeatherBotDomain.Replies
             var builder = new StringBuilder();
             var joinedSegments = TimeSegment.Join(WeatherSegments.SelectMany(x => x.TimeSegments).ToArray())
                 .Select(s => s.GetStringRepresentation());
-            builder.Append($"Ожидаются осадки: { string.Join(',', joinedSegments) }\n");
+            builder.Append($"Ожидаются осадки: { string.Join(", ", joinedSegments) }\n");
 
             foreach (var item in WeatherSegments)
             {

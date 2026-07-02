@@ -53,7 +53,7 @@ namespace BotInfrastructure
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
                 await bot.SendMessage(update.Message.Chat.Id,
-                    "🛠️ Произошла ошибка.Мы уже занимаемя ее исправлением",
+                    "🛠️ Произошла ошибка. Мы уже занимаемся ее исправлением",
                     Telegram.Bot.Types.Enums.ParseMode.Markdown);
             }
         }

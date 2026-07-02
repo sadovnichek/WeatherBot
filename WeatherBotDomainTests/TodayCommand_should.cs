@@ -24,6 +24,8 @@ namespace WeatherBotDomainTests
 
             var reply = (SimpleWeatherReply)weatherCore.GetReply(timePointer, time, weatherCodes, temperatures);
 
+            var foo = reply.BuildMessage();
+
             Assert.Multiple(() =>
             {
                 Assert.That(reply.Weather, Is.EqualTo("солнечная"));
