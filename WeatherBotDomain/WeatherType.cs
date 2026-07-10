@@ -7,9 +7,12 @@
         Cloudy,
         Rainy,
         Fog,
+        RimeFog,
+        FreezingDrizzle,
         SlightlyRainy,
         Snowy,
         Shower,
-        Thunderstorm
+        Thunderstorm,
+        ThunderstormWithHail
     }
 }

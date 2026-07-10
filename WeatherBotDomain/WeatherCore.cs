@@ -11,11 +11,14 @@ namespace WeatherBotDomain
             { WeatherType.PartlyCloudy, new WeatherDescriptor("переменная облачность", "⛅", "🌙", false, false) },
             { WeatherType.Cloudy, new WeatherDescriptor("облачная", "☁️", "🌙", true, false) },
             { WeatherType.Fog, new WeatherDescriptor("туман", "🌫️", "🌙", false, false) },
+            { WeatherType.RimeFog, new WeatherDescriptor("туман с изморозью", "🌫️", "🌙", false, false) },
             { WeatherType.Rainy, new WeatherDescriptor("дождь", "🌧️", "🌙", false, true) },
             { WeatherType.SlightlyRainy, new WeatherDescriptor("небольшой дождь", "💧", "🌙", false, true) },
+            { WeatherType.FreezingDrizzle, new WeatherDescriptor("ледяной дождь", "❄️", "🌙", false, true) },
             { WeatherType.Snowy, new WeatherDescriptor("снег", "🌨️", "🌙", false, true) },
             { WeatherType.Shower, new WeatherDescriptor("ливень", "☔", "🌙", false, true) },
-            { WeatherType.Thunderstorm, new WeatherDescriptor("гроза", "⛈️", "🌙", false, true) }
+            { WeatherType.Thunderstorm, new WeatherDescriptor("гроза", "🌩️", "🌙", false, true) },
+            { WeatherType.ThunderstormWithHail, new WeatherDescriptor("гроза с градом", "⛈️", "🌙", false, true) }
         };
 
         // TODO: what if there will be another weather code?
@@ -26,19 +29,29 @@ namespace WeatherBotDomain
             {2, WeatherType.PartlyCloudy },
             {3, WeatherType.Cloudy },
             {45, WeatherType.Fog },
-            {51, WeatherType.Rainy },
-            {53, WeatherType.Rainy },
-            {55, WeatherType.Rainy },
+            {48, WeatherType.RimeFog },
+            {51, WeatherType.SlightlyRainy },
+            {53, WeatherType.SlightlyRainy },
+            {55, WeatherType.SlightlyRainy },
+            {56, WeatherType.FreezingDrizzle },
+            {57, WeatherType.FreezingDrizzle },
             {61, WeatherType.SlightlyRainy },
             {63, WeatherType.Rainy },
             {65, WeatherType.Shower },
+            {66, WeatherType.FreezingDrizzle },
+            {67, WeatherType.FreezingDrizzle },
             {71, WeatherType.Snowy },
             {73, WeatherType.Snowy },
+            {75, WeatherType.Snowy },
             {77, WeatherType.Snowy },
             {80, WeatherType.Shower },
             {81, WeatherType.Shower },
+            {82, WeatherType.Shower },
             {85, WeatherType.Snowy },
-            {95, WeatherType.Thunderstorm }
+            {86, WeatherType.Snowy },
+            {95, WeatherType.Thunderstorm },
+            {96, WeatherType.ThunderstormWithHail },
+            {99, WeatherType.ThunderstormWithHail },
         };
 
         public string GetDescription(int weatherCode)
