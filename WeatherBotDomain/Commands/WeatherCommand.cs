@@ -1,25 +1,30 @@
 ﻿using BotInfrastructure;
+using WeatherBotDomain.OpenMeteo;
 
 namespace WeatherBotDomain.Commands
 {
     public abstract class WeatherCommand : ICommand
     {
         private readonly IWeatherApiController _controller;
-
+        private readonly IWeatherApiClient _client;
         protected readonly WeatherCore _domain;
 
         public abstract string Description { get; }
 
         public WeatherCommand(IWeatherApiController controller, 
+            IWeatherApiClient client,
             WeatherCore domain)
         {
             _controller = controller;
             _domain = domain;
+            _client = client;
         }
 
         public async Task<Reply?> Execute(string[] args)
         {
-            var dto = await _controller.TrySendRequest();
+            var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
+            var json = await _client.TrySendRequestAsync(request);
+            var dto = _controller.TryProcessApiResponse(json);
 
             if (dto is null)
                 return null;

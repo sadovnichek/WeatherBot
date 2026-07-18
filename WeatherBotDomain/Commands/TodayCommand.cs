@@ -5,8 +5,9 @@ namespace WeatherBotDomain.Commands
     public class TodayCommand : WeatherCommand
     {
         public TodayCommand(IWeatherApiController controller,
+            IWeatherApiClient client,
             WeatherCore domain)
-            : base(controller, domain)
+            : base(controller, client, domain)
         {
 
         }

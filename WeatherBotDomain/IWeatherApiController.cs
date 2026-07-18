@@ -1,7 +1,14 @@
-﻿namespace WeatherBotDomain
+﻿using WeatherBotDomain.OpenMeteo;
+
+namespace WeatherBotDomain
 {
     public interface IWeatherApiController
     {
-        Task<WeatherApiResponse?> TrySendRequest();
+        WeatherApiResponse? TryProcessApiResponse(string json);
+    }
+
+    public interface IWeatherApiClient
+    {
+        Task<string> TrySendRequestAsync(WeatherRequest request);
     }
 }

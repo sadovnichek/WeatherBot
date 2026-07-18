@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using System.Text.RegularExpressions;
+using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
 
 namespace WeatherBotDomain.Commands
@@ -7,15 +8,17 @@ namespace WeatherBotDomain.Commands
     public class HourlyCommand : ICommand
     {
         private readonly IWeatherApiController _controller;
+        private readonly IWeatherApiClient _client;
         private readonly WeatherCore weatherDomain;
 
         public string Description => "Погода и температура на каждый час сегодня";
 
-        public HourlyCommand(IWeatherApiController controller,
+        public HourlyCommand(IWeatherApiController controller, IWeatherApiClient client,
             WeatherCore domain)
         {
             _controller = controller;
             weatherDomain = domain;
+            _client = client;
         }
 
         public async Task<Reply?> Execute(string[] args)
@@ -28,7 +31,9 @@ namespace WeatherBotDomain.Commands
                     """);
             }
 
-            var dto = await _controller.TrySendRequest();
+            var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
+            var json = await _client.TrySendRequestAsync(request);
+            var dto = _controller.TryProcessApiResponse(json);
 
             if (dto is null)
                 return null;

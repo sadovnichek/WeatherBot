@@ -31,29 +31,15 @@ namespace WeatherBotDomain.OpenMeteo
 
     public class OpenMeteoController : IWeatherApiController
     {
-        public readonly HttpClient _client;
-
-        public OpenMeteoController(HttpClient client)
+        public WeatherApiResponse? TryProcessApiResponse(string json)
         {
-            _client = client;
-        }
-
-        public async Task<WeatherApiResponse?> TrySendRequest()
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress);
-            var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
-            var content = request.GetValues();
-            httpRequest.Content = content;
-
             try
             {
-                var response = await _client.SendAsync(httpRequest);
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(responseContent);
+                var parsedJson = JsonConvert.DeserializeObject<OpenMeteoResponse>(json);
 
-                if (parsedJson.Error)
+                if (parsedJson == null || parsedJson.Error)
                 {
-                    Console.WriteLine(parsedJson.ErrorReason);
+                    Console.WriteLine(parsedJson?.ErrorReason);
                     return default;
                 }
 
@@ -70,20 +56,29 @@ namespace WeatherBotDomain.OpenMeteo
                     Now = now
                 };
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("A problem occured while parsing JSON reply from server");
-                Console.WriteLine("The request was: ");
-                Console.WriteLine(await content.ReadAsStringAsync());
                 Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
                 return default;
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine("A problem occured while sending request to server");
-                Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
-                return default;
-            }
+        }
+    }
+
+    public class WeatherApiClient : IWeatherApiClient
+    {
+        private readonly HttpClient _client;
+
+        public WeatherApiClient(HttpClient client)
+        {
+            _client = client;
+        }
+
+        public async Task<string> TrySendRequestAsync(WeatherRequest request)
+        {
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress);
+            httpRequest.Content = request.GetValues();
+            var response = await _client.SendAsync(httpRequest);
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

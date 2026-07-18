@@ -4,9 +4,10 @@ namespace WeatherBotDomain.Commands
 {
     public class TomorrowCommand : WeatherCommand
     {
-        public TomorrowCommand(IWeatherApiController controller, 
+        public TomorrowCommand(IWeatherApiController controller,
+            IWeatherApiClient client,
             WeatherCore domain)
-            : base(controller, domain)
+            : base(controller, client, domain)
         {
 
         }

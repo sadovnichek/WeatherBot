@@ -1,9 +1,13 @@
-﻿using WeatherBotDomain;
+﻿using FakeItEasy;
+using Newtonsoft.Json;
+using WeatherBotDomain;
+using WeatherBotDomain.Commands;
+using WeatherBotDomain.OpenMeteo;
 
 namespace WeatherBotDomainTests
 {
     [TestFixture]
-    public class TimeSegmnet_shouldcs
+    public class TimeSegmnet_should
     {
         [Test]
         public void Test1()
@@ -16,6 +20,20 @@ namespace WeatherBotDomainTests
             var t6 = new TimeSegment(new TimeOnly(12, 0), new TimeOnly(14, 0));
 
             var result = TimeSegment.Join(new[] { t1, t2, t3, t4, t5, t6 }).ToList();
+        }
+
+        [Test]
+        public async Task Test2()
+        {
+            var domain = new WeatherCore();
+            var controller = new OpenMeteoController();
+
+            var client = A.Fake<IWeatherApiClient>();
+            A.CallTo(() => client.TrySendRequestAsync(A<OpenMeteoWeatherRequest>.Ignored)).Returns(Resources.json);
+
+            var command = new TomorrowCommand(controller, client, domain);
+
+            var result = await command.Execute([]);
         }
     }
 }
