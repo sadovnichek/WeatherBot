@@ -11,6 +11,15 @@ namespace WeatherBotDomain.OpenMeteo
         public string[] Sunset { get; set; }
     }
 
+    public class Hourly
+    {
+        [JsonProperty("temperature_2m")]
+        public double[] TemperaturePoints { get; set; }
+
+        [JsonProperty("weather_code")]
+        public int[] WeatherCodes { get; set; }
+    }
+
     public class OpenMeteoResponse
     {
         [JsonProperty("utc_offset_seconds")]

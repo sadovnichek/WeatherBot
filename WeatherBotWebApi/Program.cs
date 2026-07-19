@@ -16,21 +16,22 @@ var handler = new HttpClientHandler()
     UseProxy = false,
 };
 
-using var client = new HttpClient(handler)
+using var httpClient = new HttpClient(handler)
 {
     BaseAddress = new Uri("https://api.open-meteo.com/v1/forecast")
 };
 
 var domain = new WeatherCore();
 
-var controller = new OpenMeteoController(client);
+var apiClient = new WeatherApiClient(httpClient);
+var controller = new OpenMeteoController();
 
 var commands = new Dictionary<string, ICommand>();
 commands.Add("/start", new StartCommand());
-commands.Add("/today", new TodayCommand(controller, domain));
-commands.Add("/tomorrow", new TomorrowCommand(controller, domain));
-commands.Add("/hourly", new HourlyCommand(controller, domain));
-commands.Add("/daytime", new DaytimeCommand(controller));
+commands.Add("/today", new TodayCommand(controller, apiClient, domain));
+commands.Add("/tomorrow", new TomorrowCommand(controller, apiClient, domain));
+commands.Add("/hourly", new HourlyCommand(controller, apiClient, domain));
+commands.Add("/daytime", new DaytimeCommand(controller, apiClient));
 commands.Add("/help", new HelpCommand(commands));
 
 var bot = new TelegramBot(commands, token);

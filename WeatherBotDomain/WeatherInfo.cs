@@ -1,6 +1,6 @@
 ﻿namespace WeatherBotDomain
 {
-    public class WeatherApiResponse
+    public class WeatherInfo
     {
         public DateTime Now { get; init; }
 

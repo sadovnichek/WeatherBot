@@ -3,35 +3,9 @@ using System.Globalization;
 
 namespace WeatherBotDomain.OpenMeteo
 {
-    public abstract class WeatherRequest
-    {
-        public double Latitude { get; init; }
-
-        public double Longitude { get; init; }
-
-        public abstract HttpContent GetValues();
-    }
-
-    public class OpenMeteoWeatherRequest : WeatherRequest
-    {
-        public override HttpContent GetValues()
-        {
-            var values = new Dictionary<string, string>
-            {
-                  { "latitude", Latitude.ToString(CultureInfo.InvariantCulture) },
-                  { "longitude", Longitude.ToString(CultureInfo.InvariantCulture) },
-                  { "daily", "sunrise,sunset" },
-                  { "hourly", "temperature_2m,weather_code" },
-                  { "timezone", "auto" },
-                  { "forecast_days", "2" }
-            };
-            return new FormUrlEncodedContent(values);
-        }
-    }
-
     public class OpenMeteoController : IWeatherApiController
     {
-        public WeatherApiResponse? TryProcessApiResponse(string json)
+        public WeatherInfo? TryProcessApiResponse(string json)
         {
             try
             {
@@ -47,7 +21,7 @@ namespace WeatherBotDomain.OpenMeteo
                 var sunset = TimeOnly.Parse(parsedJson.DailyData.Sunset[0]);
                 var now = DateTime.UtcNow.AddSeconds(parsedJson.UtcOffsetSeconds);
 
-                return new WeatherApiResponse()
+                return new WeatherInfo()
                 {
                     Sunrise = sunrise,
                     Sunset = sunset,
@@ -61,24 +35,6 @@ namespace WeatherBotDomain.OpenMeteo
                 Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
                 return default;
             }
-        }
-    }
-
-    public class WeatherApiClient : IWeatherApiClient
-    {
-        private readonly HttpClient _client;
-
-        public WeatherApiClient(HttpClient client)
-        {
-            _client = client;
-        }
-
-        public async Task<string> TrySendRequestAsync(WeatherRequest request)
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, _client.BaseAddress);
-            httpRequest.Content = request.GetValues();
-            var response = await _client.SendAsync(httpRequest);
-            return await response.Content.ReadAsStringAsync();
         }
     }
 }

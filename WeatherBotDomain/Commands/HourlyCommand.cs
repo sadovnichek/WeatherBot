@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using System.Text.RegularExpressions;
+using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
 
