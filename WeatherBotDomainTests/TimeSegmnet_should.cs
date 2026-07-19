@@ -1,6 +1,7 @@
 ﻿using FakeItEasy;
 using Newtonsoft.Json;
 using WeatherBotDomain;
+using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.Commands;
 using WeatherBotDomain.OpenMeteo;
 

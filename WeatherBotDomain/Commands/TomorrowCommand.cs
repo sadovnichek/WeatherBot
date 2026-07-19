@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using WeatherBotDomain.Abstractions;
 
 namespace WeatherBotDomain.Commands
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherBotDomain.OpenMeteo
+namespace WeatherBotDomain.Abstractions
 {
     public abstract class WeatherRequest
     {
