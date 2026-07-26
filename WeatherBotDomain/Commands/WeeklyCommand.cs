@@ -18,7 +18,7 @@ namespace WeatherBotDomain.Commands
         private readonly IWeatherApiController _controller;
         private readonly WeatherCore _domain;
 
-        public string Description => throw new NotImplementedException();
+        public string Description => "прогноз погоды на неделю";
 
         public WeeklyCommand(IWeatherApiClient client,
             IWeatherApiController controller,
