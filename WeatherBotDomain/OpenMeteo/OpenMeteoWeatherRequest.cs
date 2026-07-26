@@ -19,7 +19,7 @@ namespace WeatherBotDomain.OpenMeteo
                   { "daily", "sunrise,sunset" },
                   { "hourly", "temperature_2m,weather_code" },
                   { "timezone", "auto" },
-                  { "forecast_days", "2" }
+                  { "forecast_days", ForecastDays.ToString() }
             };
             return new FormUrlEncodedContent(values);
         }

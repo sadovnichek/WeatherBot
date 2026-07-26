@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Globalization;
 using WeatherBotDomain.Abstractions;
 
 namespace WeatherBotDomain.OpenMeteo
@@ -21,14 +20,16 @@ namespace WeatherBotDomain.OpenMeteo
                 var sunrise = TimeOnly.Parse(parsedJson.DailyData.Sunrise[0]);
                 var sunset = TimeOnly.Parse(parsedJson.DailyData.Sunset[0]);
                 var now = DateTime.UtcNow.AddSeconds(parsedJson.UtcOffsetSeconds);
+                var forecastHours = parsedJson.Hourly.Timestamps.Select(DateTime.Parse).ToArray();
 
                 return new WeatherInfo()
                 {
                     Sunrise = sunrise,
                     Sunset = sunset,
-                    Temperatures = parsedJson.WeatherData.TemperaturePoints,
-                    WeatherCodes = parsedJson.WeatherData.WeatherCodes,
-                    Now = now
+                    Temperatures = parsedJson.Hourly.TemperaturePoints,
+                    WeatherCodes = parsedJson.Hourly.WeatherCodes,
+                    Now = now,
+                    ForecastHours = forecastHours
                 };
             }
             catch (Exception ex)

@@ -18,6 +18,9 @@ namespace WeatherBotDomain.OpenMeteo
 
         [JsonProperty("weather_code")]
         public int[] WeatherCodes { get; set; }
+
+        [JsonProperty("time")]
+        public string[] Timestamps { get; set; }
     }
 
     public class OpenMeteoResponse
@@ -26,7 +29,7 @@ namespace WeatherBotDomain.OpenMeteo
         public int UtcOffsetSeconds { get; set; }
 
         [JsonProperty("hourly")]
-        public Hourly WeatherData { get; set; }
+        public Hourly Hourly { get; set; }
 
         [JsonProperty("daily")]
         public Daily DailyData { get; set; }

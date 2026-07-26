@@ -4,6 +4,8 @@
     {
         public DateTime Now { get; init; }
 
+        public DateTime[] ForecastHours { get; init; }
+
         public TimeOnly Sunrise { get; init; }
 
         public TimeOnly Sunset { get; init; }

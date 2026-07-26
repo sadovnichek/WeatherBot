@@ -10,8 +10,8 @@
         {
             var wording = IsWordingNeeded ? " погода" : string.Empty;
             return $"{Greeting} {TimePointer} ожидается, в основном, *{Weather}{wording}* {Emoji}\n" +
-                        $"Средняя температура днем: *{MedianTemperature}°C*.\n" +
-                        $"Перепады температур в течении суток с *{MinTemperature}°C* до *{MaxTemperature}°C*";
+                        $"Средняя температура днем: *{Format.Temperature(MedianTemperature)}*.\n" +
+                        $"Перепады температур в течении суток с *{Format.Temperature(MinTemperature)}* до *{Format.Temperature(MaxTemperature)}*";
         }
     }
 }

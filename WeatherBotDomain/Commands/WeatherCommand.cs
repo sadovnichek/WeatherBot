@@ -23,7 +23,12 @@ namespace WeatherBotDomain.Commands
 
         public async Task<Reply?> Execute(string[] args)
         {
-            var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
+            var request = new OpenMeteoWeatherRequest() 
+            { 
+                Latitude = 56.82, 
+                Longitude = 60.55,
+                ForecastDays = 2
+            };
             var json = await _client.TrySendRequestAsync(request);
             var dto = _controller.TryProcessApiResponse(json);
 

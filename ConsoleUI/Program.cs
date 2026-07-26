@@ -30,9 +30,11 @@ namespace ConsoleUI
             commands.Add("/tomorrow", new TomorrowCommand(controller, client, domain));
             commands.Add("/hourly", new HourlyCommand(controller, client, domain));
             commands.Add("/daytime", new DaytimeCommand(controller, client));
+            commands.Add("/weekly", new WeeklyCommand(client, controller, domain));
+
             commands.Add("/help", new HelpCommand(commands));
 
-            var reply = await commands["/tomorrow"].Execute([]);
+            var reply = await commands["/weekly"].Execute([]);
 
             while (reply != null)
             {

@@ -131,9 +131,9 @@ namespace WeatherBotDomain
             double[] temperatures)
         {
             var greeting = GetGreeting(timeNow);
-            var medianTemperatureWithinDay = GetValueRounded(temperatures, xs => xs.Median());
-            var minTemperature = GetValueRounded(temperatures, xs => xs.Min());
-            var maxTemperature = GetValueRounded(temperatures, xs => xs.Max());
+            var medianTemperatureWithinDay = temperatures.Median();
+            var minTemperature = temperatures.Min();
+            var maxTemperature = temperatures.Max();
             var weatherCodesModes = weatherCodes.Mode(1).ToList();
 
             if (weatherCodesModes.Count == 1)
@@ -177,11 +177,6 @@ namespace WeatherBotDomain
                 WeathersWithoutWording = withoutWording,
                 Date = timeNow
             };
-        }
-
-        private double GetValueRounded(double[] values, Func<double[], double> func, int digits = 1)
-        {
-            return Math.Round(func(values), digits);
         }
 
         private string GetGreeting(DateTime time)

@@ -14,11 +14,6 @@ namespace WeatherBotDomain.Replies
             _data = new List<HourlyForecastData>();
         }
 
-        public HourlyForecastReply(List<HourlyForecastData> data)
-        {
-            _data = data;
-        }
-
         public void AppendData(HourlyForecastData data)
         {
             _data.Add(data);
@@ -34,7 +29,7 @@ namespace WeatherBotDomain.Replies
                   .Append(' ')
                   .Append(item.Emoji)
                   .Append(' ')
-                  .Append($"{item.Temperature}°C\n");
+                  .Append($"{Format.Temperature(item.Temperature)}\n");
             }
 
             return sb.ToString();

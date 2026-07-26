@@ -12,6 +12,8 @@ namespace WeatherBotDomain.Abstractions
 
         public double Longitude { get; init; }
 
+        public int ForecastDays { get; init; }
+
         public abstract HttpContent GetValues();
     }
 }

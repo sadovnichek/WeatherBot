@@ -26,13 +26,19 @@ namespace WeatherBotDomain.Commands
         {
             if (!AreArgumentsValid(args))
             {
-                return new PlainReply("""
+                return new PlainReply(
+                    """
                     Неверные аргументы.
                     Нужно указать два числа - начало и конец временного промежутка от 0 до 23 часов
                     """);
             }
 
-            var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
+            var request = new OpenMeteoWeatherRequest() 
+            { 
+                Latitude = 56.82, 
+                Longitude = 60.55,
+                ForecastDays = 1
+            };
             var json = await _client.TrySendRequestAsync(request);
             var dto = _controller.TryProcessApiResponse(json);
 
