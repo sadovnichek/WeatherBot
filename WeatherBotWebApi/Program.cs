@@ -32,6 +32,7 @@ commands.Add("/today", new TodayCommand(controller, apiClient, domain));
 commands.Add("/tomorrow", new TomorrowCommand(controller, apiClient, domain));
 commands.Add("/hourly", new HourlyCommand(controller, apiClient, domain));
 commands.Add("/daytime", new DaytimeCommand(controller, apiClient));
+commands.Add("/weekly", new WeeklyCommand(apiClient, controller, domain));
 commands.Add("/help", new HelpCommand(commands));
 
 var bot = new TelegramBot(commands, token);
