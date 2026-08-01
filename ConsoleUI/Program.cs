@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using System.Net;
+using System.Globalization;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
 using WeatherBotDomain.OpenMeteo;
@@ -14,6 +15,7 @@ namespace ConsoleUI
             {
                 BypassProxyOnLocal = false
             };
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
 
             var handler = new HttpClientHandler()
             {
@@ -41,7 +43,7 @@ namespace ConsoleUI
 
             commands.Add("/help", new HelpCommand(commands));
 
-            var reply = await commands["/today"].Execute([]);
+            var reply = await commands["/weekly"].Execute(["56.82", "60.55"]);
 
             while (reply != null)
             {

@@ -11,6 +11,8 @@
             _commands = commands;
         }
 
+        public bool AreArgumentsValid(string[] args) => true;
+
         public async Task<Reply?> Execute(string[] args)
         {
             return new PlainReply(GetHelp());

@@ -25,8 +25,8 @@ namespace WeatherBotDomain.Commands
         {
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Latitude = 56.82, 
-                Longitude = 60.55,
+                Latitude = double.Parse(args[0]), 
+                Longitude = double.Parse(args[1]),
                 ForecastDays = 2
             };
 
@@ -43,5 +43,17 @@ namespace WeatherBotDomain.Commands
         protected abstract Reply ProcessResponse(WeatherInfo dto);
 
         protected abstract Reply GetPrecipitationForecast(WeatherInfo dto);
+
+        public bool AreArgumentsValid(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                return true;
+            }
+
+            return args.Length == 2
+                && double.TryParse(args[0], out _)
+                && double.TryParse(args[1], out _);
+        }
     }
 }

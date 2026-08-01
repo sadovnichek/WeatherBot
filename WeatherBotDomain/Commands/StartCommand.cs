@@ -6,6 +6,8 @@ namespace WeatherBotDomain.Commands
     {
         public string Description => "начать работу с ботом";
 
+        public bool AreArgumentsValid(string[] args) => true;
+
         public async Task<Reply?> Execute(string[] args)
         {
             return new PlainReply("""

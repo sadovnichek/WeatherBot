@@ -22,10 +22,11 @@ namespace WeatherBotDomain.Commands
         {
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Latitude = 56.82, 
-                Longitude = 60.55,
+                Latitude = double.Parse(args[0]), 
+                Longitude = double.Parse(args[1]),
                 ForecastDays = 1
             };
+
             var json = await _client.TrySendRequestAsync(request);
             var dto = _controller.TryProcessApiResponse(json);
 
@@ -36,5 +37,7 @@ namespace WeatherBotDomain.Commands
 
             return new DaytimeReply(segment);
         }
+
+        public bool AreArgumentsValid(string[] args) => true;
     }
 }

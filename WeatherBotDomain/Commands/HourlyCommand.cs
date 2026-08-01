@@ -24,19 +24,10 @@ namespace WeatherBotDomain.Commands
 
         public async Task<Reply?> Execute(string[] args)
         {
-            if (!AreArgumentsValid(args))
-            {
-                return new PlainReply(
-                    """
-                    Неверные аргументы.
-                    Нужно указать два числа - начало и конец временного промежутка от 0 до 23 часов
-                    """);
-            }
-
             var request = new OpenMeteoWeatherRequest() 
-            { 
-                Latitude = 56.82, 
-                Longitude = 60.55,
+            {
+                Latitude = double.Parse(args[0]),
+                Longitude = double.Parse(args[1]),
                 ForecastDays = 1
             };
 
@@ -64,7 +55,7 @@ namespace WeatherBotDomain.Commands
             return reply;
         }
 
-        private bool AreArgumentsValid(string[] args)
+        public bool AreArgumentsValid(string[] args)
         {
             if (args.Length == 0)
                 return true;

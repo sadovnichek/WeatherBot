@@ -22,17 +22,24 @@ namespace BotInfrastructure
         {
             try
             {
-                if (update.Message != null && update.Message.Text != null)
+                if (update != null && update.Message != null 
+                    && update.Message.Text != null
+                    && update.Message.Chat != null)
                 {
                     var messageTextTokens = update.Message?.Text?.Split(" ");
                     var command = messageTextTokens?[0].Trim();
                     var args = messageTextTokens?.Skip(1).ToArray();
+                    var chatId = update.Message.Chat.Id;
 
                     if (!botCommands.TryGetValue(command, out var instance))
                     {
-                        await bot.SendMessage(update.Message.Chat.Id,
-                                "Неизвестная команда",
-                                Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        await SendMessage(chatId, "Неизвестная команда");
+                        return;
+                    }
+
+                    if (!instance.AreArgumentsValid(args))
+                    {
+                        await SendMessage(chatId, "Неверные аргументы");
                         return;
                     }
 
@@ -41,9 +48,7 @@ namespace BotInfrastructure
                     while (reply != null)
                     {
                         var text = reply.BuildMessage();
-                        await bot.SendMessage(update.Message.Chat.Id,
-                            text,
-                            Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        await SendMessage(chatId, text);
                         reply = reply.Next;
                     }
 
@@ -56,10 +61,16 @@ namespace BotInfrastructure
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
-                await bot.SendMessage(update.Message.Chat.Id,
-                    PlainReply.OnError().BuildMessage(),
-                    Telegram.Bot.Types.Enums.ParseMode.Markdown);
+
+                await SendMessage(update.Message.Chat.Id, PlainReply.OnError().BuildMessage());
             }
+        }
+
+        private async Task SendMessage(long chatId, string message)
+        {
+            await bot.SendMessage(chatId,
+                    message,
+                    Telegram.Bot.Types.Enums.ParseMode.Markdown);
         }
     }
 }

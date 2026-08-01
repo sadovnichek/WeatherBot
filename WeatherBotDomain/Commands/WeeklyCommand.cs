@@ -26,10 +26,15 @@ namespace WeatherBotDomain.Commands
 
         public async Task<Reply?> Execute(string[] args)
         {
+            if (!AreArgumentsValid(args))
+                return new PlainReply("Неверные аргументы");
+
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Latitude = 56.82, 
-                Longitude = 60.55,
+                //Latitude = 56.82, 
+                //Longitude = 60.55,
+                Latitude = double.Parse(args[0]),
+                Longitude = double.Parse(args[1]),
                 ForecastDays = 7
             };
 
@@ -42,6 +47,18 @@ namespace WeatherBotDomain.Commands
             var aggregatedData = AggregateData(dto).ToList();
 
             return new WeeklyReply(aggregatedData);
+        }
+
+        public bool AreArgumentsValid(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                return true;
+            }
+
+            return args.Length == 2
+                && double.TryParse(args[0], out _)
+                && double.TryParse(args[1], out _);
         }
 
         private IEnumerable<DailyWeatherData> AggregateData(WeatherInfo dto)
