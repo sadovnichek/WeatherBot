@@ -50,7 +50,7 @@ namespace WeatherBotDomain.Commands
         {
             var weatherCodes = dto.WeatherCodes
                 .Chunk(24)
-                .Select(d => d.Mode().Select(x => _domain.GetEmoji(x)))
+                .Select(d => d.Mode(1).Select(x => _domain.GetEmoji(x)))
                 .ToArray();
             var dates = dto.ForecastHours
                 .Chunk(24)
