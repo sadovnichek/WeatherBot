@@ -24,7 +24,7 @@ namespace WeatherBotDomain.Replies
             foreach(var item in AggregatedData)
             {
                 var emojies = string.Join("", item.Weather);
-                builder.Append($"{item.Date} {emojies} {Format.Temperature(item.MedianTemperature)}\n");
+                builder.Append($"{item.Date.ToString("dd.MM")} {emojies} {Format.Temperature(item.MedianTemperature)}\n");
             }
 
             return builder.ToString();
