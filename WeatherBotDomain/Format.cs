@@ -10,7 +10,7 @@ namespace WeatherBotDomain
     {
         public static string Temperature(double temperature)
         {
-            return $"{Math.Round(temperature, 2)}°C";
+            return $"{Math.Round(temperature, 1)}°C";
         }
     }
 }
