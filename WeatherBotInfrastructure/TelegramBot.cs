@@ -47,8 +47,8 @@ namespace BotInfrastructure
                         reply = reply.Next;
                     }
 
-                    Console.WriteLine($"Username: {update.Message.Chat.Username}\n" +
-                        $"{update.Message.Chat.FirstName} {update.Message.Chat.LastName}\n" +
+                    Console.WriteLine($"Username: {update.Message.Chat.Username} " +
+                        $"First name: {update.Message.Chat.FirstName} Last name: {update.Message.Chat.LastName} " +
                         $"Request: {update.Message.Text}");
                 }
             }
