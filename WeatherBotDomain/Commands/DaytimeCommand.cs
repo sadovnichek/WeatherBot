@@ -18,14 +18,14 @@ namespace WeatherBotDomain.Commands
             _client = client;
         }
 
-        public async Task<Reply?> Execute(string[] args)
+        public async Task<Reply> Execute(string[] args)
         {
             var request = new OpenMeteoWeatherRequest() { Latitude = 56.82, Longitude = 60.55 };
             var json = await _client.TrySendRequestAsync(request);
             var dto = _controller.TryProcessApiResponse(json);
 
             if (dto is null)
-                return null;
+                return PlainReply.OnError();
 
             var segment = new TimeSegment(dto.Sunrise, dto.Sunset);
 

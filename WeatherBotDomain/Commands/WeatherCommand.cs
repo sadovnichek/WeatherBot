@@ -33,7 +33,7 @@ namespace WeatherBotDomain.Commands
             var dto = _controller.TryProcessApiResponse(json);
 
             if (dto is null)
-                return null;
+                return PlainReply.OnError();
 
             return ProcessResponse(dto)
                 .FollowWith(GetPrecipitationForecast(dto));

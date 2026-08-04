@@ -46,6 +46,10 @@ namespace BotInfrastructure
                             Telegram.Bot.Types.Enums.ParseMode.Markdown);
                         reply = reply.Next;
                     }
+
+                    Console.WriteLine($"Username: {update.Message.Chat.Username}\n" +
+                        $"{update.Message.Chat.FirstName} {update.Message.Chat.LastName}\n" +
+                        $"Request: {update.Message.Text}");
                 }
             }
             catch (Exception ex)
@@ -53,7 +57,7 @@ namespace BotInfrastructure
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
                 await bot.SendMessage(update.Message.Chat.Id,
-                    "🛠️ Произошла ошибка. Мы уже занимаемся ее исправлением",
+                    PlainReply.OnError().BuildMessage(),
                     Telegram.Bot.Types.Enums.ParseMode.Markdown);
             }
         }

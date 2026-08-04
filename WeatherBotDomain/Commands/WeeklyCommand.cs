@@ -41,6 +41,9 @@ namespace WeatherBotDomain.Commands
             var json = await _client.TrySendRequestAsync(request);
             var dto = _controller.TryProcessApiResponse(json);
 
+            if (dto is null)
+                return PlainReply.OnError();
+
             var aggregatedData = AggregateData(dto).ToList();
 
             return new WeeklyReply(aggregatedData);

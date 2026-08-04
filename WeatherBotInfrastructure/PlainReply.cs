@@ -13,5 +13,8 @@
         {
             return _text;
         }
+
+        public static Reply OnError()
+            => new PlainReply("🛠️ Произошла ошибка. Мы уже занимаемся ее исправлением");
     }
 }

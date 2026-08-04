@@ -43,7 +43,7 @@ namespace WeatherBotDomain.Commands
             var dto = _controller.TryProcessApiResponse(json);
 
             if (dto is null)
-                return null;
+                return PlainReply.OnError(); ;
 
             var startIndex = args.Length > 0 ? int.Parse(args[0]) : 0;
             var endIndex = args.Length > 0 ? int.Parse(args[1]) + 1 : 24;
