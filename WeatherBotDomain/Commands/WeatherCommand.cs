@@ -1,6 +1,7 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.OpenMeteo;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
@@ -8,25 +9,32 @@ namespace WeatherBotDomain.Commands
     {
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
+        private readonly CoordinateArgumentResolver _coordinateArgumentResolver;
         protected readonly WeatherCore _domain;
 
         public abstract string Description { get; }
 
         public WeatherCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
-            WeatherCore domain)
+            WeatherCore domain,
+            CoordinateArgumentResolver coordinateArgumentResolver)
         {
             _controller = controller;
             _domain = domain;
             _client = client;
+            _coordinateArgumentResolver = coordinateArgumentResolver;
         }
 
         public async Task<Reply?> Execute(string[] args)
         {
+            if (!_coordinateArgumentResolver.TryGetCoordinates(args, out var coordinates, out var message))
+            {
+                return new PlainReply(message);
+            }
+
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Latitude = double.Parse(args[0]), 
-                Longitude = double.Parse(args[1]),
+                Coordinates = coordinates,
                 ForecastDays = 2
             };
 
@@ -43,17 +51,5 @@ namespace WeatherBotDomain.Commands
         protected abstract Reply ProcessResponse(WeatherInfo dto);
 
         protected abstract Reply GetPrecipitationForecast(WeatherInfo dto);
-
-        public bool AreArgumentsValid(string[] args)
-        {
-            if (args.Length == 0)
-            {
-                return true;
-            }
-
-            return args.Length == 2
-                && double.TryParse(args[0], out _)
-                && double.TryParse(args[1], out _);
-        }
     }
 }

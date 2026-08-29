@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
@@ -7,8 +8,9 @@ namespace WeatherBotDomain.Commands
     {
         public TodayCommand(IWeatherApiController controller,
             IWeatherApiClient client,
-            WeatherCore domain)
-            : base(controller, client, domain)
+            WeatherCore domain,
+            CoordinateArgumentResolver coordinateArgumentResolver)
+            : base(controller, client, domain, coordinateArgumentResolver)
         {
 
         }

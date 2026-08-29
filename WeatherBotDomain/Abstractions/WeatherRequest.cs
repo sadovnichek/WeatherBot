@@ -1,10 +1,10 @@
-﻿namespace WeatherBotDomain.Abstractions
+using WeatherBotDomain.Services;
+
+namespace WeatherBotDomain.Abstractions
 {
     public abstract class WeatherRequest
     {
-        public double Latitude { get; init; }
-
-        public double Longitude { get; init; }
+        public Coordinates Coordinates { get; init; }
 
         public int ForecastDays { get; init; }
 

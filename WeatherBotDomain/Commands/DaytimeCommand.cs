@@ -2,6 +2,7 @@
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
@@ -9,21 +10,27 @@ namespace WeatherBotDomain.Commands
     {
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
+        private readonly CoordinateArgumentResolver _coordinateArgumentResolver;
 
         public string Description => "Время заката и рассвета сегодня";
 
-        public DaytimeCommand(IWeatherApiController controller, IWeatherApiClient client)
+        public DaytimeCommand(IWeatherApiController controller, 
+            IWeatherApiClient client,
+            CoordinateArgumentResolver coordinateArgumentResolver)
         {
             _controller = controller;
             _client = client;
+            _coordinateArgumentResolver = coordinateArgumentResolver;
         }
 
-        public async Task<Reply> Execute(string[] args)
+        public async Task<Reply?> Execute(string[] args)
         {
+            if (!_coordinateArgumentResolver.TryGetCoordinates(args, out var coordinates, out var message))
+                return new PlainReply(message);
+
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Latitude = double.Parse(args[0]), 
-                Longitude = double.Parse(args[1]),
+                Coordinates = coordinates,
                 ForecastDays = 1
             };
 
@@ -37,7 +44,5 @@ namespace WeatherBotDomain.Commands
 
             return new DaytimeReply(segment);
         }
-
-        public bool AreArgumentsValid(string[] args) => true;
     }
 }

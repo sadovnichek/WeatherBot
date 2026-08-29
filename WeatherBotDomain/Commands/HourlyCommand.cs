@@ -1,8 +1,8 @@
 ﻿using BotInfrastructure;
-using System.Text.RegularExpressions;
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
@@ -11,23 +11,29 @@ namespace WeatherBotDomain.Commands
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
         private readonly WeatherCore weatherDomain;
+        private readonly CoordinateArgumentResolver _coordinateArgumentResolver;
 
         public string Description => "Погода и температура на каждый час сегодня";
 
-        public HourlyCommand(IWeatherApiController controller, IWeatherApiClient client,
-            WeatherCore domain)
+        public HourlyCommand(IWeatherApiController controller, 
+            IWeatherApiClient client,
+            WeatherCore domain,
+            CoordinateArgumentResolver coordinateArgumentResolver)
         {
             _controller = controller;
             weatherDomain = domain;
             _client = client;
+            _coordinateArgumentResolver = coordinateArgumentResolver;
         }
 
         public async Task<Reply?> Execute(string[] args)
         {
+            if (!_coordinateArgumentResolver.TryGetCoordinates(args, out var coordinates, out var message))
+                return new PlainReply(message);
+
             var request = new OpenMeteoWeatherRequest() 
             {
-                Latitude = double.Parse(args[0]),
-                Longitude = double.Parse(args[1]),
+                Coordinates = coordinates,
                 ForecastDays = 1
             };
 
@@ -53,20 +59,6 @@ namespace WeatherBotDomain.Commands
             }
 
             return reply;
-        }
-
-        public bool AreArgumentsValid(string[] args)
-        {
-            if (args.Length == 0)
-                return true;
-
-            if (args.Length == 2)
-            {
-                return Regex.IsMatch(args[0], @"\b([0-9]|1[0-9]|2[0-3])\b")
-                    && Regex.IsMatch(args[1], @"\b([0-9]|1[0-9]|2[0-3])\b");
-            }
-
-            return false;
         }
     }
 }

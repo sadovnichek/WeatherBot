@@ -9,8 +9,8 @@ namespace WeatherBotDomain.OpenMeteo
         {
             var values = new Dictionary<string, string>
             {
-                  { "latitude", Latitude.ToString(CultureInfo.InvariantCulture) },
-                  { "longitude", Longitude.ToString(CultureInfo.InvariantCulture) },
+                  { "latitude", Coordinates.Latitude.ToString(CultureInfo.InvariantCulture) },
+                  { "longitude", Coordinates.Longitude.ToString(CultureInfo.InvariantCulture) },
                   { "daily", "sunrise,sunset" },
                   { "hourly", "temperature_2m,weather_code" },
                   { "timezone", "auto" },

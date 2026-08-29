@@ -2,6 +2,7 @@
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
@@ -12,29 +13,29 @@ namespace WeatherBotDomain.Commands
         private readonly IWeatherApiClient _client;
         private readonly IWeatherApiController _controller;
         private readonly WeatherCore _domain;
+        private readonly CoordinateArgumentResolver _coordinateArgumentResolver;
 
         public string Description => "прогноз погоды на неделю";
 
         public WeeklyCommand(IWeatherApiClient client,
             IWeatherApiController controller,
-            WeatherCore domain)
+            WeatherCore domain,
+            CoordinateArgumentResolver coordinateArgumentResolver)
         {
             _client = client;
             _controller = controller;
             _domain = domain;
-        }
+            _coordinateArgumentResolver = coordinateArgumentResolver;
+         }
 
         public async Task<Reply?> Execute(string[] args)
         {
-            if (!AreArgumentsValid(args))
-                return new PlainReply("Неверные аргументы");
+            if (!_coordinateArgumentResolver.TryGetCoordinates(args, out var coordinates, out var message))
+                return new PlainReply(message);
 
             var request = new OpenMeteoWeatherRequest() 
             { 
-                //Latitude = 56.82, 
-                //Longitude = 60.55,
-                Latitude = double.Parse(args[0]),
-                Longitude = double.Parse(args[1]),
+                Coordinates = coordinates,
                 ForecastDays = 7
             };
 
@@ -47,18 +48,6 @@ namespace WeatherBotDomain.Commands
             var aggregatedData = AggregateData(dto).ToList();
 
             return new WeeklyReply(aggregatedData);
-        }
-
-        public bool AreArgumentsValid(string[] args)
-        {
-            if (args.Length == 0)
-            {
-                return true;
-            }
-
-            return args.Length == 2
-                && double.TryParse(args[0], out _)
-                && double.TryParse(args[1], out _);
         }
 
         private IEnumerable<DailyWeatherData> AggregateData(WeatherInfo dto)

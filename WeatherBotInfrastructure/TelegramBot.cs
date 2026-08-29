@@ -37,12 +37,6 @@ namespace BotInfrastructure
                         return;
                     }
 
-                    if (!instance.AreArgumentsValid(args))
-                    {
-                        await SendMessage(chatId, "Неверные аргументы");
-                        return;
-                    }
-
                     var reply = await instance.Execute(args);
                  
                     while (reply != null)
