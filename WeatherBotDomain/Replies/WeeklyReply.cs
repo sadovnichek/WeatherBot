@@ -1,9 +1,5 @@
 ﻿using BotInfrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using WeatherBotDomain.Commands;
 
 namespace WeatherBotDomain.Replies
@@ -24,7 +20,7 @@ namespace WeatherBotDomain.Replies
             foreach(var item in AggregatedData)
             {
                 var emojies = string.Join("", item.Weather);
-                builder.Append($"{item.Date.ToString("dd.MM")} {emojies} {Format.Temperature(item.MedianTemperature)}\n");
+                builder.Append($"{item.Date.ToString("dd.MM")}\t{emojies}\t{Format.Temperature(item.MedianTemperature)}\n");
             }
 
             return builder.ToString();

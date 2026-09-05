@@ -1,9 +1,4 @@
 ﻿using BotInfrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
@@ -53,8 +48,15 @@ namespace WeatherBotDomain.Commands
         {
             var weatherCodes = dto.WeatherCodes
                 .Chunk(24)
-                .Select(d => d.Mode(1).Select(x => _domain.GetEmoji(x)))
+                .Select(day =>
+                {
+                    return day
+                    .Mode(1)
+                    .Concat(day.Where(c => _domain.IsPrecipitation(c)).Distinct())
+                    .Select(x => _domain.GetEmoji(x));
+                })
                 .ToArray();
+
             var dates = dto.ForecastHours
                 .Chunk(24)
                 .Select(d =>

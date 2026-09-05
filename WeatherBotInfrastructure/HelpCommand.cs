@@ -1,7 +1,4 @@
-﻿using System.Collections.Frozen;
-using System.Threading.Channels;
-
-namespace BotInfrastructure
+﻿namespace BotInfrastructure
 {
     public class HelpCommand : ICommand
     {

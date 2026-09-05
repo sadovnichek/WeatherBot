@@ -1,6 +1,4 @@
-﻿using WeatherBotDomain.OpenMeteo;
-
-namespace WeatherBotDomain.Abstractions
+﻿namespace WeatherBotDomain.Abstractions
 {
     public interface IWeatherApiController
     {
