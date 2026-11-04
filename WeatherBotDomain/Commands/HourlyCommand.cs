@@ -39,6 +39,7 @@ namespace WeatherBotDomain.Commands
                 Longitude = 60.55,
                 ForecastDays = 1
             };
+
             var json = await _client.TrySendRequestAsync(request);
             var dto = _controller.TryProcessApiResponse(json);
 

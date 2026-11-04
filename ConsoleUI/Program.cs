@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using System.Net;
 using WeatherBotDomain;
 using WeatherBotDomain.Commands;
 using WeatherBotDomain.OpenMeteo;
@@ -9,9 +10,15 @@ namespace ConsoleUI
     {
         public static async Task Main()
         {
+            var proxy = new WebProxy("https://160.153.172.106:3193")
+            {
+                BypassProxyOnLocal = false
+            };
+
             var handler = new HttpClientHandler()
             {
                 UseProxy = false,
+                Proxy = proxy,
             };
 
             using var httpClient = new HttpClient(handler)
@@ -34,7 +41,7 @@ namespace ConsoleUI
 
             commands.Add("/help", new HelpCommand(commands));
 
-            var reply = await commands["/weekly"].Execute([]);
+            var reply = await commands["/today"].Execute([]);
 
             while (reply != null)
             {
