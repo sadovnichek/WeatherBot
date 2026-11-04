@@ -18,6 +18,8 @@ namespace BotInfrastructure.Database
         public double Latitude { get; set; }
 
         public double Longitude { get; set; }
+
+        public int LastQueryTime { get; set; }
     }
 
     public class City

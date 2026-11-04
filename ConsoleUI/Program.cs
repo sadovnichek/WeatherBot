@@ -58,21 +58,16 @@ namespace ConsoleUI
             commands.Add("/weekly", new WeeklyCommand(client, controller, domain, coordinateArgumentResolver));
             commands.Add("/help", new HelpCommand(commands));
 
-            var city = "Москва";
-            
-            if (!cityResolverService.TryResolve(city, out var coordinates))
+            var chatId = 0;
+            var user = db.Users.FirstOrDefault(u => u.ChatId == chatId);
+
+            if (user == null)
             {
-                Console.WriteLine($"City {city} not found");
-                Environment.Exit(0);
+                var entity = db.Users.Add(new User { ChatId = chatId });
+                db.SaveChanges();
             }
 
-            var latitude = coordinates.Latitude.ToString();
-            var longitude = coordinates.Longitude.ToString();
-
-            Console.WriteLine(latitude);
-            Console.WriteLine(longitude);
-
-            var reply = await commands["/today"].Execute([city]);
+            var reply = await commands["/today"].Execute(["Екатеринбург"]);
 
             while (reply != null)
             {
