@@ -51,9 +51,10 @@ namespace WeatherBotDomain.Commands
                 .Select(day =>
                 {
                     return day
-                    .Mode(1)
-                    .Concat(day.Where(c => _domain.IsPrecipitation(c)).Distinct())
-                    .Select(x => _domain.GetEmoji(x));
+                        .Mode(1)
+                        .Concat(day.Where(code => _domain.IsPrecipitation(code)))
+                        .Select(x => _domain.GetEmoji(x))
+                        .Distinct();
                 })
                 .ToArray();
 
@@ -65,6 +66,7 @@ namespace WeatherBotDomain.Commands
                     return new DateOnly(firstHour.Year, firstHour.Month, firstHour.Day);
                 })
                 .ToArray();
+
             var medianTemperature = dto.Temperatures
                 .Chunk(24)
                 .Select(d => d.Median())
