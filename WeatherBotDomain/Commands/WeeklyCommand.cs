@@ -1,13 +1,11 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
-using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
-    public record DailyWeatherData(DateOnly Date, IEnumerable<string> Weather, double MedianTemperature);
-
     public class WeeklyCommand : ICommand
     {
         private readonly IWeatherApiClient _client;
@@ -16,6 +14,8 @@ namespace WeatherBotDomain.Commands
         private readonly ICityResolverService _cityResolverService;
 
         public string Description => "прогноз погоды на неделю";
+
+        public string Name => "/weekly";
 
         public WeeklyCommand(IWeatherApiClient client,
             IWeatherApiController controller,

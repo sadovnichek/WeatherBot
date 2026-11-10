@@ -14,6 +14,8 @@ namespace WeatherBotDomain.Commands
 
         public abstract string Description { get; }
 
+        public abstract string Name { get; }
+
         public WeatherCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
             WeatherCore domain,

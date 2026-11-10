@@ -15,6 +15,8 @@ namespace WeatherBotDomain.Commands
 
         public string Description => "Погода и температура на каждый час сегодня";
 
+        public string Name => "/hourly";
+
         public HourlyCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
             WeatherCore domain,

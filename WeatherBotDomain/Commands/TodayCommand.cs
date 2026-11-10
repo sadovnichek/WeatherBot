@@ -17,6 +17,8 @@ namespace WeatherBotDomain.Commands
 
         public override string Description => "Погода, температура и осадки сегодня";
 
+        public override string Name => "/today";
+
         protected override Reply GetPrecipitationForecast(WeatherInfo dto)
         {
             var weatherCodes = dto.WeatherCodes.Take(24).ToArray();

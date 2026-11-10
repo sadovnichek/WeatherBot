@@ -16,7 +16,8 @@ namespace WeatherBotDomain.Commands
         }
 
         public override string Description => "Погода, температура и осадки на завтра";
-        
+
+        public override string Name => "/tomorrow";
         protected override Reply GetPrecipitationForecast(WeatherInfo dto)
         {
             var weatherCodes = dto.WeatherCodes.Skip(24).Take(24).ToArray();

@@ -9,13 +9,15 @@ namespace BotInfrastructure
     public class TelegramBot
     {
         private readonly TelegramBotClient bot;
-        private FrozenDictionary<string, ICommand> botCommands;
+        //private FrozenDictionary<string, ICommand> botCommands;
+        private readonly ICommandHandler _commandHandler;
 
-        public TelegramBot(Dictionary<string, ICommand> commands,
+        public TelegramBot(ICommandHandler commandHandler,
             string token)
         {
             bot = new TelegramBotClient(token);
-            botCommands = commands.ToFrozenDictionary();
+            //botCommands = commands.ToFrozenDictionary(c => c.Name, c => c);
+            _commandHandler = commandHandler;
         }
 
         public async Task ReceiveAsync(Update update)
@@ -31,7 +33,7 @@ namespace BotInfrastructure
                     var args = messageTextTokens?.Skip(1).ToArray();
                     var chatId = update.Message.Chat.Id;
 
-                    if (!botCommands.TryGetValue(command, out var instance))
+                    if (!_commandHandler.TryGetCommand(command, out var instance))
                     {
                         await SendMessage(chatId, "Неизвестная команда");
                         return;

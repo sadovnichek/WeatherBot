@@ -1,17 +1,22 @@
 ﻿namespace BotInfrastructure
 {
-    public class HelpCommand : ICommand
+    public interface IInfrastructureCommand : ICommand
     {
-        private Dictionary<string, ICommand> _commands;
+
+    }
+
+    public class HelpCommand : IInfrastructureCommand
+    {
+        private readonly IEnumerable<ICommand> _commands;
 
         public string Description => "вывести список команд";
 
-        public HelpCommand(Dictionary<string, ICommand> commands)
+        public string Name => "/help";
+
+        public HelpCommand(IEnumerable<ICommand> commands)
         {
             _commands = commands;
         }
-
-        public bool AreArgumentsValid(string[] args) => true;
 
         public async Task<Reply?> Execute(string[] args)
         {
@@ -21,7 +26,7 @@
         private string GetHelp()
         {
             return string.Join("\n",
-                _commands.Select(kv => $"{kv.Key} {kv.Value.Description}"));
+                _commands.Select(c => $"{c.Name} {c.Description}"));
         }
     }
 }

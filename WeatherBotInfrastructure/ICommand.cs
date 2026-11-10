@@ -4,6 +4,8 @@
     {
         string Description { get; }
 
+        string Name { get; }
+
         Task<Reply?> Execute(string[] args);
     }
 }

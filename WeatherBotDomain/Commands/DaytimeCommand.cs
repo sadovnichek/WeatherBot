@@ -2,7 +2,6 @@
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
-using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
@@ -13,6 +12,8 @@ namespace WeatherBotDomain.Commands
         private readonly ICityResolverService _cityResolverService;
 
         public string Description => "Время заката и рассвета сегодня";
+
+        public string Name => "/daytime";
 
         public DaytimeCommand(IWeatherApiController controller, 
             IWeatherApiClient client,

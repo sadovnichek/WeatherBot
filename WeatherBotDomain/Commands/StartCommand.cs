@@ -6,6 +6,8 @@ namespace WeatherBotDomain.Commands
     {
         public string Description => "начать работу с ботом";
 
+        public string Name => "/start";
+
         public Task<Reply?> Execute(string[] args)
         {
             return Task.FromResult<Reply?>(new PlainReply("""
