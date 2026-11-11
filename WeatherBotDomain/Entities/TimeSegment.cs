@@ -1,4 +1,4 @@
-﻿namespace WeatherBotDomain
+﻿namespace WeatherBotDomain.Entities
 {
     public record TimeSegment(TimeOnly Start, TimeOnly End)
     {

@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Entities;
 using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
@@ -8,9 +9,10 @@ namespace WeatherBotDomain.Commands
     {
         public TomorrowCommand(IWeatherApiController controller,
             IWeatherApiClient client,
-            WeatherCore domain,
-            ICityResolverService cityResolverService)
-            : base(controller, client, domain, cityResolverService)
+            IWeatherService weatherService,
+            ICityResolverService cityResolverService,
+            IPrecipitationService precipitationService)
+            : base(controller, client, weatherService, cityResolverService, precipitationService)
         {
 
         }
@@ -18,10 +20,11 @@ namespace WeatherBotDomain.Commands
         public override string Description => "Погода, температура и осадки на завтра";
 
         public override string Name => "/tomorrow";
+
         protected override Reply GetPrecipitationForecast(WeatherInfo dto)
         {
             var weatherCodes = dto.WeatherCodes.Skip(24).Take(24).ToArray();
-            return _domain.GetPrecipitationForecast(weatherCodes);
+            return _precipitationService.GetPrecipitationForecast(weatherCodes);
         }
 
         protected override Reply ProcessResponse(WeatherInfo dto)
@@ -33,7 +36,7 @@ namespace WeatherBotDomain.Commands
                 .Take(sunsetHour - sunriseHour)
                 .ToArray();
 
-            return _domain.GetReply("Завтра", dto.Now, weatherCodes, temperatures);
+            return _weatherService.GetReply("Завтра", dto.Now, weatherCodes, temperatures);
         }
     }
 }

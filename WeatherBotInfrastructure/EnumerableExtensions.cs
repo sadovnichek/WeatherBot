@@ -43,5 +43,26 @@ namespace BotInfrastructure
 
             return frequency.Where(kv => Math.Abs(kv.Value - max) <= discrepancy).Select(kv => kv.Key);
         }
+
+        /// <exception cref="ArgumentException"></exception>
+        public static List<KeyValuePair<T, (int, int)>> ClassifyItemsByIndex<T>(this T[] items)
+            where T : notnull
+        {
+            if (items.Length == 0)
+                throw new ArgumentException("Sequence is empty");
+
+            var result = new List<KeyValuePair<T, (int, int)>>();
+            int begin = 0, end = items.Length - 1;
+            for (var i = 1; i < items.Length + 1; i++)
+            {
+                if (i < items.Length && items[i].Equals(items[i - 1]))
+                    continue;
+                end = i - 1;
+                result.Add(new(items[i - 1], (begin, end)));
+                begin = i;
+            }
+
+            return result;
+        }
     }
 }

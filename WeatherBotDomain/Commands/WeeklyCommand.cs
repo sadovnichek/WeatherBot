@@ -3,6 +3,7 @@ using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
@@ -10,7 +11,7 @@ namespace WeatherBotDomain.Commands
     {
         private readonly IWeatherApiClient _client;
         private readonly IWeatherApiController _controller;
-        private readonly WeatherCore _domain;
+        private readonly IWeatherService _weatherService;
         private readonly ICityResolverService _cityResolverService;
 
         public string Description => "прогноз погоды на неделю";
@@ -19,12 +20,12 @@ namespace WeatherBotDomain.Commands
 
         public WeeklyCommand(IWeatherApiClient client,
             IWeatherApiController controller,
-            WeatherCore domain,
+            IWeatherService weatherService,
             ICityResolverService cityResolverService)
         {
             _client = client;
             _controller = controller;
-            _domain = domain;
+            _weatherService = weatherService;
             _cityResolverService = cityResolverService;
          }
 
@@ -59,8 +60,8 @@ namespace WeatherBotDomain.Commands
                 {
                     return day
                         .Mode(1)
-                        .Concat(day.Where(code => _domain.IsPrecipitation(code)))
-                        .Select(x => _domain.GetEmoji(x))
+                        .Concat(day.Where(code => _weatherService.IsPrecipitation(code)))
+                        .Select(x => _weatherService.GetEmoji(x))
                         .Distinct();
                 })
                 .ToArray();

@@ -1,5 +1,4 @@
-﻿using System.Collections.Frozen;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotInfrastructure

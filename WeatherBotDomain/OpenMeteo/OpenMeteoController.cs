@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Entities;
 
 namespace WeatherBotDomain.OpenMeteo
 {

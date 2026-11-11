@@ -1,4 +1,6 @@
-﻿namespace WeatherBotDomain.Replies
+﻿using WeatherBotDomain.Entities;
+
+namespace WeatherBotDomain.Replies
 {
     public class CompoundWeatherReply : WeatherReply
     {

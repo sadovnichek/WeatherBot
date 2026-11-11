@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using System.Text;
+using WeatherBotDomain.Entities;
 
 namespace WeatherBotDomain.Replies
 {

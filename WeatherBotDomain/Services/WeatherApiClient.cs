@@ -1,6 +1,6 @@
 ﻿using WeatherBotDomain.Abstractions;
 
-namespace WeatherBotDomain
+namespace WeatherBotDomain.Services
 {
     public class WeatherApiClient : IWeatherApiClient
     {

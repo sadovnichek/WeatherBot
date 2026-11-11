@@ -1,12 +1,13 @@
-﻿using WeatherBotDomain;
+﻿using WeatherBotDomain.Entities;
 using WeatherBotDomain.Replies;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomainTests
 {
     [TestFixture]
     public class TodayCommand_should
     {
-        private WeatherCore weatherCore;
+        private WeatherService weatherCore;
 
         [SetUp]
         public void Setup()

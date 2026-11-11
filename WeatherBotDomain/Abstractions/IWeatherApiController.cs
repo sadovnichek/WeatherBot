@@ -1,4 +1,6 @@
-﻿namespace WeatherBotDomain.Abstractions
+﻿using WeatherBotDomain.Entities;
+
+namespace WeatherBotDomain.Abstractions
 {
     public interface IWeatherApiController
     {

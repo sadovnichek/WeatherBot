@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
 using WeatherBotDomain.Services;
@@ -10,7 +11,7 @@ namespace WeatherBotDomain.Commands
     {
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
-        private readonly WeatherCore weatherDomain;
+        private readonly IWeatherService _weatherService;
         private readonly ICityResolverService _cityResolverService;
 
         public string Description => "Погода и температура на каждый час сегодня";
@@ -19,11 +20,11 @@ namespace WeatherBotDomain.Commands
 
         public HourlyCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
-            WeatherCore domain,
+            IWeatherService weatherService,
             ICityResolverService cityResolverService)
         {
             _controller = controller;
-            weatherDomain = domain;
+            _weatherService = weatherService;
             _client = client;
             _cityResolverService = cityResolverService;
         }
@@ -55,7 +56,7 @@ namespace WeatherBotDomain.Commands
             {
                 var time = new TimeOnly(i, 0);
                 var isDay = daytime.IsTimeInSegment(time);
-                var emoji = weatherDomain.GetEmoji(dto.WeatherCodes[i], !isDay);
+                var emoji = _weatherService.GetEmoji(dto.WeatherCodes[i], !isDay);
                 var temperature = dto.Temperatures[i];
                 var data = new HourlyForecastData(time, emoji, temperature);
                 reply.AppendData(data);

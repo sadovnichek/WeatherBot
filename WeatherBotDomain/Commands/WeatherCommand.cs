@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Services;
 
@@ -10,7 +11,8 @@ namespace WeatherBotDomain.Commands
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
         private readonly ICityResolverService _cityResolverService;
-        protected readonly WeatherCore _domain;
+        protected readonly IWeatherService _weatherService;
+        protected readonly IPrecipitationService _precipitationService;
 
         public abstract string Description { get; }
 
@@ -18,13 +20,15 @@ namespace WeatherBotDomain.Commands
 
         public WeatherCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
-            WeatherCore domain,
-            ICityResolverService cityResolverService)
+            IWeatherService weatherService,
+            ICityResolverService cityResolverService,
+            IPrecipitationService precipitationService)
         {
             _controller = controller;
-            _domain = domain;
+            _weatherService = weatherService;
             _client = client;
             _cityResolverService = cityResolverService;
+            _precipitationService = precipitationService;
         }
 
         public async Task<Reply?> Execute(string[] args)

@@ -1,5 +1,6 @@
 ﻿using BotInfrastructure;
 using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
 

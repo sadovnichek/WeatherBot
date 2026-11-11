@@ -14,7 +14,7 @@ namespace WeatherBotDomain.Services
         }
 
         /// <summary>
-        /// Retrieve city coordinates by name
+        /// Retrieve city coordinates by it own name
         /// </summary>
         /// <returns>false if city does not exist, otherwise true and city coordinates</returns>
         public Result<Coordinates> TryResolve(string cityName)

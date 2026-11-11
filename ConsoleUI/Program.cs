@@ -1,7 +1,6 @@
 ﻿using BotInfrastructure;
 using BotInfrastructure.Database;
 using System.Globalization;
-using WeatherBotDomain;
 using WeatherBotDomain.Commands;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Services;
@@ -18,7 +17,8 @@ namespace ConsoleUI
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
 
             var services = new ServiceCollection()
-                .AddSingleton<WeatherCore>()
+                .AddSingleton<IWeatherService, WeatherService>()
+                .AddSingleton<IPrecipitationService, PrecipitationService>()
                 .AddSingleton<IWeatherApiClient, WeatherApiClient>()
                 .AddSingleton<IWeatherApiController, OpenMeteoController>()
                 .AddSingleton<ICityResolverService, CityResolverService>()
@@ -46,7 +46,7 @@ namespace ConsoleUI
                 .BuildServiceProvider();
 
             var handler = services.GetService<ICommandHandler>();
-            handler.TryGetCommand("/help", out var command);
+            handler.TryGetCommand("/today", out var command);
 
             var reply = await command.Execute(["Екатеринбург"]);
 

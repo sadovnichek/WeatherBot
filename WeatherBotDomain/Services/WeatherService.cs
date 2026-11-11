@@ -1,11 +1,38 @@
 ﻿using BotInfrastructure;
+using WeatherBotDomain.Entities;
 using WeatherBotDomain.Replies;
 
-namespace WeatherBotDomain
+namespace WeatherBotDomain.Services
 {
-    public class WeatherCore
+    public interface IWeatherService
     {
-        private static readonly Dictionary<WeatherType, WeatherDescriptor> weatherData = new()
+        string GetDescription(int weatherCode);
+
+        string GetDescription(WeatherType weather);
+
+        string GetEmoji(int weatherCode, bool isNight = false);
+
+        string GetEmoji(WeatherType weather, bool isNight = false);
+
+        bool IsWordingNeeded(int weatherCode);
+
+        bool IsPrecipitationExpected(int[] weatherCodes);
+
+        bool IsPrecipitation(int weatherCode);
+
+        bool IsPrecipitation(WeatherType weather);
+
+        WeatherType GetWeather(int weatherCode);
+
+        WeatherReply GetReply(string timePointer,
+            DateTime timeNow,
+            int[] weatherCodes,
+            double[] temperatures);
+    }
+
+    public class WeatherService : IWeatherService
+    {
+        private readonly Dictionary<WeatherType, WeatherDescriptor> weatherData = new()
         {
             { WeatherType.Sunny, new WeatherDescriptor("солнечная", "☀️", "🌙", true, false) },
             { WeatherType.PartlyCloudy, new WeatherDescriptor("переменная облачность", "⛅", "🌙", false, false) },
@@ -21,7 +48,7 @@ namespace WeatherBotDomain
             { WeatherType.ThunderstormWithHail, new WeatherDescriptor("гроза с градом", "⛈️", "🌙", false, true) }
         };
 
-        private static readonly Dictionary<int, WeatherType> weatherGrouping = new()
+        private readonly Dictionary<int, WeatherType> weatherGrouping = new()
         {
             {0, WeatherType.Sunny },
             {1, WeatherType.Sunny },
@@ -104,27 +131,6 @@ namespace WeatherBotDomain
             return weather;
         }
 
-        /// <exception cref="ArgumentException"></exception>
-        public static List<KeyValuePair<T, (int, int)>> ClassifyItemsByIndex<T>(T[] items)
-            where T : notnull
-        {
-            if (items.Length == 0)
-                throw new ArgumentException("Sequence is empty");
-
-            var result = new List<KeyValuePair<T, (int, int)>>();
-            int begin = 0, end = items.Length - 1;
-            for(var i = 1; i < items.Length + 1; i++)
-            {
-                if (i < items.Length && items[i].Equals(items[i - 1]))
-                    continue;
-                end = i - 1;
-                result.Add(new (items[i - 1], (begin, end)));
-                begin = i;
-            }
-
-            return result;
-        }
-
         public WeatherReply GetReply(string timePointer,
             DateTime timeNow,
             int[] weatherCodes,
@@ -189,32 +195,6 @@ namespace WeatherBotDomain
                 return "Добрый день!";
 
             return "Добрый вечер!";
-        }
-
-        public IEnumerable<WeatherSegment> GetWeatherSegments(int[] weatherCodes)
-        {
-            return ClassifyItemsByIndex(weatherCodes.Select(GetWeather).ToArray())
-                    .Where(kv => IsPrecipitation(kv.Key))
-                    .GroupBy(kv => kv.Key)
-                    .Select(group => new WeatherSegment(
-                        GetDescription(group.Key),
-                        GetEmoji(group.Key),
-                        group.Select(p =>
-                        {
-                            var start = new TimeOnly(p.Value.Item1, 0);
-                            var end = new TimeOnly(p.Value.Item2, 0).AddHours(1);
-                            return new TimeSegment(start, end);
-                        })
-                    .ToArray()));
-        }
-
-        public PrecipitationReply GetPrecipitationForecast(int[] weatherCodes)
-        {
-            var weatherSegments = GetWeatherSegments(weatherCodes);
-
-            var reply = new PrecipitationReply(weatherSegments);
-
-            return reply;
         }
     }
 }
