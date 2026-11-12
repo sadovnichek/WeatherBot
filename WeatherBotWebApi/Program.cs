@@ -1,5 +1,6 @@
 using BotInfrastructure;
 using BotInfrastructure.Database;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
 using WeatherBotDomain.Abstractions;
@@ -38,6 +39,12 @@ builder.Services.AddSingleton<IWeatherService, WeatherService>()
                     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
                     options.UseSqlite(connectionString);
                 })
+                .Configure<ForwardedHeadersOptions>(options =>
+                {
+                    options.ForwardedHeaders =
+                        ForwardedHeaders.XForwardedFor |
+                        ForwardedHeaders.XForwardedProto;
+                })
                 .AddSingleton(s =>
                 {
                     var handler = s.GetService<ICommandHandler>();
@@ -46,6 +53,7 @@ builder.Services.AddSingleton<IWeatherService, WeatherService>()
                 });
 
 var app = builder.Build();
+app.UseForwardedHeaders();
 
 var bot = app.Services.GetService<TelegramBot>();
 
