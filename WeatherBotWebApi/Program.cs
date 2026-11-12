@@ -1,41 +1,53 @@
 using BotInfrastructure;
+using BotInfrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
-using WeatherBotDomain;
+using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.Commands;
 using WeatherBotDomain.OpenMeteo;
+using WeatherBotDomain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var port = Environment.GetEnvironmentVariable("PORT");
+var port = builder.Configuration.GetValue("App:Port", 8080);
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+builder.Services.AddSingleton<IWeatherService, WeatherService>()
+                .AddSingleton<IPrecipitationService, PrecipitationService>()
+                .AddSingleton<IWeatherApiClient, WeatherApiClient>()
+                .AddSingleton<IWeatherApiController, OpenMeteoController>()
+                .AddSingleton<ICityResolverService, CityResolverService>()
+                .AddSingleton<ICommand, StartCommand>()
+                .AddSingleton<ICommand, TodayCommand>()
+                .AddSingleton<ICommand, TomorrowCommand>()
+                .AddSingleton<ICommand, HourlyCommand>()
+                .AddSingleton<ICommand, DaytimeCommand>()
+                .AddSingleton<ICommand, WeeklyCommand>()
+                .AddSingleton<IInfrastructureCommand, HelpCommand>()
+                .AddSingleton<ICommandHandler, CommandHandler>()
+                .AddSingleton(s =>
+                {
+                    var handler = new HttpClientHandler();
+                    return new HttpClient(handler)
+                    {
+                        BaseAddress = new Uri("https://api.open-meteo.com/v1/forecast")
+                    };
+                })
+                .AddDbContext<AppDbContext>(options =>
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                    options.UseSqlite(connectionString);
+                })
+                .AddSingleton(s =>
+                {
+                    var handler = s.GetService<ICommandHandler>();
+                    var token = builder.Configuration["Bot:Token"];
+                    return new TelegramBot(handler, token);
+                });
+
 var app = builder.Build();
-var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
 
-var handler = new HttpClientHandler()
-{
-    UseProxy = false,
-};
-
-using var httpClient = new HttpClient(handler)
-{
-    BaseAddress = new Uri("https://api.open-meteo.com/v1/forecast")
-};
-
-var domain = new WeatherCore();
-
-var apiClient = new WeatherApiClient(httpClient);
-var controller = new OpenMeteoController();
-
-var commands = new Dictionary<string, ICommand>();
-commands.Add("/start", new StartCommand());
-commands.Add("/today", new TodayCommand(controller, apiClient, domain));
-commands.Add("/tomorrow", new TomorrowCommand(controller, apiClient, domain));
-commands.Add("/hourly", new HourlyCommand(controller, apiClient, domain));
-commands.Add("/daytime", new DaytimeCommand(controller, apiClient));
-commands.Add("/weekly", new WeeklyCommand(apiClient, controller, domain));
-commands.Add("/help", new HelpCommand(commands));
-
-var bot = new TelegramBot(commands, token);
+var bot = app.Services.GetService<TelegramBot>();
 
 app.MapPost("/webhook", async (Update u) =>
     {

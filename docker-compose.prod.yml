@@ -1,0 +1,22 @@
+services:
+  weatherbotwebapi:
+    restart: unless-stopped
+
+    env_file:
+      - /etc/weatherbot/weatherbot.env
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      App__Port: 8080
+
+      ConnectionStrings__DefaultConnection: "Data Source=/data/weatherbot.db"
+
+    ports:
+      - "127.0.0.1:8080:8080"
+
+    volumes:
+      - weatherbot_data:/data
+
+volumes:
+  weatherbot_data:
+    name: weatherbot_data  

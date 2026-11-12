@@ -1,0 +1,6 @@
+services:
+  weatherbotwebapi:
+    image: ${DOCKER_REGISTRY-}weatherbotwebapi
+    build:
+      context: .
+      dockerfile: WeatherBotWebApi/Dockerfile
