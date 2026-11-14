@@ -25,12 +25,13 @@ namespace WeatherBotDomain.Commands
 
         public async Task<Reply?> Execute(string[] args)
         {
-            if (!_cityResolverService.TryResolve(args[0], out var coordinates))
+            var resolveResult = _cityResolverService.TryResolve(args[0]);
+            if (!resolveResult.Success)
                 return new PlainReply("Не удалось определить город");
 
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Coordinates = coordinates,
+                Coordinates = resolveResult.Value,
                 ForecastDays = 1
             };
 

@@ -1,24 +1,9 @@
 ﻿using BotInfrastructure.Database;
+using WeatherBotDomain.Abstractions;
+using WeatherBotDomain.Entities;
 
 namespace WeatherBotDomain.Services
 {
-    public readonly struct Coordinates
-    {
-        public double Latitude { get; }
-        public double Longitude { get; }
-
-        public Coordinates(double latitude, double longitude)
-        {
-            Latitude = latitude;
-            Longitude = longitude;
-        }
-    }
-
-    public interface ICityResolverService
-    {
-        bool TryResolve(string cityName, out Coordinates coordinates);
-    }
-
     public class CityResolverService : ICityResolverService
     {
         private readonly AppDbContext _dbContext;
@@ -32,18 +17,17 @@ namespace WeatherBotDomain.Services
         /// Retrieve city coordinates by name
         /// </summary>
         /// <returns>false if city does not exist, otherwise true and city coordinates</returns>
-        public bool TryResolve(string cityName, out Coordinates coordinates)
+        public Result<Coordinates> TryResolve(string cityName)
         {
             var dbRecord = _dbContext.Cities.FirstOrDefault(x => x.Name == cityName);
 
             if (dbRecord is null)
             {
-                coordinates = default;
-                return false;
+                return Result<Coordinates>.Failure();
             }
 
-            coordinates = new Coordinates(dbRecord.Latitude, dbRecord.Longitude);
-            return true;
+            var coordinates = new Coordinates(dbRecord.Latitude, dbRecord.Longitude);
+            return new Result<Coordinates>(coordinates);
         }
     }
 }

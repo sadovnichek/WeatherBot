@@ -2,6 +2,7 @@
 using WeatherBotDomain;
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.Commands;
+using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
 
@@ -30,11 +31,13 @@ namespace WeatherBotDomainTests
             var controller = new OpenMeteoController();
 
             var client = A.Fake<IWeatherApiClient>();
+            var resolver = A.Fake<ICityResolverService>();
             A.CallTo(() => client.TrySendRequestAsync(A<OpenMeteoWeatherRequest>.Ignored)).Returns(Resources.json);
+            A.CallTo(() => resolver.TryResolve(A<string>.Ignored)).Returns(new Result<Coordinates>(new Coordinates()));
 
-            var command = new TomorrowCommand(controller, client, domain);
+            var command = new TomorrowCommand(controller, client, domain, resolver);
 
-            var result = await command.Execute([]);
+            var result = await command.Execute(["city"]);
         }
 
         [Test]
@@ -44,9 +47,11 @@ namespace WeatherBotDomainTests
             var controller = new OpenMeteoController();
 
             var client = A.Fake<IWeatherApiClient>();
+            var resolver = A.Fake<ICityResolverService>();
             A.CallTo(() => client.TrySendRequestAsync(A<OpenMeteoWeatherRequest>.Ignored)).Returns(Resources.json);
+            A.CallTo(() => resolver.TryResolve(A<string>.Ignored)).Returns(new Result<Coordinates>(new Coordinates()));
 
-            var command = new WeeklyCommand(client, controller, domain);
+            var command = new WeeklyCommand(client, controller, domain, resolver);
 
             var reply = await command.Execute([]) as WeeklyReply;
 

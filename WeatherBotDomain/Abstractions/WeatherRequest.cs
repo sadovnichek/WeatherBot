@@ -1,4 +1,4 @@
-using WeatherBotDomain.Services;
+using WeatherBotDomain.Entities;
 
 namespace WeatherBotDomain.Abstractions
 {
