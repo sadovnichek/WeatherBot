@@ -13,25 +13,25 @@ namespace WeatherBotDomain.Commands
         private readonly IWeatherApiClient _client;
         private readonly IWeatherApiController _controller;
         private readonly WeatherCore _domain;
-        private readonly CoordinateArgumentResolver _coordinateArgumentResolver;
+        private readonly ICityResolverService _cityResolverService;
 
         public string Description => "прогноз погоды на неделю";
 
         public WeeklyCommand(IWeatherApiClient client,
             IWeatherApiController controller,
             WeatherCore domain,
-            CoordinateArgumentResolver coordinateArgumentResolver)
+            ICityResolverService cityResolverService)
         {
             _client = client;
             _controller = controller;
             _domain = domain;
-            _coordinateArgumentResolver = coordinateArgumentResolver;
+            _cityResolverService = cityResolverService;
          }
 
         public async Task<Reply?> Execute(string[] args)
         {
-            if (!_coordinateArgumentResolver.TryGetCoordinates(args, out var coordinates, out var message))
-                return new PlainReply(message);
+            if (!_cityResolverService.TryResolve(args[0], out var coordinates))
+                return new PlainReply("Не удалось определить город");
 
             var request = new OpenMeteoWeatherRequest() 
             { 

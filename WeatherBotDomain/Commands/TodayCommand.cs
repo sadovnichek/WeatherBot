@@ -9,8 +9,8 @@ namespace WeatherBotDomain.Commands
         public TodayCommand(IWeatherApiController controller,
             IWeatherApiClient client,
             WeatherCore domain,
-            CoordinateArgumentResolver coordinateArgumentResolver)
-            : base(controller, client, domain, coordinateArgumentResolver)
+            ICityResolverService cityResolverService)
+            : base(controller, client, domain, cityResolverService)
         {
 
         }

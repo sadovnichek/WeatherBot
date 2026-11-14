@@ -11,25 +11,25 @@ namespace WeatherBotDomain.Commands
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
         private readonly WeatherCore weatherDomain;
-        private readonly CoordinateArgumentResolver _coordinateArgumentResolver;
+        private readonly ICityResolverService _cityResolverService;
 
         public string Description => "Погода и температура на каждый час сегодня";
 
         public HourlyCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
             WeatherCore domain,
-            CoordinateArgumentResolver coordinateArgumentResolver)
+            ICityResolverService cityResolverService)
         {
             _controller = controller;
             weatherDomain = domain;
             _client = client;
-            _coordinateArgumentResolver = coordinateArgumentResolver;
+            _cityResolverService = cityResolverService;
         }
 
         public async Task<Reply?> Execute(string[] args)
         {
-            if (!_coordinateArgumentResolver.TryGetCoordinates(args, out var coordinates, out var message))
-                return new PlainReply(message);
+            if (!_cityResolverService.TryResolve(args[0], out var coordinates))
+                return new PlainReply("Не удалось определить город");
 
             var request = new OpenMeteoWeatherRequest() 
             {
