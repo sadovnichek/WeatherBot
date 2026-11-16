@@ -49,7 +49,8 @@ builder.Services.AddSingleton<IWeatherService, WeatherService>()
                 {
                     var handler = s.GetService<ICommandHandler>();
                     var token = builder.Configuration["Bot:Token"];
-                    return new TelegramBot(handler, token);
+                    var logger = s.GetService<ILogger<TelegramBot>>();
+                    return new TelegramBot(handler, token, logger);
                 });
 
 var app = builder.Build();
