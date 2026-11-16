@@ -19,4 +19,5 @@ services:
 
 volumes:
   weatherbot_data:
+    external: true
     name: weatherbot_data  

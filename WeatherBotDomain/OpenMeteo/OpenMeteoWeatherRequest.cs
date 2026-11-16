@@ -11,7 +11,7 @@ namespace WeatherBotDomain.OpenMeteo
             {
                   { "latitude", Coordinates.Latitude.ToString(CultureInfo.InvariantCulture) },
                   { "longitude", Coordinates.Longitude.ToString(CultureInfo.InvariantCulture) },
-                  { "daily", "sunrice,suncet" },
+                  { "daily", "sunrise,sunset" },
                   { "hourly", "temperature_2m,weather_code" },
                   { "timezone", "auto" },
                   { "forecast_days", ForecastDays.ToString() }
