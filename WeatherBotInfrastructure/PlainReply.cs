@@ -2,6 +2,7 @@
 {
     public class PlainReply : Reply
     {
+        private static PlainReply onError = new PlainReply("🛠️ Произошла ошибка. Мы уже занимаемся ее исправлением");
         private string _text;
 
         public PlainReply(string text)
@@ -14,7 +15,6 @@
             return _text;
         }
 
-        public static Reply OnError()
-            => new PlainReply("🛠️ Произошла ошибка. Мы уже занимаемся ее исправлением");
+        public static Reply OnError() => onError;
     }
 }

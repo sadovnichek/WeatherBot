@@ -7,6 +7,8 @@ using WeatherBotDomain.Services;
 using Microsoft.Extensions.DependencyInjection;
 using WeatherBotDomain.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace ConsoleUI
 {
@@ -30,6 +32,7 @@ namespace ConsoleUI
                 .AddSingleton<ICommand, WeeklyCommand>()
                 .AddSingleton<IInfrastructureCommand, HelpCommand>()
                 .AddSingleton<ICommandHandler, CommandHandler>()
+                .AddLogging(builder => builder.AddConsole())
                 .AddSingleton(s =>
                 {
                     var handler = new HttpClientHandler();

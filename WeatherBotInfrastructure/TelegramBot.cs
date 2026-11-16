@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Microsoft.Extensions.Logging;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotInfrastructure
@@ -7,16 +8,17 @@ namespace BotInfrastructure
 
     public class TelegramBot
     {
-        private readonly TelegramBotClient bot;
-        //private FrozenDictionary<string, ICommand> botCommands;
+        private readonly TelegramBotClient _bot;
         private readonly ICommandHandler _commandHandler;
+        private readonly ILogger<TelegramBot> _logger;
 
         public TelegramBot(ICommandHandler commandHandler,
-            string token)
+            string token,
+            ILogger<TelegramBot> logger)
         {
-            bot = new TelegramBotClient(token);
-            //botCommands = commands.ToFrozenDictionary(c => c.Name, c => c);
+            _bot = new TelegramBotClient(token);
             _commandHandler = commandHandler;
+            _logger = logger;
         }
 
         public async Task ReceiveAsync(Update update)
@@ -47,15 +49,18 @@ namespace BotInfrastructure
                         reply = reply.Next;
                     }
 
-                    Console.WriteLine($"Username: {update.Message.Chat.Username} " +
-                        $"First name: {update.Message.Chat.FirstName} Last name: {update.Message.Chat.LastName} " +
-                        $"Request: {update.Message.Text}");
+                    _logger.LogDebug("Username:{username}\nName:{name}\nRequest:{request}\nTime UTC:{time}\n",
+                        update.Message.Chat.Username,
+                        update.Message.Chat.FirstName,
+                        update.Message.Text,
+                        DateTime.UtcNow);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                _logger.LogError("Exception:{message}\nStackTrace:{stacktrace}\n",
+                    ex.Message,
+                    ex.StackTrace);
 
                 await SendMessage(update.Message.Chat.Id, PlainReply.OnError().BuildMessage());
             }
@@ -63,7 +68,7 @@ namespace BotInfrastructure
 
         private async Task SendMessage(long chatId, string message)
         {
-            await bot.SendMessage(chatId,
+            await _bot.SendMessage(chatId,
                     message,
                     Telegram.Bot.Types.Enums.ParseMode.Markdown);
         }
