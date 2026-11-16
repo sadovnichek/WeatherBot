@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var port = builder.Configuration.GetValue("App:Port", 8080);
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 builder.Services.AddSingleton<IWeatherService, WeatherService>()
                 .AddSingleton<IPrecipitationService, PrecipitationService>()
