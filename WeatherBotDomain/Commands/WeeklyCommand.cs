@@ -7,37 +7,36 @@ using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
-    public class WeeklyCommand : ICommand
+    public class WeeklyCommand : CitySpecificCommand
     {
         private readonly IWeatherApiClient _client;
         private readonly IWeatherApiController _controller;
         private readonly IWeatherService _weatherService;
-        private readonly ICityResolverService _cityResolverService;
 
-        public string Description => "прогноз погоды на неделю";
+        public override string Description => "прогноз погоды на неделю";
 
-        public string Name => "/weekly";
+        public override string Name => "/weekly";
 
         public WeeklyCommand(IWeatherApiClient client,
             IWeatherApiController controller,
             IWeatherService weatherService,
-            ICityResolverService cityResolverService)
+            ICityResolverService cityResolverService) : base(cityResolverService)
         {
             _client = client;
             _controller = controller;
             _weatherService = weatherService;
-            _cityResolverService = cityResolverService;
          }
 
-        public async Task<Reply?> Execute(string[] args)
+        public override async Task<Reply?> Execute(string[] args)
         {
-            var resolveResult = _cityResolverService.TryResolve(args[0]);
-            if (!resolveResult.Success)
-                return new PlainReply("Не удалось определить город");
+            if (!TryResolveCoordinates(args, out var message, out var coordinates))
+            {
+                return new PlainReply(message);
+            }
 
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Coordinates = resolveResult.Value,
+                Coordinates = coordinates,
                 ForecastDays = 7
             };
 

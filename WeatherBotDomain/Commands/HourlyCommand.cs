@@ -7,37 +7,36 @@ using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
-    public class HourlyCommand : ICommand
+    public class HourlyCommand : CitySpecificCommand
     {
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
         private readonly IWeatherService _weatherService;
-        private readonly ICityResolverService _cityResolverService;
 
-        public string Description => "Погода и температура на каждый час сегодня";
+        public override string Description => "Погода и температура на каждый час сегодня";
 
-        public string Name => "/hourly";
+        public override string Name => "/hourly";
 
         public HourlyCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
             IWeatherService weatherService,
-            ICityResolverService cityResolverService)
+            ICityResolverService cityResolverService) : base(cityResolverService)
         {
             _controller = controller;
             _weatherService = weatherService;
             _client = client;
-            _cityResolverService = cityResolverService;
         }
 
-        public async Task<Reply?> Execute(string[] args)
+        public override async Task<Reply?> Execute(string[] args)
         {
-            var resolveResult = _cityResolverService.TryResolve(args[0]);
-            if (!resolveResult.Success)
-                return new PlainReply("Не удалось определить город");
+            if (!TryResolveCoordinates(args, out var message, out var coordinates))
+            {
+                return new PlainReply(message);
+            }
 
             var request = new OpenMeteoWeatherRequest() 
             {
-                Coordinates = resolveResult.Value,
+                Coordinates = coordinates,
                 ForecastDays = 1
             };
 

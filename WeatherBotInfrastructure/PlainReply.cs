@@ -2,11 +2,12 @@
 {
     public class PlainReply : Reply
     {
-        private static PlainReply onError = new PlainReply("🛠️ Произошла ошибка. Мы уже занимаемся ее исправлением");
-        private string _text;
+        private static readonly PlainReply onError = new("🛠️ Произошла ошибка. Мы уже занимаемся ее исправлением");
+        private readonly string _text;
 
-        public PlainReply(string text)
+        public PlainReply(string? text)
         {
+            ArgumentNullException.ThrowIfNull(text);
             _text = text;
         }
 

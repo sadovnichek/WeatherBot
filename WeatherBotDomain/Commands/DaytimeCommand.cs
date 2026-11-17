@@ -3,37 +3,37 @@ using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
+using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
-    public class DaytimeCommand : ICommand
+    public class DaytimeCommand : CitySpecificCommand
     {
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
-        private readonly ICityResolverService _cityResolverService;
 
-        public string Description => "Время заката и рассвета сегодня";
+        public override string Description => "Время заката и рассвета сегодня";
 
-        public string Name => "/daytime";
+        public override string Name => "/daytime";
 
         public DaytimeCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
-            ICityResolverService cityResolverService)
+            ICityResolverService cityResolverService) : base(cityResolverService)
         {
             _controller = controller;
             _client = client;
-            _cityResolverService = cityResolverService;
         }
 
-        public async Task<Reply?> Execute(string[] args)
+        public override async Task<Reply?> Execute(string[] args)
         {
-            var resolveResult = _cityResolverService.TryResolve(args[0]);
-            if (!resolveResult.Success)
-                return new PlainReply("Не удалось определить город");
+            if (!TryResolveCoordinates(args, out var message, out var coordinates))
+            {
+                return new PlainReply(message);
+            }
 
             var request = new OpenMeteoWeatherRequest() 
             { 
-                Coordinates = resolveResult.Value,
+                Coordinates = coordinates,
                 ForecastDays = 1
             };
 
