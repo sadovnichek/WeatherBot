@@ -7,29 +7,36 @@ using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
-    public class HourlyCommand : CitySpecificCommand
+    public class HourlyCommand : ICommand
     {
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
         private readonly IWeatherService _weatherService;
+        private readonly ICoordinateResolver _coordinateResolver;
+        private readonly IUserService _userService;
 
-        public override string Description => "Погода и температура на каждый час сегодня";
+        public string Description => "Погода и температура на каждый час сегодня";
 
-        public override string Name => "/hourly";
+        public string Name => "/hourly";
 
         public HourlyCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
             IWeatherService weatherService,
-            ICityResolverService cityResolverService) : base(cityResolverService)
+            ICoordinateResolver coordinateResolver,
+            IUserService userService)
         {
             _controller = controller;
             _weatherService = weatherService;
             _client = client;
+            _coordinateResolver = coordinateResolver;
+            _userService = userService;
         }
 
-        public override async Task<Reply?> Execute(string[] args)
+        public async Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
-            if (!TryResolveCoordinates(args, out var message, out var coordinates))
+            var user = _userService.CreateOrUpdate(userInfo.ChatId, userInfo.LastMessageTimeUtc);
+
+            if (!_coordinateResolver.TryResolveCoordinates(user, args, out var message, out var coordinates))
             {
                 return new PlainReply(message);
             }

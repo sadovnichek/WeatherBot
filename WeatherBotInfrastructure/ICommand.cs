@@ -6,6 +6,6 @@
 
         string Name { get; }
 
-        Task<Reply?> Execute(string[] args);
+        Task<Reply?> Execute(UserInfo userInfo, string[] args);
     }
 }

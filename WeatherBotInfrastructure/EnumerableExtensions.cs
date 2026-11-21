@@ -64,5 +64,11 @@ namespace BotInfrastructure
 
             return result;
         }
+
+        public static long ToUnixEpoch(this DateTime dateTime)
+        {
+            var dateTimeOffset = new DateTimeOffset(dateTime);
+            return dateTimeOffset.ToUnixTimeSeconds();
+        }
     }
 }

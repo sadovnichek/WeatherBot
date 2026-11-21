@@ -29,5 +29,25 @@ namespace WeatherBotDomain.Services
             var coordinates = new Coordinates(dbRecord.Latitude, dbRecord.Longitude);
             return new Result<Coordinates>(coordinates);
         }
+
+        public Result<long> GetCityIdByName(string cityName)
+        {
+            var dbRecord = _dbContext.Cities.FirstOrDefault(x => x.Name == cityName);
+
+            if (dbRecord is null)
+                return Result<long>.Failure();
+
+            return new Result<long>(dbRecord.Id);
+        }
+
+        public Result<City> GetCityById(long cityId)
+        {
+            var dbRecord = _dbContext.Cities.FirstOrDefault(x => x.Id == cityId);
+
+            if (dbRecord is null)
+                return Result<City>.Failure();
+
+            return new Result<City>(dbRecord);
+        }
     }
 }

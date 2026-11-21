@@ -1,4 +1,5 @@
 ﻿using BotInfrastructure;
+using Microsoft.Extensions.Logging;
 using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.Entities;
 using WeatherBotDomain.Services;
@@ -10,9 +11,10 @@ namespace WeatherBotDomain.Commands
         public TomorrowCommand(IWeatherApiController controller,
             IWeatherApiClient client,
             IWeatherService weatherService,
-            ICityResolverService cityResolverService,
-            IPrecipitationService precipitationService)
-            : base(controller, client, weatherService, cityResolverService, precipitationService)
+            IPrecipitationService precipitationService,
+            ICoordinateResolver coordinateResolver,
+            IUserService userService)
+            : base(controller, client, weatherService, precipitationService, coordinateResolver, userService)
         {
 
         }

@@ -12,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var port = builder.Configuration.GetValue("App:Port", 8080);
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
-builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 builder.Services.AddSingleton<IWeatherService, WeatherService>()
                 .AddSingleton<IPrecipitationService, PrecipitationService>()
@@ -25,8 +24,13 @@ builder.Services.AddSingleton<IWeatherService, WeatherService>()
                 .AddSingleton<ICommand, HourlyCommand>()
                 .AddSingleton<ICommand, DaytimeCommand>()
                 .AddSingleton<ICommand, WeeklyCommand>()
+                .AddSingleton<ICommand, SetDefaultCityCommand>()
                 .AddSingleton<IInfrastructureCommand, HelpCommand>()
                 .AddSingleton<ICommandHandler, CommandHandler>()
+                .AddSingleton<IUserService, UserService>()
+                .AddSingleton<ICoordinateResolver, CoordinateResolver>()
+                .AddSingleton(new BotToken(builder.Configuration["Bot:Token"]))
+                .AddLogging(builder => builder.AddConsole())
                 .AddSingleton(s =>
                 {
                     var handler = new HttpClientHandler();
@@ -46,13 +50,7 @@ builder.Services.AddSingleton<IWeatherService, WeatherService>()
                         ForwardedHeaders.XForwardedFor |
                         ForwardedHeaders.XForwardedProto;
                 })
-                .AddSingleton(s =>
-                {
-                    var handler = s.GetRequiredService<ICommandHandler>();
-                    var token = builder.Configuration["Bot:Token"];
-                    var logger = s.GetRequiredService<ILogger<TelegramBot>>();
-                    return new TelegramBot(handler, token, logger);
-                });
+                .AddSingleton<TelegramBot>();
 
 var app = builder.Build();
 app.UseForwardedHeaders();

@@ -4,8 +4,6 @@ using Telegram.Bot.Types;
 
 namespace BotInfrastructure
 {
-    // Fluent interface for adding commands?
-
     public class TelegramBot
     {
         private readonly TelegramBotClient _bot;
@@ -25,13 +23,14 @@ namespace BotInfrastructure
         {
             try
             {
-                if (update != null && update.Message != null 
+                if (update != null 
+                    && update.Message != null 
                     && update.Message.Text != null
                     && update.Message.Chat != null)
                 {
-                    var messageTextTokens = update.Message?.Text?.Split(" ");
-                    var command = messageTextTokens?[0].Trim();
-                    var args = messageTextTokens?.Skip(1).ToArray();
+                    var messageTextTokens = update.Message.Text.Trim().Split();
+                    var command = messageTextTokens[0];
+                    var args = messageTextTokens.Skip(1).ToArray();
                     var chatId = update.Message.Chat.Id;
 
                     if (!_commandHandler.TryGetCommand(command, out var instance))
@@ -40,7 +39,13 @@ namespace BotInfrastructure
                         return;
                     }
 
-                    var reply = await instance.Execute(args);
+                    var userInfo = new UserInfo() 
+                    { 
+                        ChatId = chatId, 
+                        LastMessageTimeUtc = update.Message.Date.ToUnixEpoch() 
+                    };
+
+                    var reply = await instance.Execute(userInfo, args);
                  
                     while (reply != null)
                     {

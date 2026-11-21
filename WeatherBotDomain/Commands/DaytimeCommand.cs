@@ -3,30 +3,36 @@ using WeatherBotDomain.Abstractions;
 using WeatherBotDomain.Entities;
 using WeatherBotDomain.OpenMeteo;
 using WeatherBotDomain.Replies;
-using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
-    public class DaytimeCommand : CitySpecificCommand
+    public class DaytimeCommand : ICommand
     {
         private readonly IWeatherApiController _controller;
         private readonly IWeatherApiClient _client;
+        private readonly ICoordinateResolver _coordinateResolver;
+        private readonly IUserService _userService;
 
-        public override string Description => "Время заката и рассвета сегодня";
+        public string Description => "Время заката и рассвета сегодня";
 
-        public override string Name => "/daytime";
+        public string Name => "/daytime";
 
         public DaytimeCommand(IWeatherApiController controller, 
             IWeatherApiClient client,
-            ICityResolverService cityResolverService) : base(cityResolverService)
+            ICoordinateResolver coordinateResolver,
+            IUserService userService)
         {
             _controller = controller;
             _client = client;
+            _coordinateResolver = coordinateResolver;
+            _userService = userService;
         }
 
-        public override async Task<Reply?> Execute(string[] args)
+        public async Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
-            if (!TryResolveCoordinates(args, out var message, out var coordinates))
+            var user = _userService.CreateOrUpdate(userInfo.ChatId, userInfo.LastMessageTimeUtc);
+
+            if (!_coordinateResolver.TryResolveCoordinates(user, args, out var message, out var coordinates))
             {
                 return new PlainReply(message);
             }

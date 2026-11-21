@@ -7,29 +7,36 @@ using WeatherBotDomain.Services;
 
 namespace WeatherBotDomain.Commands
 {
-    public class WeeklyCommand : CitySpecificCommand
+    public class WeeklyCommand : ICommand
     {
         private readonly IWeatherApiClient _client;
         private readonly IWeatherApiController _controller;
         private readonly IWeatherService _weatherService;
+        private readonly ICoordinateResolver _coordinateResolver;
+        private readonly IUserService _userService;
 
-        public override string Description => "прогноз погоды на неделю";
+        public string Description => "прогноз погоды на неделю";
 
-        public override string Name => "/weekly";
+        public string Name => "/weekly";
 
         public WeeklyCommand(IWeatherApiClient client,
             IWeatherApiController controller,
             IWeatherService weatherService,
-            ICityResolverService cityResolverService) : base(cityResolverService)
+            ICoordinateResolver coordinateResolver,
+            IUserService userService)
         {
             _client = client;
             _controller = controller;
             _weatherService = weatherService;
+            _coordinateResolver = coordinateResolver;
+            _userService = userService;
          }
 
-        public override async Task<Reply?> Execute(string[] args)
+        public async Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
-            if (!TryResolveCoordinates(args, out var message, out var coordinates))
+            var user = _userService.CreateOrUpdate(userInfo.ChatId, userInfo.LastMessageTimeUtc);
+
+            if (!_coordinateResolver.TryResolveCoordinates(user, args, out var message, out var coordinates))
             {
                 return new PlainReply(message);
             }

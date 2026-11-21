@@ -18,7 +18,7 @@
             _commands = commands;
         }
 
-        public async Task<Reply?> Execute(string[] args)
+        public async Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
             return new PlainReply(GetHelp());
         }

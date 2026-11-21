@@ -10,11 +10,14 @@ namespace BotInfrastructure.Database
 
         public long ChatId { get; set; }
 
-        public double Latitude { get; set; }
+        public long? DefaultCityId { get; set; }
 
-        public double Longitude { get; set; }
+        public long LastQueryTime { get; set; }
 
-        public int LastQueryTime { get; set; }
+        public override string ToString()
+        {
+            return $"\nId={Id}\nChatId={ChatId}\nDefaultCityId={DefaultCityId}\nLastQueryTime={LastQueryTime}\n";
+        }
     }
 
     public class City
@@ -33,19 +36,17 @@ namespace BotInfrastructure.Database
 
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-
-        }
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options) { }
 
         public DbSet<User> Users => Set<User>();
 
         public DbSet<City> Cities => Set<City>();
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WeatherBotStorage", "app.db");
-        //    optionsBuilder.UseSqlite(string.Format("Data Source={0}", path));
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WeatherBotStorage", "wb.db");
+            optionsBuilder.UseSqlite($"Data Source = {path}");
+        }
     }
 }

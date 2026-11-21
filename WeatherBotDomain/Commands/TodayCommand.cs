@@ -10,9 +10,10 @@ namespace WeatherBotDomain.Commands
         public TodayCommand(IWeatherApiController controller,
             IWeatherApiClient client,
             IWeatherService weatherService,
-            ICityResolverService cityResolverService,
-            IPrecipitationService precipitationService)
-            : base(controller, client, weatherService, cityResolverService, precipitationService)
+            IPrecipitationService precipitationService,
+            ICoordinateResolver coordinateResolver,
+            IUserService userService)
+            : base(controller, client, weatherService, precipitationService, coordinateResolver, userService)
         {
 
         }

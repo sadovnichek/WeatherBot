@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using WeatherBotDomain.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 namespace ConsoleUI
 {
@@ -30,8 +29,11 @@ namespace ConsoleUI
                 .AddSingleton<ICommand, HourlyCommand>()
                 .AddSingleton<ICommand, DaytimeCommand>()
                 .AddSingleton<ICommand, WeeklyCommand>()
+                .AddSingleton<ICommand, SetDefaultCityCommand>()
                 .AddSingleton<IInfrastructureCommand, HelpCommand>()
                 .AddSingleton<ICommandHandler, CommandHandler>()
+                .AddSingleton<IUserService, UserService>()
+                .AddSingleton<ICoordinateResolver, CoordinateResolver>()
                 .AddLogging(builder => builder.AddConsole())
                 .AddSingleton(s =>
                 {
@@ -43,15 +45,16 @@ namespace ConsoleUI
                 })
                 .AddDbContext<AppDbContext>(options =>
                 {
-                    var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WeatherBotStorage", "app.db");
+                    var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WeatherBotStorage", "wb.db");
                     options.UseSqlite($"Data Source = {path}");
                 })
                 .BuildServiceProvider();
 
             var handler = services.GetService<ICommandHandler>();
-            handler.TryGetCommand("/today", out var command);
+            handler.TryGetCommand("/weekly", out var command);
+            var userInfo = new UserInfo() { ChatId = 0, LastMessageTimeUtc = DateTime.UtcNow.ToUnixEpoch() };
 
-            var reply = await command.Execute(["Екатеринбург"]);
+            var reply = await command.Execute(userInfo, [/*"Екатеринбург"*/]);
 
             while (reply != null)
             {
@@ -59,6 +62,11 @@ namespace ConsoleUI
                 Console.WriteLine(text);
                 reply = reply.Next;
             }
+
+            var service = services.GetRequiredService<IUserService>();
+            service.GetAllUsers()
+                .ToList()
+                .ForEach(u => Console.Write(u));
         }
     }
 }
