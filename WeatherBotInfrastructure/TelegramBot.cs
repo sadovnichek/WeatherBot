@@ -11,10 +11,10 @@ namespace BotInfrastructure
         private readonly ILogger<TelegramBot> _logger;
 
         public TelegramBot(ICommandHandler commandHandler,
-            string token,
+            BotToken botToken,
             ILogger<TelegramBot> logger)
         {
-            _bot = new TelegramBotClient(token);
+            _bot = new TelegramBotClient(botToken.token);
             _commandHandler = commandHandler;
             _logger = logger;
         }
