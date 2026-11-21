@@ -140,3 +140,4 @@ _NCrunch*
 
 .vs/
 /ConsoleUI/Migrations
+*.py
