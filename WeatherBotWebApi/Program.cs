@@ -53,9 +53,17 @@ builder.Services.AddSingleton<IWeatherService, WeatherService>()
                 .AddSingleton<TelegramBot>();
 
 var app = builder.Build();
+
+//auto migration
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+}
+
 app.UseForwardedHeaders();
 
-var bot = app.Services.GetService<TelegramBot>();
+var bot = app.Services.GetRequiredService<TelegramBot>();
 
 app.MapPost("/webhook", async (Update u) =>
     {
