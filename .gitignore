@@ -7,7 +7,6 @@
 *.sln.docstates
 
 artifacts/
-*/Migrations/
 *.db
 *.db-shm
 *.db-wal
