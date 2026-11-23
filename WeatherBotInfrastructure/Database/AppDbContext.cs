@@ -43,10 +43,10 @@ namespace BotInfrastructure.Database
 
         public DbSet<City> Cities => Set<City>();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WeatherBotStorage", "wb.db");
-            optionsBuilder.UseSqlite($"Data Source = {path}");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WeatherBotStorage", "wb.db");
+        //    optionsBuilder.UseSqlite($"Data Source = {path}");
+        //}
     }
 }
