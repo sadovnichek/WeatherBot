@@ -10,11 +10,13 @@ namespace WeatherBotDomain.Abstractions
 
         User UpdateUserDefaultCityId(long chatId, long defaultCityId);
 
-        User CreateUser(long chatId, long currentTime);
+        User CreateUser(long chatId);
 
         bool UserExists(long chatId);
 
-        User CreateOrUpdate(long chatId, long lastQueryTime);
+        void CreateIfNotExists(long chatId);
+
+        //User CreateOrUpdate(long chatId, long lastQueryTime);
 
         IEnumerable<User> GetAllUsers();
     }

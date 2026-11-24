@@ -14,8 +14,9 @@ namespace WeatherBotDomain.Replies
             var wording = WeathersWithWording.Length > 0 ? " погода" : string.Empty;
             var withWording = string.Join(" и ", WeathersWithWording.Select(w => $"*{w}*"));
             var withoutWording = string.Join(", ", WeathersWithoutWording.Select(w => $"*{w}*"));
+            var greeting = IsGreetingNeeded ? Greeting + " " : string.Empty;
             
-            return $"{Greeting} {TimePointer} ожидаются {withWording}{wording}{delimiter}{withoutWording} {Emoji}\n" +
+            return $"{greeting}{TimePointer} ожидаются {withWording}{wording}{delimiter}{withoutWording} {Emoji}\n" +
                         $"Средняя температура днем: *{Format.Temperature(MedianTemperature)}*.\n" +
                         $"Перепады температур в течении суток с *{Format.Temperature(MinTemperature)}* до *{Format.Temperature(MaxTemperature)}*";
         }

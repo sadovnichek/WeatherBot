@@ -4,11 +4,13 @@ namespace WeatherBotDomain.Replies
 {
     public abstract class WeatherReply : Reply
     {
-        public string TimePointer { get; init; }
+        public required string TimePointer { get; init; }
 
         public DateTime Date { get; init; }
 
         public string Greeting { get; init; }
+
+        public required bool IsGreetingNeeded { get; init; }
 
         public string Emoji { get; init; }
 

@@ -34,7 +34,8 @@ namespace WeatherBotDomain.Commands
 
         public async Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
-            var user = _userService.CreateOrUpdate(userInfo.ChatId, userInfo.LastMessageTimeUtc);
+            _userService.CreateIfNotExists(userInfo.ChatId);
+            var user = _userService.UpdateUserLastQueryTime(userInfo.ChatId, userInfo.LastMessageTimeUtc);
 
             if (!_coordinateResolver.TryResolveCoordinates(user, args, out var message, out var coordinates))
             {

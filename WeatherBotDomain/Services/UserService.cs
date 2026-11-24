@@ -1,4 +1,5 @@
-﻿using BotInfrastructure.Database;
+﻿using BotInfrastructure;
+using BotInfrastructure.Database;
 using Microsoft.Extensions.Logging;
 using WeatherBotDomain.Abstractions;
 
@@ -26,11 +27,11 @@ namespace WeatherBotDomain.Services
             return dbRecord;
         }
 
-        public User CreateUser(long chatId, long currentTime)
+        public User CreateUser(long chatId)
         {
             try
             {
-                var newUser = new User() { ChatId = chatId, LastQueryTime = currentTime };
+                var newUser = new User() { ChatId = chatId, LastQueryTime = DateTime.UtcNow.ToUnixEpoch() };
                 _dbContext.Users.Add(newUser);
                 _dbContext.SaveChanges();
 
@@ -66,14 +67,22 @@ namespace WeatherBotDomain.Services
             return _dbContext.Users.Any(u => u.ChatId == chatId);
         }
 
-        public User CreateOrUpdate(long chatId, long lastQueryTime)
+        //public User CreateOrUpdate(long chatId, long lastQueryTime)
+        //{
+        //    if (!UserExists(chatId))
+        //    {
+        //        return CreateUser(chatId, lastQueryTime);
+        //    }
+
+        //    return UpdateUserLastQueryTime(chatId, lastQueryTime);
+        //}
+
+        public void CreateIfNotExists(long chatId)
         {
             if (!UserExists(chatId))
             {
-                return CreateUser(chatId, lastQueryTime);
+                CreateUser(chatId);
             }
-
-            return UpdateUserLastQueryTime(chatId, lastQueryTime);
         }
 
         public IEnumerable<User> GetAllUsers()

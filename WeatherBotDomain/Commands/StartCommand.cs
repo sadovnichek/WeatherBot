@@ -18,7 +18,8 @@ namespace WeatherBotDomain.Commands
 
         public Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
-            _userService.CreateOrUpdate(userInfo.ChatId, userInfo.LastMessageTimeUtc);
+            _userService.CreateIfNotExists(userInfo.ChatId);
+            _userService.UpdateUserLastQueryTime(userInfo.ChatId, userInfo.LastMessageTimeUtc);
 
             return Task.FromResult<Reply?>(new PlainReply("""
                 Добро пожаловать в WeatherBot! 

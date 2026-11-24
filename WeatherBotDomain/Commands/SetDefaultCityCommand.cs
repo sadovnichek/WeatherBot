@@ -21,7 +21,8 @@ namespace WeatherBotDomain.Commands
 
         public async Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
-            _userService.CreateOrUpdate(userInfo.ChatId, userInfo.LastMessageTimeUtc);
+            _userService.CreateIfNotExists(userInfo.ChatId);
+            var user = _userService.UpdateUserLastQueryTime(userInfo.ChatId, userInfo.LastMessageTimeUtc);
 
             var cityName = args[0];
             var result = _cityResolverService.GetCityIdByName(cityName);

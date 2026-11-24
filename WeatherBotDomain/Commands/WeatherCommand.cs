@@ -15,6 +15,8 @@ namespace WeatherBotDomain.Commands
         private readonly ICoordinateResolver _coordinateResolver;
         private readonly IUserService _userService;
 
+        private const int _timeToRememberInSeconds = 60 * 10;
+
         public abstract string Description { get; }
 
         public  abstract string Name { get; }
@@ -36,12 +38,16 @@ namespace WeatherBotDomain.Commands
 
         public async Task<Reply?> Execute(UserInfo userInfo, string[] args)
         {
-            var user = _userService.CreateOrUpdate(userInfo.ChatId, userInfo.LastMessageTimeUtc);
+            _userService.CreateIfNotExists(userInfo.ChatId);
+            var lastQueryTime = _userService.GetUserByChatId(userInfo.ChatId).LastQueryTime;
+            var user = _userService.UpdateUserLastQueryTime(userInfo.ChatId, userInfo.LastMessageTimeUtc);
 
             if (!_coordinateResolver.TryResolveCoordinates(user, args, out var message, out var coordinates))
             {
                 return new PlainReply(message);
             }
+
+            var needToGreeting = user.LastQueryTime - lastQueryTime > _timeToRememberInSeconds;
 
             var request = new OpenMeteoWeatherRequest() 
             { 
@@ -55,11 +61,11 @@ namespace WeatherBotDomain.Commands
             if (dto is null)
                 return PlainReply.OnError();
 
-            return ProcessResponse(dto)
+            return ProcessResponse(dto, needToGreeting)
                 .FollowWith(GetPrecipitationForecast(dto));
         }
 
-        protected abstract Reply ProcessResponse(WeatherInfo dto);
+        protected abstract Reply ProcessResponse(WeatherInfo dto, bool isGreetingNeeded);
 
         protected abstract Reply GetPrecipitationForecast(WeatherInfo dto);
     }

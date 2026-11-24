@@ -28,7 +28,7 @@ namespace WeatherBotDomain.Commands
             return _precipitationService.GetPrecipitationForecast(weatherCodes);
         }
 
-        protected override Reply ProcessResponse(WeatherInfo dto)
+        protected override Reply ProcessResponse(WeatherInfo dto, bool isGreetingNeeded)
         {
             var temperatures = dto.Temperatures.Take(24).ToArray();
             var sunriseHour = dto.Sunrise.Hour;
@@ -37,7 +37,7 @@ namespace WeatherBotDomain.Commands
                 .Take(sunsetHour - sunriseHour)
                 .ToArray();
 
-            return _weatherService.GetReply("Сегодня", dto.Now, weatherCodes, temperatures);
+            return _weatherService.GetReply("Сегодня", dto.Now, isGreetingNeeded, weatherCodes, temperatures);
         }
     }
 }

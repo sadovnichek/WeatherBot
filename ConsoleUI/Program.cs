@@ -51,10 +51,10 @@ namespace ConsoleUI
                 .BuildServiceProvider();
 
             var handler = services.GetService<ICommandHandler>();
-            handler.TryGetCommand("/weekly", out var command);
+            handler.TryGetCommand("/today", out var command);
             var userInfo = new UserInfo() { ChatId = 0, LastMessageTimeUtc = DateTime.UtcNow.ToUnixEpoch() };
 
-            var reply = await command.Execute(userInfo, [/*"Екатеринбург"*/]);
+            var reply = await command.Execute(userInfo, []);
 
             while (reply != null)
             {
@@ -62,11 +62,6 @@ namespace ConsoleUI
                 Console.WriteLine(text);
                 reply = reply.Next;
             }
-
-            var service = services.GetRequiredService<IUserService>();
-            service.GetAllUsers()
-                .ToList()
-                .ForEach(u => Console.Write(u));
         }
     }
 }

@@ -53,7 +53,7 @@ namespace BotInfrastructure.Migrations
                     b.Property<long?>("DefaultCityId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("LastQueryTime")
+                    b.Property<long?>("LastQueryTime")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

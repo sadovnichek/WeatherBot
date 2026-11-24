@@ -26,6 +26,7 @@ namespace WeatherBotDomain.Services
 
         WeatherReply GetReply(string timePointer,
             DateTime timeNow,
+            bool isGreetingNeeded,
             int[] weatherCodes,
             double[] temperatures);
     }
@@ -133,6 +134,7 @@ namespace WeatherBotDomain.Services
 
         public WeatherReply GetReply(string timePointer,
             DateTime timeNow,
+            bool isGreetingNeeded,
             int[] weatherCodes,
             double[] temperatures)
         {
@@ -151,6 +153,7 @@ namespace WeatherBotDomain.Services
                 return new SimpleWeatherReply()
                 {
                     Greeting = greeting,
+                    IsGreetingNeeded = isGreetingNeeded,
                     IsWordingNeeded = IsWordingNeeded(mainWeatherCode),
                     TimePointer = timePointer,
                     Weather = weather,
@@ -174,6 +177,7 @@ namespace WeatherBotDomain.Services
             return new CompoundWeatherReply()
             {
                 Greeting = greeting,
+                IsGreetingNeeded = isGreetingNeeded,
                 TimePointer = timePointer,
                 MedianTemperature = medianTemperatureWithinDay,
                 MinTemperature = minTemperature,

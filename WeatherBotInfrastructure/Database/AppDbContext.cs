@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using System.ComponentModel.DataAnnotations;
 
 namespace BotInfrastructure.Database
@@ -12,7 +13,7 @@ namespace BotInfrastructure.Database
 
         public long? DefaultCityId { get; set; }
 
-        public long LastQueryTime { get; set; }
+        public long? LastQueryTime { get; set; }
 
         public override string ToString()
         {
@@ -42,11 +43,19 @@ namespace BotInfrastructure.Database
         public DbSet<User> Users => Set<User>();
 
         public DbSet<City> Cities => Set<City>();
+    }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WeatherBotStorage", "wb.db");
-        //    optionsBuilder.UseSqlite($"Data Source = {path}");
-        //}
+    // Class for performing migrations on a local machine
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    {
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            var directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var path = Path.Combine(directoryPath, "WeatherBotStorage", "wb.db");
+            optionsBuilder.UseSqlite($"Data Source={path}");
+
+            return new AppDbContext(optionsBuilder.Options);
+        }
     }
 }
